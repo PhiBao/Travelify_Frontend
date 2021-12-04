@@ -1,0 +1,43 @@
+.divider:after,
+.divider:before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+
+.form-outline {
+  position: relative;
+}
+
+.form__input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  outline: none;
+}
+
+.form__input:hover {
+  border-color: #adffff;
+}
+
+.form__input:focus {
+  border-color: #18ffff;
+}
+
+.form__label {
+  position: absolute;
+  left: 1rem;
+  top: 0.8rem;
+  padding: 0 0.5rem;
+  cursor: text;
+  transition: top 200ms ease-in, left 200ms ease-in, font-size 200ms ease-in;
+  background-color: white;
+}
+
+.form__input:focus ~ .form__label,
+.form__input:not(:placeholder-shown).form__input:not(:focus) ~ .form__label {
+  top: -0.5rem;
+  font-size: 0.8rem;
+  left: 0.8rem;
+}
