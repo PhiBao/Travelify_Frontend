@@ -1,0 +1,161 @@
+import React from "react";
+import * as Yup from "yup";
+import moment from "moment";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, Link } from "react-router-dom";
+import { createSession } from "../../store/session";
+import { Input, Button } from "../common/form";
+import "./form.css";
+
+const schema = Yup.object().shape({
+  first_name: Yup.string().max(20),
+  last_name: Yup.string().max(20),
+  email: Yup.string().required().email(),
+  password: Yup.string()
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}/,
+      "minimum eight characters, at least one letter and one number"
+    )
+    .required(),
+  password_confirmation: Yup.string().oneOf(
+    [Yup.ref("password"), null],
+    "password confirmation doesn't match password"
+  ),
+  phone_number: Yup.string()
+    .matches(/^[0-9]+$/, "Must be only digits")
+    .min(9)
+    .max(11),
+  address: Yup.string().max(100),
+  birthday: Yup.string()
+    .matches(
+      /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
+      "Date of Birth is invalid"
+    )
+    .test("birthday", "Please choose a valid date of birth", (value) => {
+      const age = moment().diff(moment(value), "years");
+      return age >= 16 && age <= 120;
+    }),
+});
+
+export const Registration = () => {
+  const dispatch = useDispatch();
+  const session = useSelector((state) => state.entities.session);
+
+  const { register, handleSubmit, formState } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = (user, e) => {
+    e.preventDefault();
+    dispatch(createSession({ user }));
+  };
+
+  const { errors } = formState;
+
+  if (session.user._id) return <Navigate to="/" />;
+
+  return (
+    <section className="vh-100 pt-5">
+      <div className="mask d-flex align-items-center h-100">
+        <div className="container h-100">
+          <div className="row d-flex justify-content-center align-items-center h-100">
+            <div className="col-12 col-md-9 col-lg-7 col-xl-6">
+              <div className="card" style={{ borderRadius: "15px" }}>
+                <div className="card-body p-5">
+                  <h2 className="text-uppercase text-center mb-5">
+                    Create an account
+                  </h2>
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="row">
+                      <div className="col-md-6">
+                        <Input
+                          register={register}
+                          name="first_name"
+                          spacingClass="mb-5"
+                          label="First name"
+                          error={errors.first_name}
+                        />
+                      </div>
+                      <div className="col-md-6 ">
+                        <Input
+                          register={register}
+                          spacingClass="mb-5"
+                          name="last_name"
+                          label="Last name"
+                          error={errors.last_name}
+                        />
+                      </div>
+                    </div>
+                    <Input
+                      register={register}
+                      name="email"
+                      label="Email"
+                      spacingClass="mb-5"
+                      error={errors.email}
+                    />
+                    <Input
+                      register={register}
+                      name="address"
+                      label="Address"
+                      spacingClass="mb-5"
+                      error={errors.address}
+                    />
+                    <Input
+                      register={register}
+                      name="phone_number"
+                      label="Phone number"
+                      spacingClass="mb-5"
+                      error={errors.phone_number}
+                    />
+                    <Input
+                      register={register}
+                      name="birthday"
+                      label="Date of Birth"
+                      spacingClass="mb-5"
+                      error={errors.birthday}
+                      type="date"
+                      value="2000-01-01"
+                    />
+                    <Input
+                      register={register}
+                      name="password"
+                      label="Password"
+                      type="password"
+                      spacingClass="mb-5"
+                      error={errors.password}
+                    />
+                    <Input
+                      register={register}
+                      name="password_confirmation"
+                      label="Password confirmation"
+                      type="password"
+                      spacingClass="mb-5"
+                      error={errors.password_confirmation}
+                    />
+
+                    <Button
+                      label="Register"
+                      alignClass="d-flex justify-content-center"
+                      styleClass="btn-success text-body"
+                    />
+
+                    <p className="text-center text-muted mt-2 mb-0">
+                      Have already an account?{" "}
+                      <Link to="/login" className="fw-bold text-body">
+                        <u>Login here</u>
+                      </Link>
+                    </p>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Registration;

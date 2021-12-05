@@ -1,8 +1,8 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPiedPiperAlt } from "@fortawesome/free-brands-svg-icons";
-import { useSelector } from "react-redux";
 
 const NavBar = () => {
   const session = useSelector((state) => state.entities.session);
@@ -46,7 +46,7 @@ const NavBar = () => {
               <React.Fragment>
                 <li className="nav-item">
                   <NavLink className="nav-link" to="/profile">
-                    {user.username}
+                    Profile
                   </NavLink>
                 </li>
                 <li className="nav-item">
@@ -56,6 +56,7 @@ const NavBar = () => {
                 </li>
               </React.Fragment>
             )}
+            {user.username && <p>Welcome, {user.username}</p>}
           </ul>
         </div>
       </div>

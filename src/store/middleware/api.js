@@ -27,6 +27,7 @@ const api =
     if (onStart) dispatch({ type: onStart });
 
     next(action);
+
     axios.defaults.headers.common["Authenticate"] = auth.getJwt();
 
     try {

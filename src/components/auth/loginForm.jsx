@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
@@ -8,21 +8,19 @@ import { faFacebookF, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { faSuitcase } from "@fortawesome/free-solid-svg-icons";
 import { Navigate } from "react-router-dom";
 import { receiveSession } from "../../store/session";
-import "./loginForm.css";
+import { Input, Button, Checkbox } from "../common/form";
+import "./form.css";
 
 const schema = Yup.object().shape({
   email: Yup.string().required().email(),
   password: Yup.string().min(8).required(),
+  remember_me: Yup.boolean(),
 });
 
 export const LoginForm = () => {
   const dispatch = useDispatch();
   const session = useSelector((state) => state.entities.session);
 
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-  });
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(schema),
   });
@@ -30,10 +28,6 @@ export const LoginForm = () => {
   const onSubmit = (user, e) => {
     e.preventDefault();
     dispatch(receiveSession({ user }));
-    setUser({
-      email: "",
-      password: "",
-    });
   };
 
   const { errors } = formState;
@@ -78,78 +72,37 @@ export const LoginForm = () => {
                       >
                         Sign into your account
                       </h5>
-                      <div className="form-outline mb-5">
-                        <input
-                          {...register("email")}
-                          className="form-control form-control-lg form__input"
-                          onChange={(e) => {
-                            setUser({ ...user, email: e.target.value });
-                          }}
-                          value={user.email}
-                          placeholder=" "
-                          id="email"
-                        />
-                        <label
-                          htmlFor="email"
-                          className="form-label form__label"
-                        >
-                          Email
-                        </label>
-                      </div>
-                      <div className="alert text-danger px-0 mb-0 fade show">
-                        {errors.email?.message}
-                      </div>
+                      <Input
+                        register={register}
+                        name="email"
+                        label="Email"
+                        spacingClass="mb-5"
+                        error={errors.email}
+                      />
 
-                      <div className="form-outline mb-4">
-                        <input
-                          {...register("password")}
-                          className="form-control form-control-lg form__input"
-                          onChange={(e) => {
-                            setUser({ ...user, password: e.target.value });
-                          }}
-                          value={user.password}
-                          type="password"
-                          placeholder=" "
-                          id="password"
-                        />
-                        <label
-                          htmlFor="password"
-                          className="form-label form__label"
-                        >
-                          Password
-                        </label>
-                      </div>
-                      <div className="alert text-danger px-0 pt-4 mb-0 fade show">
-                        {errors.password?.message}
-                      </div>
+                      <Input
+                        register={register}
+                        name="password"
+                        label="Password"
+                        spacingClass="mb-4 pb-4"
+                        type="password"
+                        error={errors.password}
+                      />
 
                       <div className="d-flex justify-content-around align-items-center mb-4">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="rememberMe"
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="rememberMe"
-                          >
-                            {" "}
-                            Remember me{" "}
-                          </label>
-                        </div>
+                        <Checkbox
+                          label="Remember me"
+                          register={register}
+                          name={"remember_me"}
+                        />
                         <a href="#!">Forgot password?</a>
                       </div>
 
-                      <div className="pt-1 mb-4">
-                        <button
-                          className="btn btn-dark btn-lg btn-block form-control"
-                          type="submit"
-                        >
-                          Log in
-                        </button>
-                      </div>
+                      <Button
+                        label="Log in"
+                        alignClass="mb-4"
+                        styleClass="btn-dark form-control"
+                      />
                       <div className="divider d-flex align-items-center my-4">
                         <p className="text-center fw-bold mx-3 mb-0 text-muted">
                           OR
