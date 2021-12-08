@@ -1,12 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-import { apiCallBegan } from "./api";
+import {
+  apiCallBegan,
+  apiCallSuccess,
+  apiCallFailed,
+  apiCallPrepare,
+} from "./api";
 import auth from "../services/authService";
 
 const slice = createSlice({
   name: "session",
   initialState: {
     user: {},
+    loading: false,
   },
   reducers: {
     sessionReceived: (session, action) => {
@@ -16,15 +22,16 @@ const slice = createSlice({
         session.user = user;
         if (remember_me === true) auth.rememberMe(token);
         toast.success("Welcome to Travelify!");
+        session.loading = false;
       } else {
         toast.error(message);
       }
     },
-    sessionDestroyed: (session, action) => {
+    sessionDestroyed: (session) => {
       auth.logout();
       session.user = null;
     },
-    sessionGotten: (session, action) => {
+    sessionGotten: (session) => {
       const currentUser = auth.getCurrentUser();
       if (currentUser) {
         session.user = currentUser;
@@ -41,6 +48,40 @@ const slice = createSlice({
         messages.map((message) => toast.error(message));
       }
     },
+    passwordForgotten: (session, action) => {
+      const { status, message, email } = action.payload;
+      if (status === 200) {
+        session.user = {
+          ...session.user,
+          reset_email_sent: true,
+          email: email,
+        };
+      } else {
+        toast.error(message);
+      }
+    },
+    passwordReset: (session, action) => {
+      const { status, message } = action.payload;
+      if (status === 200) {
+        session.user = { ...session.user, reset: true };
+        toast.success("Reset password successfully");
+      } else {
+        toast.error(message);
+      }
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(apiCallPrepare, (session) => {
+        session.loading = true;
+      })
+      .addCase(apiCallSuccess, (session) => {
+        session.loading = false;
+      })
+      .addCase(apiCallFailed, (session) => {
+        session.loading = false;
+      })
+      .addDefaultCase(() => {});
   },
 });
 
@@ -49,6 +90,8 @@ export const {
   sessionDestroyed,
   sessionGotten,
   sessionCreated,
+  passwordForgotten,
+  passwordReset,
 } = slice.actions;
 
 export default slice.reducer;
@@ -84,6 +127,28 @@ export const createSession = (user) => (dispatch) => {
       method: "POST",
       data: user,
       onSuccess: sessionCreated.type,
+    })
+  );
+};
+
+export const forgottenPassword = (data) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: users_url + "/forgotten_password",
+      method: "GET",
+      params: data,
+      onSuccess: passwordForgotten.type,
+    })
+  );
+};
+
+export const resetPassword = (user, token) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: users_url + `/${token}/reset_password`,
+      method: "PUT",
+      data: user,
+      onSuccess: passwordReset.type,
     })
   );
 };

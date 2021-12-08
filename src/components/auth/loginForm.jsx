@@ -2,13 +2,14 @@ import React from "react";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFacebookF, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { faSuitcase } from "@fortawesome/free-solid-svg-icons";
-import { Navigate } from "react-router-dom";
+import { faFacebookF, faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { Navigate, Link } from "react-router-dom";
 import { receiveSession } from "../../store/session";
 import { Input, Button, Checkbox } from "../common/form";
+import Loading from "../layout/loading";
 import "./form.css";
 
 const schema = Yup.object().shape({
@@ -17,25 +18,23 @@ const schema = Yup.object().shape({
   remember_me: Yup.boolean(),
 });
 
-export const LoginForm = () => {
-  const dispatch = useDispatch();
-  const session = useSelector((state) => state.entities.session);
-
+export const LoginForm = (props) => {
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(schema),
   });
 
   const onSubmit = (user, e) => {
     e.preventDefault();
-    dispatch(receiveSession({ user }));
+    props.receiveSession({ user });
   };
 
   const { errors } = formState;
 
-  if (session.user._id) return <Navigate to="/" />;
+  if (props.session.user._id) return <Navigate to="/" place />;
 
   return (
     <section className="vh-100">
+      {props.session.loading && <Loading />}
       <div className="container py-5 h-100">
         <div className="row d-flex align-items-center justify-content-center h-100">
           <div className="col col-xl-10">
@@ -95,7 +94,12 @@ export const LoginForm = () => {
                           register={register}
                           name={"remember_me"}
                         />
-                        <a href="#!">Forgot password?</a>
+                        <Link
+                          to="/forgotten_password"
+                          className="fw-bold text-info"
+                        >
+                          Forgot password?
+                        </Link>
                       </div>
 
                       <Button
@@ -139,4 +143,12 @@ export const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+const mapStateToProps = (state) => ({
+  session: state.entities.session,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  receiveSession: (data) => dispatch(receiveSession(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

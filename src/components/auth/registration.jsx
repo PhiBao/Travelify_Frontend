@@ -3,10 +3,11 @@ import * as Yup from "yup";
 import moment from "moment";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { connect } from "react-redux";
 import { Navigate, Link } from "react-router-dom";
 import { createSession } from "../../store/session";
 import { Input, Button } from "../common/form";
+import Loading from "../layout/loading";
 import "./form.css";
 
 const schema = Yup.object().shape({
@@ -39,25 +40,23 @@ const schema = Yup.object().shape({
     }),
 });
 
-export const Registration = () => {
-  const dispatch = useDispatch();
-  const session = useSelector((state) => state.entities.session);
-
+export const Registration = (props) => {
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(schema),
   });
 
   const onSubmit = (user, e) => {
     e.preventDefault();
-    dispatch(createSession({ user }));
+    props.createSession({ user });
   };
 
   const { errors } = formState;
 
-  if (session.user._id) return <Navigate to="/" />;
+  if (props.session.user._id) return <Navigate to="/" replace />;
 
   return (
     <section className="vh-100 pt-5">
+      {props.session.loading && <Loading />}
       <div className="mask d-flex align-items-center h-100">
         <div className="container h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
@@ -158,4 +157,12 @@ export const Registration = () => {
   );
 };
 
-export default Registration;
+const mapStateToProps = (state) => ({
+  session: state.entities.session,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  createSession: (data) => dispatch(createSession(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Registration);

@@ -1,12 +1,11 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPiedPiperAlt } from "@fortawesome/free-brands-svg-icons";
 
-const NavBar = () => {
-  const session = useSelector((state) => state.entities.session);
-  const { user } = session;
+const NavBar = (props) => {
+  const { user } = props.session;
 
   return (
     <nav className="navbar fixed-top navbar-expand-lg navbar-light bg-light">
@@ -64,4 +63,8 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+const mapStateToProps = (state) => ({
+  session: state.entities.session,
+});
+
+export default connect(mapStateToProps, null)(NavBar);

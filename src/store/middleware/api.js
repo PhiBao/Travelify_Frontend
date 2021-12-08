@@ -22,9 +22,9 @@ const api =
   async (action) => {
     if (action.type !== actions.apiCallBegan.type) return next(action);
 
-    const { url, method, data, onStart, onSuccess, onError } = action.payload;
+    const { url, method, data, onSuccess, onError, params } = action.payload;
 
-    if (onStart) dispatch({ type: onStart });
+    dispatch(actions.apiCallPrepare());
 
     next(action);
 
@@ -33,13 +33,18 @@ const api =
     try {
       const response = await axios.request({
         url,
+        params,
         method,
         data,
       });
+      // Specific
+      if (onSuccess)
+        dispatch({
+          type: onSuccess,
+          payload: response.data,
+        });
       // General
       dispatch(actions.apiCallSuccess(response.data));
-      // Specific
-      if (onSuccess) dispatch({ type: onSuccess, payload: response.data });
     } catch (error) {
       // General
       dispatch(actions.apiCallFailed(error.message));

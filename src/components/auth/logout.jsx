@@ -1,16 +1,18 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { destroySession } from "../../store/session";
 
-export const Logout = () => {
-  const dispatch = useDispatch();
-
+export const Logout = (props) => {
   useEffect(() => {
-    dispatch(destroySession());
+    props.destroySession();
     window.location = "/";
   });
 
   return null;
 };
 
-export default Logout;
+const mapDispatchToProps = (dispatch) => ({
+  destroySession: () => dispatch(destroySession()),
+});
+
+export default connect(null, mapDispatchToProps)(Logout);
