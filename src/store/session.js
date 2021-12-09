@@ -16,16 +16,11 @@ const slice = createSlice({
   },
   reducers: {
     sessionReceived: (session, action) => {
-      const { status, token, message, user, remember_me } = action.payload;
-      if (status === 200) {
-        auth.loginWithJwt(token);
-        session.user = user;
-        if (remember_me === true) auth.rememberMe(token);
-        toast.success("Welcome to Travelify!");
-        session.loading = false;
-      } else {
-        toast.error(message);
-      }
+      const { token, user, remember_me } = action.payload;
+      auth.loginWithJwt(token);
+      session.user = user;
+      if (remember_me === true) auth.rememberMe(token);
+      toast.success("Welcome to Travelify!");
     },
     sessionDestroyed: (session) => {
       auth.logout();
@@ -38,36 +33,24 @@ const slice = createSlice({
       }
     },
     sessionCreated: (session, action) => {
-      const { user, token, status, messages } = action.payload;
-      if (status === 201) {
-        const { id, first_name } = user;
-        auth.loginWithJwt(token);
-        session.user = { _id: id, username: first_name };
-        toast.success("Welcome to Travelify!");
-      } else {
-        messages.map((message) => toast.error(message));
-      }
+      const { user, token } = action.payload;
+
+      const { id, first_name } = user;
+      auth.loginWithJwt(token);
+      session.user = { _id: id, username: first_name };
+      toast.success("Welcome to Travelify!");
     },
     passwordForgotten: (session, action) => {
-      const { status, message, email } = action.payload;
-      if (status === 200) {
-        session.user = {
-          ...session.user,
-          reset_email_sent: true,
-          email: email,
-        };
-      } else {
-        toast.error(message);
-      }
+      const { email } = action.payload;
+      session.user = {
+        ...session.user,
+        reset_email_sent: true,
+        email: email,
+      };
     },
-    passwordReset: (session, action) => {
-      const { status, message } = action.payload;
-      if (status === 200) {
-        session.user = { ...session.user, reset: true };
-        toast.success("Reset password successfully");
-      } else {
-        toast.error(message);
-      }
+    passwordReset: (session) => {
+      session.user = { ...session.user, reset: true };
+      toast.success("Reset password successfully");
     },
   },
   extraReducers: (builder) => {

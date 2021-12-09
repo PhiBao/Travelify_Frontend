@@ -45,9 +45,9 @@ export const Registration = (props) => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (user, e) => {
+  const onSubmit = async (user, e) => {
     e.preventDefault();
-    props.createSession({ user });
+    await props.createSession({ user });
   };
 
   const { errors } = formState;

@@ -48,6 +48,12 @@ const api =
     } catch (error) {
       // General
       dispatch(actions.apiCallFailed(error.message));
+
+      if (error.response && error.response.data.messages) {
+        return Promise.reject(
+          error.response.data.messages.map((message) => toast.error(message))
+        );
+      }
       // Specific
       if (onError) dispatch({ type: onError, payload: error.message });
     }

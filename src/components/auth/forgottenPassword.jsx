@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
-import { Navigate, Link, useNavigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { forgottenPassword } from "../../store/session";
@@ -21,11 +21,9 @@ export const ForgottenPassword = (props) => {
     resolver: yupResolver(schema),
   });
 
-  const navigate = useNavigate();
-
-  const onSubmit = (data, e) => {
+  const onSubmit = async (data, e) => {
     e.preventDefault();
-    props.forgottenPassword(data, navigate);
+    await props.forgottenPassword(data);
   };
 
   const { errors } = formState;
@@ -34,7 +32,7 @@ export const ForgottenPassword = (props) => {
   if (session.user._id) return <Navigate to="/" replace />;
 
   return (
-    <section className="vh-100 pt-5">
+    <section className="vh-100">
       {session.loading && <Loading />}
       <div className="mask d-flex align-items-center h-100">
         <div className="container h-100">

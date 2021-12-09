@@ -32,19 +32,19 @@ export const ResetPassword = (props) => {
 
   const onSubmit = async (data, e) => {
     e.preventDefault();
-    props.resetPassword(
+    await props.resetPassword(
       { user: { ...data, email: q.get("email") } },
       q.get("token")
     );
+    navigate("/login", { replace: true });
   };
 
   const { errors } = formState;
 
-  if (props.session.user.reset === true) navigate("/login", { replace: true });
   if (props.session.user._id) return <Navigate to="/" replace />;
 
   return (
-    <section className="vh-100 pt-5">
+    <section className="vh-100">
       {props.session.loading && <Loading />}
       <div className="mask d-flex align-items-center h-100">
         <div className="container h-100">

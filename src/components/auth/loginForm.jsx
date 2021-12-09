@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSuitcase } from "@fortawesome/free-solid-svg-icons";
 import { faFacebookF, faTwitter } from "@fortawesome/free-brands-svg-icons";
-import { Navigate, Link } from "react-router-dom";
+import { Navigate, Link, useNavigate, useLocation } from "react-router-dom";
 import { receiveSession } from "../../store/session";
 import { Input, Button, Checkbox } from "../common/form";
 import Loading from "../layout/loading";
@@ -19,13 +19,17 @@ const schema = Yup.object().shape({
 });
 
 export const LoginForm = (props) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (user, e) => {
+  const onSubmit = async (user, e) => {
     e.preventDefault();
-    props.receiveSession({ user });
+    await props.receiveSession({ user });
+
+    navigate(location.state?.from.pathname || "/");
   };
 
   const { errors } = formState;

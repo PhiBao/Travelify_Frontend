@@ -14,8 +14,9 @@ import Logout from "./components/auth/logout";
 import Registration from "./components/auth/registration";
 import ForgottenPassword from "./components/auth/forgottenPassword";
 import ResetPassword from "./components/auth/resetPassword";
+import UserSettings from "./components/users/userSettings";
 import { getSession } from "./store/session";
-//import ProtectedRoute from "./components/common/protectedRoute";
+import ProtectedRoute from "./components/common/protectedRoute";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
@@ -36,6 +37,9 @@ const App = (props) => {
           <Route path="/register" element={<Registration />} />
           <Route path="/forgotten_password" element={<ForgottenPassword />} />
           <Route path="/reset_password" element={<ResetPassword />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/settings" element={<UserSettings />} />
+          </Route>
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </main>
