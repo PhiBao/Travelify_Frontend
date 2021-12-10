@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import _ from "lodash";
-import { getCurrentUser, updateUser } from "../../store/users";
+import { getCurrentUser, updateUser, activateUser } from "../../store/users";
 import Loading from "../layout/loading";
 import { Input, Button } from "../common/form";
 import "./userSettings.css";
@@ -43,11 +43,8 @@ const schema = Yup.object().shape({
 export const UserSettings = (props) => {
   const { currentUser, loading } = props.users;
   useEffect(() => {
-    const getCurrentUser = async () => {
-      await props.getCurrentUser();
-    };
     if (currentUser.id === 0) {
-      getCurrentUser();
+      props.getCurrentUser();
     }
   });
 
@@ -86,7 +83,7 @@ export const UserSettings = (props) => {
     formData.append("address", user.address);
     formData.append("birthday", user.birthday);
     if (user.avatar.length > 0) formData.append("avatar", user.avatar[0]);
-    await props.updateUser(formData);
+    await props.updateUser(formData, currentUser.id);
   };
 
   const { errors } = formState;
@@ -216,7 +213,13 @@ export const UserSettings = (props) => {
                         <div className="alert alert-warning mt-3">
                           Your email is not confirmed. Please check your inbox.
                           <br />
-                          <button className="btn btn-dark btn-block mt-1">
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              await props.activateUser(currentUser.id);
+                            }}
+                            className="btn btn-dark btn-block mt-1"
+                          >
                             Resend confirmation
                           </button>
                         </div>
@@ -244,7 +247,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getCurrentUser: () => dispatch(getCurrentUser()),
-  updateUser: (data) => dispatch(updateUser(data)),
+  updateUser: (data, id) => dispatch(updateUser(data, id)),
+  activateUser: (id) => dispatch(activateUser(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserSettings);

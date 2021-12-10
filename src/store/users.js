@@ -40,6 +40,15 @@ const slice = createSlice({
       users.currentUser = user;
       toast.success("Update user info successfully");
     },
+    userActivated: () => {
+      toast.success(
+        "We have just sent you a email, please check and confirm your account"
+      );
+    },
+    userConfirmed: (users) => {
+      users.currentUser.activated = true;
+      toast.success("Congratulation! your account has been activated");
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -56,13 +65,15 @@ const slice = createSlice({
   },
 });
 
-export const { currentUserGotten, userUpdated } = slice.actions;
+export const { currentUserGotten, userUpdated, userActivated, userConfirmed } =
+  slice.actions;
 
 export default slice.reducer;
 
 // Action Creators
 
 const url = "/users";
+const activate_url = "/activation";
 
 export const getCurrentUser = () => (dispatch, getState) => {
   const { _id } = getState().entities.session.user;
@@ -77,14 +88,34 @@ export const getCurrentUser = () => (dispatch, getState) => {
   } else return;
 };
 
-export const updateUser = (data) => (dispatch, getState) => {
-  const { id } = getState().entities.users.currentUser;
+export const updateUser = (data, id) => (dispatch) => {
   return dispatch(
     apiCallBegan({
       url: url + `/${id}`,
       method: "PUT",
       data,
       onSuccess: userUpdated.type,
+    })
+  );
+};
+
+export const activateUser = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: activate_url + `/${id}`,
+      method: "GET",
+      onSuccess: userActivated.type,
+    })
+  );
+};
+
+export const confirmUser = (token, email) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: activate_url + `/${token}`,
+      method: "PUT",
+      data: { user: { email } },
+      onSuccess: userConfirmed.type,
     })
   );
 };
