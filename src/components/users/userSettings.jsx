@@ -11,10 +11,9 @@ import { Input, Button } from "../common/form";
 import "./userSettings.css";
 
 const schema = Yup.object().shape({
-  id: Yup.number().required(),
   first_name: Yup.string().max(20),
   last_name: Yup.string().max(20),
-  email: Yup.string().required().email(),
+  email: Yup.string().email().required(),
   phone_number: Yup.string()
     .matches(/^[0-9]+$/, "Must be only digits")
     .min(9)
@@ -30,6 +29,15 @@ const schema = Yup.object().shape({
       const age = moment().diff(moment(value), "years");
       return age >= 16 && age <= 120;
     }),
+  avatar: Yup.mixed()
+    .test("fileSize", "The file is too large", (value) => {
+      return value.length > 0 ? value[0].size <= 5242880 : true;
+    })
+    .test("type", "We support png, jpg, gif file", (value) => {
+      return value.length > 0
+        ? ["image/png", "image/jpg", "image/gif"].includes(value[0].type)
+        : true;
+    }),
 });
 
 export const UserSettings = (props) => {
@@ -44,11 +52,11 @@ export const UserSettings = (props) => {
   });
 
   const { register, handleSubmit, setValue, formState } = useForm({
+    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 
   const fields = [
-    "id",
     "first_name",
     "last_name",
     "email",
@@ -61,8 +69,24 @@ export const UserSettings = (props) => {
 
   const onSubmit = async (user, e) => {
     e.preventDefault();
-    if (_.isEqual(user, _.omit(currentUser, "admin", "created_at"))) return;
-    await props.updateUser({ user });
+
+    if (
+      _.isEqual(
+        _.omit(user, "avatar"),
+        _.omit(currentUser, "id", "admin", "created_at", "avatar")
+      ) &&
+      user.avatar.length === 0
+    )
+      return;
+    const formData = new FormData();
+    formData.append("first_name", user.first_name);
+    formData.append("last_name", user.last_name);
+    formData.append("email", user.email);
+    formData.append("phone_number", user.phone_number);
+    formData.append("address", user.address);
+    formData.append("birthday", user.birthday);
+    if (user.avatar.length > 0) formData.append("avatar", user.avatar[0]);
+    await props.updateUser(formData);
   };
 
   const { errors } = formState;
@@ -71,9 +95,9 @@ export const UserSettings = (props) => {
     <section className="vh-100">
       {loading && <Loading />}
       <div className="container py-5 h-100">
-        <div className="row my-5 d-flex align-items-start justify-content-center h-100">
+        <div className="row my-3 d-flex align-items-start justify-content-center h-100">
           <div className="col col-xl-10">
-            <h4 className="font-weight-bold py-3 mb-4">Account settings</h4>
+            <h4 className="font-weight-bold py-2 mb-2">Account settings</h4>
             <div className="row">
               <h6>&rarr;Setting&rarr;General</h6>
             </div>
@@ -104,9 +128,41 @@ export const UserSettings = (props) => {
                     </a>
                   </div>
                 </div>
-                <div className="col-md-8 col-lg-8 d-flex align-items-top">
-                  <div className="card-body px-lg-4 text-black">
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="col-md-8 col-lg-8 col-sm-auto d-flex align-items-top">
+                  <div className="row px-3">
+                    <div className="d-flex align-items-start my-3 px-sm-5 px-md-4 px-lg-5 px-3">
+                      <img
+                        src={
+                          currentUser.avatar?.url ||
+                          "https://bootdey.com/img/Content/avatar/avatar1.png"
+                        }
+                        alt=""
+                        className="img mt-2"
+                      />
+                      <div className="ps-sm-4 ps-2">
+                        {" "}
+                        <b>Profile Avatar</b>
+                        <br />
+                        <input
+                          {...register("avatar")}
+                          className="btn button border"
+                          type="file"
+                          name="avatar"
+                        />
+                        <p className="text-muted">
+                          Allowed JPG, GIF or PNG. Max size of 5MB
+                        </p>
+                        {errors.avatar && (
+                          <div className="alert text-danger px-0 mb-0 fade show">
+                            errors.avatar.message
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <form
+                      className="mt-4 mx-lg-2 me-md-5 pe-md-5 px-sm-4 "
+                      onSubmit={handleSubmit(onSubmit)}
+                    >
                       <div className="row">
                         <div className="col-md-6">
                           <Input
@@ -156,10 +212,19 @@ export const UserSettings = (props) => {
                         error={errors.birthday}
                         type="date"
                       />
+                      {currentUser.activated === false && (
+                        <div className="alert alert-warning mt-3">
+                          Your email is not confirmed. Please check your inbox.
+                          <br />
+                          <button className="btn btn-dark btn-block mt-1">
+                            Resend confirmation
+                          </button>
+                        </div>
+                      )}
                       <Button
                         label="Update"
-                        alignClass="d-flex justify-content-center"
-                        styleClass="btn-success text-body"
+                        alignClass="d-flex justify-content-center mb-3"
+                        styleClass="btn-success text-white"
                       />
                     </form>
                   </div>

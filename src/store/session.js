@@ -39,6 +39,7 @@ const slice = createSlice({
       auth.loginWithJwt(token);
       session.user = { _id: id, username: first_name };
       toast.success("Welcome to Travelify!");
+      toast.success("Please check your email to confirm your account");
     },
     passwordForgotten: (session, action) => {
       const { email } = action.payload;

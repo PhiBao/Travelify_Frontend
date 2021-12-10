@@ -5,7 +5,12 @@ import api from "./middleware/api";
 const store = () => {
   return configureStore({
     reducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api),
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: ["api/callBegan"],
+        },
+      }).concat(api),
   });
 };
 

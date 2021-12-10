@@ -12,6 +12,11 @@ const slice = createSlice({
   initialState: {
     currentUser: {
       id: 0,
+      avatar: {
+        byte_size: 0,
+        url: "",
+        name: "",
+      },
       first_name: "",
       last_name: "",
       address: "",
@@ -72,10 +77,11 @@ export const getCurrentUser = () => (dispatch, getState) => {
   } else return;
 };
 
-export const updateUser = (data) => (dispatch) => {
+export const updateUser = (data) => (dispatch, getState) => {
+  const { id } = getState().entities.users.currentUser;
   return dispatch(
     apiCallBegan({
-      url: url + `/${data.user.id}`,
+      url: url + `/${id}`,
       method: "PUT",
       data,
       onSuccess: userUpdated.type,

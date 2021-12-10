@@ -14,7 +14,9 @@ export const Input = ({
       <div className={`form-outline ${spacingClass}`}>
         <input
           {...register(name)}
-          className="form-control form-control-lg form__input"
+          className={`form-control form-control-lg form__input ${
+            error ? "is-invalid" : ""
+          }`}
           placeholder=" "
           type={type}
           {...rest}

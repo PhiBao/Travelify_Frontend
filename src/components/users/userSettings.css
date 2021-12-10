@@ -4,3 +4,10 @@
     padding-right: 1rem;
   }
 }
+
+.img {
+  width: 70px;
+  height: 70px;
+  border-radius: 6px;
+  object-fit: cover;
+}
