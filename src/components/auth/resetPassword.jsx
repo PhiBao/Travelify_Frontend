@@ -7,7 +7,7 @@ import { Navigate, useSearchParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "../../store/session";
 import { Input, Button } from "../common/form";
 import Loading from "../layout/loading";
-import "./form.css";
+import "../common/form.css";
 
 const schema = Yup.object().shape({
   password: Yup.string()

@@ -8,7 +8,7 @@ import { Navigate, Link } from "react-router-dom";
 import { createSession } from "../../store/session";
 import { Input, Button } from "../common/form";
 import Loading from "../layout/loading";
-import "./form.css";
+import "../common/form.css";
 
 const schema = Yup.object().shape({
   first_name: Yup.string().max(20),

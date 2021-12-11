@@ -6,8 +6,17 @@
 }
 
 .img {
-  width: 70px;
-  height: 70px;
+  width: 64px;
+  height: 64px;
   border-radius: 6px;
   object-fit: cover;
+}
+
+@media screen and (max-width: 576px) {
+  input[type="file"] {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 150px;
+  }
 }

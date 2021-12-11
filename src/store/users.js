@@ -49,6 +49,9 @@ const slice = createSlice({
       users.currentUser.activated = true;
       toast.success("Congratulation! your account has been activated");
     },
+    passwordChanged: () => {
+      toast.success("Your password has been changed!");
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -65,8 +68,13 @@ const slice = createSlice({
   },
 });
 
-export const { currentUserGotten, userUpdated, userActivated, userConfirmed } =
-  slice.actions;
+export const {
+  currentUserGotten,
+  userUpdated,
+  userActivated,
+  userConfirmed,
+  passwordChanged,
+} = slice.actions;
 
 export default slice.reducer;
 
@@ -116,6 +124,18 @@ export const confirmUser = (token, email) => (dispatch) => {
       method: "PUT",
       data: { user: { email } },
       onSuccess: userConfirmed.type,
+    })
+  );
+};
+
+export const changePassword = (data) => (dispatch, getState) => {
+  const { id } = getState().entities.users.currentUser;
+  return dispatch(
+    apiCallBegan({
+      url: url + `/${id}/change_password`,
+      method: "PUT",
+      data,
+      onSuccess: passwordChanged.type,
     })
   );
 };

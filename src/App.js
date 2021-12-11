@@ -40,7 +40,7 @@ const App = (props) => {
           <Route path="/reset_password" element={<ResetPassword />} />
           <Route path="/activate_account" element={<UserActivation />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/settings" element={<UserSettings />} />
+            <Route path="/settings/*" element={<UserSettings />} />
           </Route>
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>

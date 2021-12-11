@@ -10,7 +10,7 @@ import { Navigate, Link, useNavigate, useLocation } from "react-router-dom";
 import { receiveSession } from "../../store/session";
 import { Input, Button, Checkbox } from "../common/form";
 import Loading from "../layout/loading";
-import "./form.css";
+import "../common/form.css";
 
 const schema = Yup.object().shape({
   email: Yup.string().required().email(),

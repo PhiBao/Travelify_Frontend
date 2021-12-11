@@ -9,7 +9,7 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { forgottenPassword } from "../../store/session";
 import { Input, Button } from "../common/form";
 import Loading from "../layout/loading";
-import "./form.css";
+import ".././common/form.css";
 import "./forgottenPassword.css";
 
 const schema = Yup.object().shape({
