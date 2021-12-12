@@ -13,19 +13,19 @@ const slice = createSlice({
     currentUser: {
       id: 0,
       avatar: {
-        byte_size: 0,
+        byteSize: 0,
         url: "",
         name: "",
       },
-      first_name: "",
-      last_name: "",
+      firstName: "",
+      lastName: "",
       address: "",
-      phone_number: "",
+      phoneNumber: "",
       birthday: "",
       email: "",
       activated: false,
       admin: false,
-      created_at: "",
+      createdAt: "",
     },
     list: [],
     loading: false,
@@ -103,6 +103,7 @@ export const updateUser = (data, id) => (dispatch) => {
       method: "PUT",
       data,
       onSuccess: userUpdated.type,
+      headers: { "Content-Type": "multipart/form-data" },
     })
   );
 };

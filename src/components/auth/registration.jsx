@@ -11,8 +11,8 @@ import Loading from "../layout/loading";
 import "../common/form.css";
 
 const schema = Yup.object().shape({
-  first_name: Yup.string().max(20),
-  last_name: Yup.string().max(20),
+  firstName: Yup.string().max(20),
+  lastName: Yup.string().max(20),
   email: Yup.string().required().email(),
   password: Yup.string()
     .matches(
@@ -20,11 +20,11 @@ const schema = Yup.object().shape({
       "minimum eight characters, at least one letter and one number"
     )
     .required(),
-  password_confirmation: Yup.string().oneOf(
+  passwordConfirmation: Yup.string().oneOf(
     [Yup.ref("password"), null],
     "password confirmation doesn't match password"
   ),
-  phone_number: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^[0-9]+$/, "Must be only digits")
     .min(9)
     .max(11),
@@ -71,19 +71,19 @@ export const Registration = (props) => {
                       <div className="col-md-6">
                         <Input
                           register={register}
-                          name="first_name"
+                          name="firstName"
                           spacingClass="mb-5"
                           label="First name"
-                          error={errors.first_name}
+                          error={errors.firstName}
                         />
                       </div>
                       <div className="col-md-6 ">
                         <Input
                           register={register}
                           spacingClass="mb-5"
-                          name="last_name"
+                          name="lastName"
                           label="Last name"
-                          error={errors.last_name}
+                          error={errors.lastName}
                         />
                       </div>
                     </div>
@@ -103,10 +103,10 @@ export const Registration = (props) => {
                     />
                     <Input
                       register={register}
-                      name="phone_number"
+                      name="phoneNumber"
                       label="Phone number"
                       spacingClass="mb-5"
-                      error={errors.phone_number}
+                      error={errors.phoneNumber}
                     />
                     <Input
                       register={register}
@@ -127,11 +127,11 @@ export const Registration = (props) => {
                     />
                     <Input
                       register={register}
-                      name="password_confirmation"
+                      name="passwordConfirmation"
                       label="Password confirmation"
                       type="password"
                       spacingClass="mb-5"
-                      error={errors.password_confirmation}
+                      error={errors.passwordConfirmation}
                     />
 
                     <Button

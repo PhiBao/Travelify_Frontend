@@ -9,10 +9,10 @@ import { Input, Button } from "../common/form";
 import { updateUser, activateUser } from "../../store/users";
 
 const schema = Yup.object().shape({
-  first_name: Yup.string().max(20).nullable(),
-  last_name: Yup.string().max(20).nullable(),
+  firstName: Yup.string().max(20).nullable(),
+  lastName: Yup.string().max(20).nullable(),
   email: Yup.string().email().required(),
-  phone_number: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^[0-9]+$/, "Must be only digits")
     .min(9)
     .max(11)
@@ -59,10 +59,10 @@ export const UserProfile = (props) => {
   });
 
   const fields = [
-    "first_name",
-    "last_name",
+    "firstName",
+    "lastName",
     "email",
-    "phone_number",
+    "phoneNumber",
     "address",
     "birthday",
     "activated",
@@ -75,16 +75,16 @@ export const UserProfile = (props) => {
     if (
       _.isEqual(
         _.omit(user, "avatar"),
-        _.omit(currentUser, "id", "admin", "created_at", "avatar")
+        _.omit(currentUser, "id", "admin", "createdAt", "avatar")
       ) &&
       user.avatar.length === 0
     )
       return;
     const formData = new FormData();
-    formData.append("first_name", user.first_name);
-    formData.append("last_name", user.last_name);
+    formData.append("first_name", user.firstName);
+    formData.append("last_name", user.lastName);
     formData.append("email", user.email);
-    formData.append("phone_number", user.phone_number);
+    formData.append("phone_number", user.phoneNumber);
     formData.append("address", user.address);
     formData.append("birthday", user.birthday);
     if (user.avatar.length > 0) formData.append("avatar", user.avatar[0]);
@@ -114,8 +114,8 @@ export const UserProfile = (props) => {
           />
           <p className="text-muted">Allowed JPG, GIF or PNG. Max size of 5MB</p>
           {errors.avatar && (
-            <div className="alert text-danger px-0 mb-0 fade show">
-              errors.avatar.message
+            <div className="alert text-danger p-0 mb-0 fade show">
+              {errors.avatar.message}
             </div>
           )}
         </div>
@@ -129,19 +129,19 @@ export const UserProfile = (props) => {
           <div className="col-md-6">
             <Input
               register={register}
-              name="first_name"
+              name="firstName"
               spacingClass="mb-5"
               label="First name"
-              error={errors.first_name}
+              error={errors.firstName}
             />
           </div>
           <div className="col-md-6 ">
             <Input
               register={register}
               spacingClass="mb-5"
-              name="last_name"
+              name="lastName"
               label="Last name"
-              error={errors.last_name}
+              error={errors.lastName}
             />
           </div>
         </div>
@@ -161,10 +161,10 @@ export const UserProfile = (props) => {
         />
         <Input
           register={register}
-          name="phone_number"
+          name="phoneNumber"
           label="Phone number"
           spacingClass="mb-5"
-          error={errors.phone_number}
+          error={errors.phoneNumber}
         />
         <Input
           register={register}

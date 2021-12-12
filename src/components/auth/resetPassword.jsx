@@ -16,7 +16,7 @@ const schema = Yup.object().shape({
       "minimum eight characters, at least one letter and one number"
     )
     .required(),
-  password_confirmation: Yup.string().oneOf(
+  passwordConfirmation: Yup.string().oneOf(
     [Yup.ref("password"), null],
     "password confirmation doesn't match password"
   ),
@@ -66,11 +66,11 @@ export const ResetPassword = (props) => {
                     />
                     <Input
                       register={register}
-                      name="password_confirmation"
+                      name="passwordConfirmation"
                       label="Password confirmation"
                       type="password"
                       spacingClass="mb-4 pb-3"
-                      error={errors.password_confirmation}
+                      error={errors.passwordConfirmation}
                     />
 
                     <Button

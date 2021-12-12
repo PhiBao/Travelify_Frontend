@@ -15,7 +15,7 @@ import "../common/form.css";
 const schema = Yup.object().shape({
   email: Yup.string().required().email(),
   password: Yup.string().min(8).required(),
-  remember_me: Yup.boolean(),
+  rememberMe: Yup.boolean(),
 });
 
 export const LoginForm = (props) => {
@@ -96,7 +96,7 @@ export const LoginForm = (props) => {
                         <Checkbox
                           label="Remember me"
                           register={register}
-                          name={"remember_me"}
+                          name={"rememberMe"}
                         />
                         <Link
                           to="/forgotten_password"

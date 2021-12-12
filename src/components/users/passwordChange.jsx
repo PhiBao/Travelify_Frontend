@@ -7,15 +7,15 @@ import { Input, Button } from "../common/form";
 import { changePassword } from "../../store/users";
 
 const schema = Yup.object().shape({
-  current_password: Yup.string().min(8).required(),
-  new_password: Yup.string()
+  currentPassword: Yup.string().min(8).required(),
+  newPassword: Yup.string()
     .matches(
       /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}/,
       "minimum eight characters, at least one letter and one number"
     )
     .required(),
-  password_confirmation: Yup.string().oneOf(
-    [Yup.ref("new_password"), null],
+  passwordConfirmation: Yup.string().oneOf(
+    [Yup.ref("newPassword"), null],
     "Confirmation password for new password don't mash"
   ),
 });
@@ -43,26 +43,26 @@ export const PasswordChange = (props) => {
       <form className="mt-4 px-4" onSubmit={handleSubmit(onChangePassword)}>
         <Input
           register={register}
-          name="current_password"
+          name="currentPassword"
           label="Current password"
           spacingClass="mb-4 pb-4"
-          error={errors.current_password}
+          error={errors.currentPassword}
           type="password"
         />
         <Input
           register={register}
-          name="new_password"
+          name="newPassword"
           label="New password"
           spacingClass="mb-5"
-          error={errors.new_password}
+          error={errors.newPassword}
           type="password"
         />
         <Input
           register={register}
-          name="password_confirmation"
+          name="passwordConfirmation"
           label="Password confirmation"
           spacingClass="mb-5"
-          error={errors.password_confirmation}
+          error={errors.passwordConfirmation}
           type="password"
         />
 

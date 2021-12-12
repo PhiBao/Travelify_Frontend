@@ -1,9 +1,21 @@
 import axios from "axios";
+import humps from "humps";
 import { toast } from "react-toastify";
 import * as actions from "../api";
 import auth from "../../services/authService";
 
 axios.defaults.baseURL = "http://localhost:3900";
+
+axios.interceptors.response.use((response) => {
+  response.data = humps.camelizeKeys(response.data);
+  return response;
+});
+
+axios.interceptors.request.use((request) => {
+  if (request.headers["Content-Type"] === "multipart/form-data") return request;
+  request.data = humps.decamelizeKeys(request.data);
+  return request;
+});
 
 axios.interceptors.response.use(null, (error) => {
   const expectedError =
@@ -22,7 +34,8 @@ const api =
   async (action) => {
     if (action.type !== actions.apiCallBegan.type) return next(action);
 
-    const { url, method, data, onSuccess, onError, params } = action.payload;
+    const { url, method, data, onSuccess, onError, params, headers } =
+      action.payload;
 
     dispatch(actions.apiCallPrepare());
 
@@ -36,6 +49,7 @@ const api =
         params,
         method,
         data,
+        headers,
       });
       // Specific
       if (onSuccess)
