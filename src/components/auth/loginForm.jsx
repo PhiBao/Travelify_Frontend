@@ -5,9 +5,11 @@ import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSuitcase } from "@fortawesome/free-solid-svg-icons";
-import { faFacebookF, faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { faFacebookF, faGooglePlus } from "@fortawesome/free-brands-svg-icons";
 import { Navigate, Link, useNavigate, useLocation } from "react-router-dom";
-import { receiveSession } from "../../store/session";
+import FacebookLogin from "react-facebook-login";
+import GoogleLogin from "react-google-login";
+import { receiveSession, loginSocial } from "../../store/session";
 import { Input, Button, Checkbox } from "../common/form";
 import Loading from "../layout/loading";
 import "../common/form.css";
@@ -21,24 +23,69 @@ const schema = Yup.object().shape({
 export const LoginForm = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { register, handleSubmit, formState } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
   });
 
+  const { session, receiveSession, loginSocial } = props;
+  const { currentUser, loading } = session;
+
   const onSubmit = async (user, e) => {
     e.preventDefault();
-    await props.receiveSession({ user });
+    await receiveSession({ user });
 
     navigate(location.state?.from.pathname || "/");
   };
 
-  const { errors } = formState;
+  if (currentUser.id !== 0) return <Navigate to="/" place />;
 
-  if (props.session.user._id) return <Navigate to="/" place />;
+  const responseFacebook = async (response) => {
+    const data = {
+      provider: response.graphDomain,
+      uid: response.id,
+      id_token: response.accessToken,
+      info: {
+        email: response.email,
+        firstName: response.first_name,
+        lastName: response.last_name,
+        avatar: response.picture.data.url,
+      },
+    };
+    const headers = {
+      Authorization: `Bearer ${response.accessToken}`,
+      access_token: `${response.accessToken}`,
+    };
+
+    await loginSocial(data, headers);
+  };
+
+  const responseGoogle = async (response) => {
+    const data = {
+      provider: "Google",
+      uid: response.Ba,
+      id_token: response.tokenId,
+      info: {
+        email: response.profileObj.email,
+        firstName: response.profileObj.givenName,
+        lastName: response.profileObj.familyName,
+        avatar: response.profileObj.imageUrl,
+      },
+    };
+    const headers = {
+      Authorization: `Bearer ${response.accessToken}`,
+      access_token: `${response.accessToken}`,
+    };
+
+    await loginSocial(data, headers);
+  };
 
   return (
     <section className="vh-100">
-      {props.session.loading && <Loading />}
+      {loading && <Loading />}
       <div className="container py-5 h-100">
         <div className="row d-flex align-items-center justify-content-center h-100">
           <div className="col col-xl-10">
@@ -117,24 +164,40 @@ export const LoginForm = (props) => {
                         </p>
                       </div>
 
-                      <a
-                        className="btn btn-primary btn-lg btn-block form-control"
+                      <FacebookLogin
+                        appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+                        autoLoad={false}
+                        fields="first_name,last_name,email,picture"
+                        scope="public_profile,email"
+                        callback={responseFacebook}
+                        icon={
+                          <FontAwesomeIcon
+                            icon={faFacebookF}
+                            className="me-2"
+                          />
+                        }
                         style={{ backgroundColor: "#3b5998" }}
-                        href="#!"
-                        role="button"
-                      >
-                        <FontAwesomeIcon icon={faFacebookF} className="me-2" />
-                        Continue with Facebook
-                      </a>
-                      <a
-                        className="btn btn-primary btn-lg btn-block form-control mt-2"
-                        style={{ backgroundColor: "#55acee" }}
-                        href="#!"
-                        role="button"
-                      >
-                        <FontAwesomeIcon icon={faTwitter} className="me-2" />
-                        Continue with Twitter
-                      </a>
+                        cssClass="btn btn-facebook btn-lg btn-block form-control text-center mt-2"
+                      />
+
+                      <GoogleLogin
+                        clientId={process.env.REACT_APP_GOOGLE_APP_ID}
+                        onSuccess={responseGoogle}
+                        onFailure={responseGoogle}
+                        render={(renderProps) => (
+                          <button
+                            className="btn btn-google btn-lg btn-block form-control mt-2"
+                            onClick={renderProps.onClick}
+                          >
+                            <FontAwesomeIcon
+                              icon={faGooglePlus}
+                              className="me-2"
+                            />
+                            Login with Google
+                          </button>
+                        )}
+                        cookiePolicy={"single_host_origin"}
+                      />
                     </form>
                   </div>
                 </div>
@@ -153,6 +216,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   receiveSession: (data) => dispatch(receiveSession(data)),
+  loginSocial: (data, headers) => dispatch(loginSocial(data, headers)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

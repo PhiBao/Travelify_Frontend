@@ -6,7 +6,7 @@ export const Logout = (props) => {
   useEffect(() => {
     props.destroySession();
     window.location = "/";
-  });
+  }, []);
 
   return null;
 };

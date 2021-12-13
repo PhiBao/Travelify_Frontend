@@ -30,9 +30,12 @@ export const ResetPassword = (props) => {
     resolver: yupResolver(schema),
   });
 
+  const { session, resetPassword } = props;
+  const { currentUser, loading } = session;
+
   const onSubmit = async (data, e) => {
     e.preventDefault();
-    await props.resetPassword(
+    await resetPassword(
       { user: { ...data, email: q.get("email") } },
       q.get("token")
     );
@@ -41,11 +44,11 @@ export const ResetPassword = (props) => {
 
   const { errors } = formState;
 
-  if (props.session.user._id) return <Navigate to="/" replace />;
+  if (currentUser.id !== 0) return <Navigate to="/" replace />;
 
   return (
     <section className="vh-100">
-      {props.session.loading && <Loading />}
+      {loading && <Loading />}
       <div className="mask d-flex align-items-center h-100">
         <div className="container h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">

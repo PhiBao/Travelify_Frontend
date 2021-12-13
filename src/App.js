@@ -18,20 +18,29 @@ import UserSettings from "./components/users/userSettings";
 import UserActivation from "./components/users/userActivation";
 import { getSession } from "./store/session";
 import ProtectedRoute from "./components/common/protectedRoute";
+import { getCurrentUser } from "./store/session";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
 const App = (props) => {
+  const { currentUser, getSession, getCurrentUser } = props;
+  const getPrepareData = async () => {
+    if (currentUser.id === 0) {
+      await getSession();
+      await getCurrentUser();
+    }
+  };
+
   useEffect(() => {
-    props.getSession();
-  });
+    getPrepareData();
+  }, []);
 
   return (
     <Router>
       <NavBar />
       <main className="container-fluid">
         <ToastContainer theme="dark" className="mt-5" />
-        <Routes>
+        <Routes className="pb-lg-3">
           <Route path="/" element={<Tours />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/logout" element={<Logout />} />
@@ -49,8 +58,13 @@ const App = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  getSession: () => dispatch(getSession()),
+const mapStateToProps = (state) => ({
+  currentUser: state.entities.session.currentUser,
 });
 
-export default connect(null, mapDispatchToProps)(App);
+const mapDispatchToProps = (dispatch) => ({
+  getSession: () => dispatch(getSession()),
+  getCurrentUser: () => dispatch(getCurrentUser()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

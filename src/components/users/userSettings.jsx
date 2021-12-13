@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { Routes, Route, NavLink } from "react-router-dom";
-import { getCurrentUser } from "../../store/users";
 import Loading from "../layout/loading";
 import UserProfile from "./userProfile";
 import PasswordChange from "./passwordChange";
@@ -9,13 +8,7 @@ import "../common/form.css";
 import "./userSettings.css";
 
 export const UserSettings = (props) => {
-  const { currentUser, loading } = props.users;
-
-  useEffect(() => {
-    if (currentUser.id === 0) {
-      props.getCurrentUser();
-    }
-  });
+  const { loading } = props;
 
   return (
     <section className="vh-100">
@@ -57,11 +50,7 @@ export const UserSettings = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  users: state.entities.users,
+  loading: state.entities.users.loading,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  getCurrentUser: () => dispatch(getCurrentUser()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserSettings);
+export default connect(mapStateToProps, null)(UserSettings);

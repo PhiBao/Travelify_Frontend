@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import * as actions from "../api";
 import auth from "../../services/authService";
 
-axios.defaults.baseURL = "http://localhost:3900";
+axios.defaults.baseURL = process.env.REACT_APP_API_ENDPOINT;
 
 axios.interceptors.response.use((response) => {
   response.data = humps.camelizeKeys(response.data);

@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { Input, Button } from "../common/form";
-import { updateUser, activateUser } from "../../store/users";
+import { updateUser, activateUser } from "../../store/session";
 
 const schema = Yup.object().shape({
   firstName: Yup.string().max(20).nullable(),
@@ -45,7 +45,7 @@ const schema = Yup.object().shape({
 });
 
 export const UserProfile = (props) => {
-  const { currentUser } = props.users;
+  const { currentUser, updateUser, activateUser } = props;
 
   const {
     register,
@@ -88,7 +88,7 @@ export const UserProfile = (props) => {
     formData.append("address", user.address);
     formData.append("birthday", user.birthday);
     if (user.avatar.length > 0) formData.append("avatar", user.avatar[0]);
-    await props.updateUser(formData, currentUser.id);
+    await updateUser(formData, currentUser.id);
   };
 
   return (
@@ -200,7 +200,7 @@ export const UserProfile = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  users: state.entities.users,
+  currentUser: state.entities.session.currentUser,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -41,22 +41,27 @@ const schema = Yup.object().shape({
 });
 
 export const Registration = (props) => {
-  const { register, handleSubmit, formState } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
   });
 
+  const { session, createSession } = props;
+  const { currentUser, loading } = session;
+
   const onSubmit = async (user, e) => {
     e.preventDefault();
-    await props.createSession({ user });
+    await createSession({ user });
   };
 
-  const { errors } = formState;
-
-  if (props.session.user._id) return <Navigate to="/" replace />;
+  if (currentUser.id !== 0) return <Navigate to="/" replace />;
 
   return (
     <section className="vh-100 pt-5">
-      {props.session.loading && <Loading />}
+      {loading && <Loading />}
       <div className="mask d-flex align-items-center h-100">
         <div className="container h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">

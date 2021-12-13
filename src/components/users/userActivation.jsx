@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { connect } from "react-redux";
 import { Navigate, useSearchParams } from "react-router-dom";
-import { confirmUser } from "../../store/users";
+import { confirmUser } from "../../store/session";
 
 export const UserActivation = (props) => {
   const [q] = useSearchParams();
 
   useEffect(() => {
     props.confirmUser(q.get("token"), q.get("email"));
-  });
+  }, []);
 
   return <Navigate to="/settings" replace />;
 };

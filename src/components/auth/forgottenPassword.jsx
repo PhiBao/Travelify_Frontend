@@ -17,29 +17,33 @@ const schema = Yup.object().shape({
 });
 
 export const ForgottenPassword = (props) => {
-  const { register, handleSubmit, formState } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
   });
 
+  const { session, forgottenPassword } = props;
+  const { currentUser, loading } = session;
+
   const onSubmit = async (data, e) => {
     e.preventDefault();
-    await props.forgottenPassword(data);
+    await forgottenPassword(data);
   };
 
-  const { errors } = formState;
-  const { session } = props;
-
-  if (session.user._id) return <Navigate to="/" replace />;
+  if (currentUser.id !== 0) return <Navigate to="/" replace />;
 
   return (
     <section className="vh-100">
-      {session.loading && <Loading />}
+      {loading && <Loading />}
       <div className="mask d-flex align-items-center h-100">
         <div className="container h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
             <div className="col-12 col-md-9 col-lg-7 col-xl-6">
               <div className="card" style={{ borderRadius: "15px" }}>
-                {session.user?.reset_email_sent === true ? (
+                {currentUser.reset_email_sent === true ? (
                   <section className="mail-success">
                     <div className="container">
                       <div className="row">
@@ -61,7 +65,7 @@ export const ForgottenPassword = (props) => {
                                 className="btn btn-link text-primary mt-0 pt-0"
                                 onClick={() => {
                                   props.forgottenPassword({
-                                    email: session.user.email,
+                                    email: currentUser.email,
                                   });
                                 }}
                               >
@@ -124,8 +128,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  forgottenPassword: (data, navigate) =>
-    dispatch(forgottenPassword(data, navigate)),
+  forgottenPassword: (data) => dispatch(forgottenPassword(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ForgottenPassword);

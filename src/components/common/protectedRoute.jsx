@@ -5,7 +5,7 @@ import { Navigate, useLocation, Outlet } from "react-router-dom";
 const ProtectedRoute = (props) => {
   const location = useLocation();
 
-  return props.session.user?._id ? (
+  return props.session.currentUser.id !== 0 ? (
     <Outlet />
   ) : (
     <Navigate to="/login" state={{ from: location }} />
