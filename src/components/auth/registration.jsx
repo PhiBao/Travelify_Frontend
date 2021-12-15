@@ -29,15 +29,14 @@ const schema = Yup.object().shape({
     .min(9)
     .max(11),
   address: Yup.string().max(100),
-  birthday: Yup.string()
-    .matches(
-      /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
-      "Date of Birth is invalid"
-    )
-    .test("birthday", "Please choose a valid date of birth", (value) => {
+  birthday: Yup.date().test(
+    "birthday",
+    "Please choose a valid date of birth",
+    (value) => {
       const age = moment().diff(moment(value), "years");
       return age >= 16 && age <= 120;
-    }),
+    }
+  ),
 });
 
 export const Registration = (props) => {

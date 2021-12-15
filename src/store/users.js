@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 import {
-  //  apiCallBegan,
+  apiCallBegan,
   apiCallSuccess,
   apiCallFailed,
   apiCallPrepare,
@@ -13,7 +13,11 @@ const slice = createSlice({
     list: [],
     loading: false,
   },
-  reducers: {},
+  reducers: {
+    passwordChanged: () => {
+      toast.success("Your password has been changed!");
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(apiCallPrepare, (users) => {
@@ -29,10 +33,24 @@ const slice = createSlice({
   },
 });
 
-// export const {} = slice.actions;
+export const { passwordChanged } = slice.actions;
 
 export default slice.reducer;
 
 // Action Creators
+
+const url = "/users";
+
+export const changePassword = (data) => (dispatch, getState) => {
+  const { id } = getState().entities.session.currentUser;
+  return dispatch(
+    apiCallBegan({
+      url: url + `/${id}/change_password`,
+      method: "PUT",
+      data,
+      onSuccess: passwordChanged.type,
+    })
+  );
+};
 
 // Selector

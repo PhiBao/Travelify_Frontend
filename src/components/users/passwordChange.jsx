@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { Input, Button } from "../common/form";
-import { changePassword } from "../../store/session";
+import { changePassword } from "../../store/users";
 
 const schema = Yup.object().shape({
   currentPassword: Yup.string().min(8).required(),

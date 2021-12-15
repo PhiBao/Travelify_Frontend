@@ -64,3 +64,45 @@ export const Checkbox = ({ register, name, label, ...rest }) => {
     </div>
   );
 };
+
+export const Select = ({
+  register,
+  options,
+  name,
+  custom,
+  label,
+  error,
+  ...rest
+}) => {
+  return (
+    <div className="row ms-1">
+      <label
+        htmlFor={name}
+        className="fs-5 d-inline-flex align-items-center justify-content-center col-3 badge bg-warning text-dark col-form-label"
+      >
+        {label}
+      </label>
+      <div className="col">
+        <select
+          {...register(name, custom)}
+          className={`form-control form-control-lg ${
+            error ? "is-invalid" : ""
+          }`}
+          {...rest}
+        >
+          <option value="" disabled>
+            Select a kind
+          </option>
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="alert text-danger px-0 mb-0 fade show">
+        {error?.message}
+      </div>
+    </div>
+  );
+};

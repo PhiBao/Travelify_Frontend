@@ -16,6 +16,7 @@ import ForgottenPassword from "./components/auth/forgottenPassword";
 import ResetPassword from "./components/auth/resetPassword";
 import UserSettings from "./components/users/userSettings";
 import UserActivation from "./components/users/userActivation";
+import TourForm from "./components/tours/TourForm";
 import { getSession } from "./store/session";
 import ProtectedRoute from "./components/common/protectedRoute";
 import { getCurrentUser } from "./store/session";
@@ -52,6 +53,7 @@ const App = (props) => {
             <Route path="/settings/*" element={<UserSettings />} />
           </Route>
           <Route path="*" element={<Navigate replace to="/" />} />
+          <Route path="/tours/new" element={<TourForm />} />
         </Routes>
       </main>
     </Router>

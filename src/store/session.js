@@ -81,9 +81,6 @@ const slice = createSlice({
       session.currentUser.activated = true;
       toast.success("Congratulation! your account has been activated");
     },
-    passwordChanged: () => {
-      toast.success("Your password has been changed!");
-    },
     socialLoggedIn: (session, action) => {
       const { token, user } = action.payload;
       auth.loginWithJwt(token);
@@ -117,7 +114,6 @@ export const {
   userUpdated,
   userActivated,
   userConfirmed,
-  passwordChanged,
   socialLoggedIn,
 } = slice.actions;
 
@@ -223,18 +219,6 @@ export const confirmUser = (token, email) => (dispatch) => {
       method: "PUT",
       data: { user: { email } },
       onSuccess: userConfirmed.type,
-    })
-  );
-};
-
-export const changePassword = (data) => (dispatch, getState) => {
-  const { id } = getState().entities.session.currentUser;
-  return dispatch(
-    apiCallBegan({
-      url: users_url + `/${id}/change_password`,
-      method: "PUT",
-      data,
-      onSuccess: passwordChanged.type,
     })
   );
 };
