@@ -64,9 +64,8 @@ const api =
       dispatch(actions.apiCallFailed(error.message));
 
       if (error.response && error.response.data.messages) {
-        return Promise.reject(
-          error.response.data.messages.map((message) => toast.error(message))
-        );
+        error.response.data.messages.map((message) => toast.error(message));
+        return Promise.reject(error);
       }
       // Specific
       if (onError) dispatch({ type: onError, payload: error.message });

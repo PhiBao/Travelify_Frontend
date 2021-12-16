@@ -38,7 +38,7 @@ const schema = Yup.object().shape({
     })
     .test("type", "We support png, jpg, gif file", (value) => {
       return value.length > 0
-        ? ["image/png", "image/jpg", "image/gif"].includes(value[0].type)
+        ? ["image/png", "image/jpeg", "image/gif"].includes(value[0].type)
         : true;
     })
     .nullable(),
@@ -111,6 +111,7 @@ export const UserProfile = (props) => {
             className="btn button border"
             type="file"
             name="avatar"
+            accept=".jpg, .gif, .png"
           />
           <p className="text-muted">Allowed JPG, GIF or PNG. Max size of 5MB</p>
           {errors.avatar && (

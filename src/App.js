@@ -16,7 +16,7 @@ import ForgottenPassword from "./components/auth/forgottenPassword";
 import ResetPassword from "./components/auth/resetPassword";
 import UserSettings from "./components/users/userSettings";
 import UserActivation from "./components/users/userActivation";
-import TourForm from "./components/tours/TourForm";
+import TourForm from "./components/tours/tourForm";
 import { getSession } from "./store/session";
 import ProtectedRoute from "./components/common/protectedRoute";
 import { getCurrentUser } from "./store/session";

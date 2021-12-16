@@ -17,7 +17,7 @@ const slice = createSlice({
   },
   reducers: {
     toursLoaded: (tours, action) => {},
-    tourCreated: (tours, action) => {
+    tourCreated: () => {
       toast.success("The tour has been created successfully!");
     },
   },
@@ -62,6 +62,7 @@ export const createTour = (data) => (dispatch) => {
       method: "POST",
       data,
       onSuccess: tourCreated.type,
+      headers: { "Content-Type": "multipart/form-data" },
     })
   );
 };

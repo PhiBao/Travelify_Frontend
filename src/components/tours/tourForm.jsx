@@ -3,27 +3,33 @@ import * as Yup from "yup";
 import moment from "moment";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-// import { connect } from "react-redux";
-// import { Navigate, Link } from "react-router-dom";
-// import { createSession } from "../../store/session";
+import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { createTour } from "../../store/tours";
 import { Input, Button, Select } from "../common/form";
-// import Loading from "../layout/loading";
+import Loading from "../layout/loading";
 import "../common/form.css";
+import "./tourForm.css";
 
 const schema = Yup.object().shape({
   name: Yup.string().max(255).required(),
   description: Yup.string().max(500).nullable(),
-  price: Yup.number().required().positive().integer(),
+  price: Yup.number()
+    .typeError("Must specify a number")
+    .required()
+    .positive()
+    .integer(),
   kind: Yup.string()
     .oneOf(["single", "fixed"], "Tour must belongs to a kind")
     .required(),
   limit: Yup.number().when("kind", {
     is: "fixed",
     then: Yup.number()
+      .typeError("Must specify a number")
       .required("Fixed tour must has a limit")
       .positive()
       .integer(),
-    otherwise: Yup.number().nullable(),
+    otherwise: Yup.number().typeError("Must specify a number").nullable(),
   }),
   departureDay: Yup.date().when("kind", {
     is: "fixed",
@@ -45,6 +51,21 @@ const schema = Yup.object().shape({
       ),
     otherwise: Yup.string().nullable(),
   }),
+  images: Yup.mixed()
+    .required()
+    .test("fileSize", "The file is too large", (value) => {
+      for (let i = 0; i < value.length; i++) {
+        if (value[i] > 5242880) return false;
+      }
+      return true;
+    })
+    .test("type", "We support png, jpg, gif file", (value) => {
+      for (let i = 0; i < value.length; i++) {
+        if (!["image/png", "image/jpeg", "image/gif"].includes(value[i].type))
+          return false;
+      }
+      return true;
+    }),
 });
 
 export const TourForm = (props) => {
@@ -58,6 +79,9 @@ export const TourForm = (props) => {
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const { loading, createTour } = props;
+  const navigate = useNavigate();
 
   const handleKindChange = (e) => {
     const { value } = e.target;
@@ -81,21 +105,44 @@ export const TourForm = (props) => {
 
   const onSubmit = async (tour, e) => {
     e.preventDefault();
-    const time = moment(tour.terminalDay).diff(
-      moment(tour.departureDay),
-      "hours"
-    );
-    if (time < 6) {
-      setError("terminalDay", {
-        type: "manual",
-        message: "Terminal day must be after at least six hours departure day",
-      });
-      return;
+
+    if (tour.kind === "fixed") {
+      const time = moment(tour.terminalDay).diff(
+        moment(tour.departureDay),
+        "hours"
+      );
+      if (time < 6) {
+        setError("terminalDay", {
+          type: "manual",
+          message:
+            "Terminal day must be after at least six hours departure day",
+        });
+        return;
+      }
     }
+
+    const formData = new FormData();
+    formData.append("name", tour.name);
+    formData.append("description", tour.description);
+    formData.append("kind", tour.kind);
+    if (tour.kind === "fixed") {
+      formData.append("limit", tour.limit);
+      formData.append("departure_day", tour.departureDay);
+      formData.append("terminal_day", tour.terminalDay);
+    }
+    if (tour.kind === "single") formData.append("time", tour.time);
+    formData.append("price", tour.price);
+    for (let i = 0; i < tour.images.length; i++) {
+      formData.append("images[]", tour.images[i]);
+    }
+
+    await createTour(formData);
+    navigate("/tours");
   };
 
   return (
     <section className="vh-100 pt-5">
+      {loading && <Loading />}
       <div className="mask d-flex align-items-center h-100">
         <div className="container h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
@@ -106,6 +153,31 @@ export const TourForm = (props) => {
                     Create a tour
                   </h2>
                   <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="row ms-1 mb-3">
+                      <label
+                        htmlFor="images"
+                        className="mb-3 d-none fs-5 d-inline-flex align-items-center justify-content-center
+                                   col-3 badge bg-warning text-dark col-form-label d-sm-block"
+                      >
+                        Images
+                      </label>
+                      <div className="col">
+                        <input
+                          {...register("images")}
+                          className="custom-file-input btn button border form-control form-control-lg"
+                          type="file"
+                          multiple
+                          name="images"
+                          accept=".jpg, .gif, .png"
+                        />
+                        <p className="text-muted d-none d-sm-block">
+                          Allowed JPG, GIF or PNG. Max size of 5MB
+                        </p>
+                      </div>
+                      <div className="alert text-danger p-0 mb-0 fade show">
+                        {errors.images?.message}
+                      </div>
+                    </div>
                     <Input
                       register={register}
                       name="name"
@@ -194,4 +266,12 @@ export const TourForm = (props) => {
   );
 };
 
-export default TourForm;
+const mapStateToProps = (state) => ({
+  loading: state.entities.tours.loading,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  createTour: (data) => dispatch(createTour(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TourForm);
