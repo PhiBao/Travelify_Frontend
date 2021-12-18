@@ -9,8 +9,8 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { forgottenPassword } from "../../store/session";
 import { Input, Button } from "../common/form";
 import Loading from "../layout/loading";
-import ".././common/form.css";
-import "./forgottenPassword.css";
+import ".././common/form.scss";
+import "./forgottenPassword.scss";
 
 const schema = Yup.object().shape({
   email: Yup.string().required().email(),

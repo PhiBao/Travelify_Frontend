@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { createTour } from "../../store/tours";
 import { Input, Button, Select } from "../common/form";
 import Loading from "../layout/loading";
-import "../common/form.css";
-import "./tourForm.css";
+import "../common/form.scss";
+import "./tourForm.scss";
 
 const schema = Yup.object().shape({
   name: Yup.string().max(255).required(),

@@ -12,7 +12,7 @@ import GoogleLogin from "react-google-login";
 import { receiveSession, loginSocial } from "../../store/session";
 import { Input, Button, Checkbox } from "../common/form";
 import Loading from "../layout/loading";
-import "../common/form.css";
+import "../common/form.scss";
 
 const schema = Yup.object().shape({
   email: Yup.string().required().email(),

@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import { connect } from "react-redux";
 import LoginForm from "./components/auth/loginForm";
-import Tours from "./components/tours/tours";
 import NavBar from "./components/layout/navBar";
 import Logout from "./components/auth/logout";
 import Registration from "./components/auth/registration";
@@ -17,11 +16,12 @@ import ResetPassword from "./components/auth/resetPassword";
 import UserSettings from "./components/users/userSettings";
 import UserActivation from "./components/users/userActivation";
 import TourForm from "./components/tours/tourForm";
+import Home from "./components/home/home";
 import { getSession } from "./store/session";
 import ProtectedRoute from "./components/common/protectedRoute";
 import { getCurrentUser } from "./store/session";
 import "react-toastify/dist/ReactToastify.css";
-import "./App.css";
+import "./App.scss";
 
 const App = (props) => {
   const { currentUser, getSession, getCurrentUser } = props;
@@ -42,7 +42,7 @@ const App = (props) => {
       <main className="container-fluid">
         <ToastContainer theme="dark" className="mt-5" />
         <Routes className="pb-lg-3">
-          <Route path="/" element={<Tours />} />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<Registration />} />

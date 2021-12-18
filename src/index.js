@@ -6,7 +6,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle";
 import App from "./App";
 import configureStore from "./store/configureStore";
-import "./index.css";
+import "./index.scss";
 
 const store = configureStore();
 

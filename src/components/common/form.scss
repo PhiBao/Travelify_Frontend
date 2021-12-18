@@ -1,9 +1,18 @@
-.divider:after,
-.divider:before {
+$border-color: #1a73e8;
+@mixin divider-helper {
   content: "";
   flex: 1;
   height: 1px;
   background: #eee;
+}
+
+.divider {
+  &:after {
+    @include divider-helper;
+  }
+  &:before {
+    @include divider-helper;
+  }
 }
 
 .form-outline {
@@ -22,7 +31,36 @@
   padding: 1rem;
   background: none;
   z-index: 1;
+
+  &:focus {
+    + {
+      .form__label {
+        top: -0.5rem;
+        left: 0.8rem;
+        color: $border-color;
+        font-size: 0.75rem;
+        font-weight: 500;
+        z-index: 10;
+      }
+    }
+    border: 1.5px solid $border-color;
+  }
+
+  &:not(:placeholder-shown).form__input {
+    &:not(:focus) {
+      + {
+        .form__label {
+          top: -0.5rem;
+          left: 0.8rem;
+          font-size: 0.75rem;
+          font-weight: 500;
+          z-index: 10;
+        }
+      }
+    }
+  }
 }
+
 .form__label {
   position: absolute;
   left: 1rem;
@@ -30,29 +68,7 @@
   padding: 0 0.25rem;
   background-color: #fff;
   color: #80868b;
-
   transition: 0.3s;
-}
-
-.form__input:focus + .form__label {
-  top: -0.5rem;
-  left: 0.8rem;
-  color: #1a73e8;
-  font-size: 0.75rem;
-  font-weight: 500;
-  z-index: 10;
-}
-
-.form__input:not(:placeholder-shown).form__input:not(:focus) + .form__label {
-  top: -0.5rem;
-  left: 0.8rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  z-index: 10;
-}
-
-.form__input:focus {
-  border: 1.5px solid #1a73e8;
 }
 
 .loading {

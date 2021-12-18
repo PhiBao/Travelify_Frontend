@@ -4,8 +4,8 @@ import { Routes, Route, NavLink } from "react-router-dom";
 import Loading from "../layout/loading";
 import UserProfile from "./userProfile";
 import PasswordChange from "./passwordChange";
-import "../common/form.css";
-import "./userSettings.css";
+import "../common/form.scss";
+import "./userSettings.scss";
 
 export const UserSettings = (props) => {
   const { loading } = props;
