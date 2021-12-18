@@ -39,7 +39,7 @@ const App = (props) => {
   return (
     <Router>
       <NavBar />
-      <main className="container-fluid">
+      <main className="App">
         <ToastContainer theme="dark" className="mt-5" />
         <Routes className="pb-lg-3">
           <Route path="/" element={<Home />} />

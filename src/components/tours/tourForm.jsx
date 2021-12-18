@@ -31,12 +31,12 @@ const schema = Yup.object().shape({
       .integer(),
     otherwise: Yup.number().typeError("Must specify a number").nullable(),
   }),
-  departureDay: Yup.date().when("kind", {
+  beginDate: Yup.date().when("kind", {
     is: "fixed",
     then: Yup.date().required("Fixed tour must has departure day"),
     otherwise: Yup.date().nullable(),
   }),
-  terminalDay: Yup.date().when("kind", {
+  returnDate: Yup.date().when("kind", {
     is: "fixed",
     then: Yup.date().required("Fixed tour must has terminal day"),
     otherwise: Yup.date().nullable(),
@@ -66,6 +66,7 @@ const schema = Yup.object().shape({
       }
       return true;
     }),
+  departure: Yup.string().required(),
 });
 
 export const TourForm = (props) => {
@@ -90,8 +91,8 @@ export const TourForm = (props) => {
         resetField("time");
         break;
       case "single":
-        resetField("departureDay");
-        resetField("terminalDay");
+        resetField("beginDate");
+        resetField("returnDate");
         resetField("limit");
         break;
       default:
@@ -102,17 +103,25 @@ export const TourForm = (props) => {
   };
 
   const [kind, setKind] = useState("");
+  const cites = [
+    "Hanoi",
+    "Tp.HCM",
+    "Danang",
+    "Cantho",
+    "Haiphong",
+    "Quangninh",
+  ];
 
   const onSubmit = async (tour, e) => {
     e.preventDefault();
 
     if (tour.kind === "fixed") {
-      const time = moment(tour.terminalDay).diff(
-        moment(tour.departureDay),
+      const time = moment(tour.returnDate).diff(
+        moment(tour.beginDate),
         "hours"
       );
       if (time < 6) {
-        setError("terminalDay", {
+        setError("returnDate", {
           type: "manual",
           message:
             "Terminal day must be after at least six hours departure day",
@@ -125,10 +134,11 @@ export const TourForm = (props) => {
     formData.append("name", tour.name);
     formData.append("description", tour.description);
     formData.append("kind", tour.kind);
+    formData.append("kind", tour.departure);
     if (tour.kind === "fixed") {
       formData.append("limit", tour.limit);
-      formData.append("departure_day", tour.departureDay);
-      formData.append("terminal_day", tour.terminalDay);
+      formData.append("begin_date", tour.beginDate);
+      formData.append("return_date", tour.returnDate);
     }
     if (tour.kind === "single") formData.append("time", tour.time);
     formData.append("price", tour.price);
@@ -204,6 +214,13 @@ export const TourForm = (props) => {
                       error={errors.kind}
                       value={kind}
                     />
+                    <Select
+                      register={register}
+                      name="departure"
+                      label="Departure"
+                      options={cites}
+                      error={errors.departure}
+                    />
                     {kind === "fixed" && (
                       <>
                         <Input
@@ -216,18 +233,18 @@ export const TourForm = (props) => {
                         />
                         <Input
                           register={register}
-                          name="departureDay"
+                          name="beginDate"
                           label="Departure day"
                           spacingClass="mb-5"
-                          error={errors.departureDay}
+                          error={errors.beginDate}
                           type="datetime-local"
                         />
                         <Input
                           register={register}
-                          name="terminalDay"
+                          name="returnDate"
                           label="Terminal day"
                           spacingClass="mb-5"
-                          error={errors.terminalDay}
+                          error={errors.returnDate}
                           type="datetime-local"
                         />
                       </>

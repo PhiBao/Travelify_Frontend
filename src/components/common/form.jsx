@@ -78,7 +78,7 @@ export const Select = ({
     <div className="row ms-1">
       <label
         htmlFor={name}
-        className="fs-5 d-inline-flex align-items-center justify-content-center col-3 badge bg-warning text-dark col-form-label"
+        className="fs-5 overflow-hidden d-inline-flex align-items-center justify-content-center col-3 badge bg-warning text-dark col-form-label"
       >
         {label}
       </label>
@@ -91,7 +91,7 @@ export const Select = ({
           {...rest}
         >
           <option value="" disabled>
-            Select a kind
+            Select a {name}
           </option>
           {options.map((option) => (
             <option key={option} value={option}>
