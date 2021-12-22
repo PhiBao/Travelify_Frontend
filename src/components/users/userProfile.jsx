@@ -1,11 +1,19 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import * as Yup from "yup";
 import moment from "moment";
-import _ from "lodash";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
-import { Input, Button } from "../common/form";
+import { makeStyles } from "@material-ui/core";
+import SendIcon from "@mui/icons-material/Send";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
+import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
+import { TextInputField, FormButton, DatePickerField } from "../common/form";
 import { updateUser, activateUser } from "../../store/session";
 
 const schema = Yup.object().shape({
@@ -13,18 +21,15 @@ const schema = Yup.object().shape({
   lastName: Yup.string().max(20).nullable(),
   email: Yup.string().email().required(),
   phoneNumber: Yup.string()
-    .matches(/^[0-9]+$/, "Must be only digits")
-    .min(9)
-    .max(11)
-    .nullable(),
-  address: Yup.string().max(100).nullable(),
-  activated: Yup.boolean().nullable(),
-  birthday: Yup.string()
     .nullable()
     .matches(
-      /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
-      "Date of Birth is invalid"
-    )
+      /^[0-9]{9,11}|^$/,
+      "Must be only digits and have length from 9 to 11"
+    ),
+  address: Yup.string().max(100).nullable(),
+  activated: Yup.boolean().nullable(),
+  birthday: Yup.date()
+    .nullable()
     .test("birthday", "Please choose a valid date of birth", (value) => {
       if (value) {
         const age = moment().diff(moment(value), "years");
@@ -33,53 +38,88 @@ const schema = Yup.object().shape({
     })
     .nullable(),
   avatar: Yup.mixed()
-    .test("fileSize", "The file is too large", (value) => {
-      return value.length > 0 ? value[0].size <= 5242880 : true;
-    })
     .test("type", "We support png, jpg, gif file", (value) => {
       return value.length > 0
         ? ["image/png", "image/jpeg", "image/gif"].includes(value[0].type)
         : true;
     })
+    .test("fileSize", "The file is too large", (value) => {
+      return value.length > 0 ? value[0].size <= 5242880 : true;
+    })
     .nullable(),
+});
+
+const useStyles = makeStyles({
+  avatar: {
+    position: "relative",
+  },
+  upload: {
+    position: "absolute",
+    left: 32,
+    top: 36,
+  },
+  fileInput: {
+    display: "none",
+  },
 });
 
 export const UserProfile = (props) => {
   const { currentUser, updateUser, activateUser } = props;
+  const classes = useStyles();
 
   const {
+    control,
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty, isValid },
   } = useForm({
-    mode: "onBlur",
-    reValidateMode: "onBlur",
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      address: "",
+      birthday: "2000-01-01",
+      activated: "",
+      avatar: [],
+    },
+    mode: "onChange",
     resolver: yupResolver(schema),
   });
 
-  const fields = [
-    "firstName",
-    "lastName",
-    "email",
-    "phoneNumber",
-    "address",
-    "birthday",
-    "activated",
-  ];
-  fields.forEach((field) => setValue(field, currentUser[field]));
+  const [image, setImage] = useState(null);
+
+  useEffect(() => {
+    setImage(currentUser.avatar?.url);
+
+    const fields = [
+      "firstName",
+      "lastName",
+      "email",
+      "phoneNumber",
+      "address",
+      "birthday",
+      "activated",
+    ];
+
+    fields.forEach((field) => {
+      if (currentUser[field]) setValue(field, currentUser[field]);
+    });
+  }, []);
+
+  const handleImageChange = (e) => {
+    e.preventDefault();
+    const newImage = e.target?.files?.[0];
+
+    if (newImage) {
+      setImage(URL.createObjectURL(newImage));
+    }
+  };
 
   const onEditProfile = async (user, e) => {
     e.preventDefault();
 
-    if (
-      _.isEqual(
-        _.omit(user, "avatar"),
-        _.omit(currentUser, "id", "admin", "createdAt", "avatar")
-      ) &&
-      user.avatar.length === 0
-    )
-      return;
     const formData = new FormData();
     formData.append("first_name", user.firstName);
     formData.append("last_name", user.lastName);
@@ -91,112 +131,128 @@ export const UserProfile = (props) => {
     await updateUser(formData, currentUser.id);
   };
 
-  return (
-    <div className="col-md-8 col-lg-8 col-sm-auto">
-      <div className="d-flex align-items-start my-3 px-sm-5 px-md-4 px-lg-5 px-3">
-        <img
-          src={
-            currentUser.avatar?.url ||
-            `${process.env.PUBLIC_URL}/assets/images/unknown.png`
-          }
-          alt=""
-          className="img mt-3"
-        />
-        <div className="ps-sm-4 ps-2">
-          {" "}
-          <b>Profile Avatar</b>
-          <br />
-          <input
-            {...register("avatar")}
-            className="btn button border"
-            type="file"
-            name="avatar"
-            accept=".jpg, .gif, .png"
-          />
-          <p className="text-muted">Allowed JPG, GIF or PNG. Max size of 5MB</p>
-          {errors.avatar && (
-            <div className="alert text-danger p-0 mb-0 fade show">
-              {errors.avatar.message}
-            </div>
-          )}
-        </div>
-      </div>
+  const avatarField = register("avatar");
 
-      <form
-        className="mt-4 mx-lg-2 px-4"
-        onSubmit={handleSubmit(onEditProfile)}
+  return (
+    <Box
+      bgcolor="background.paper"
+      p={2}
+      borderRadius="15px"
+      component="form"
+      autoComplete="off"
+      onSubmit={handleSubmit(onEditProfile)}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
-        <div className="row">
-          <div className="col-md-6">
-            <Input
-              register={register}
-              name="firstName"
-              spacingClass="mb-5"
-              label="First name"
-              error={errors.firstName}
-            />
-          </div>
-          <div className="col-md-6 ">
-            <Input
-              register={register}
-              spacingClass="mb-5"
-              name="lastName"
-              label="Last name"
-              error={errors.lastName}
-            />
-          </div>
-        </div>
-        <Input
-          register={register}
-          name="email"
-          label="Email"
-          spacingClass="mb-5"
-          error={errors.email}
-        />
-        <Input
-          register={register}
-          name="address"
-          label="Address"
-          spacingClass="mb-5"
-          error={errors.address}
-        />
-        <Input
-          register={register}
+        <Box className={classes.avatar}>
+          <Avatar
+            src={image || `${process.env.PUBLIC_URL}/assets/images/unknown.png`}
+            alt=""
+            sx={{ width: "64px", height: "64px" }}
+          />
+          <Box className={classes.upload}>
+            <label htmlFor="icon-button-file">
+              <input
+                {...avatarField}
+                onChange={(e) => {
+                  avatarField.onChange(e);
+                  handleImageChange(e);
+                }}
+                className={classes.fileInput}
+                id="icon-button-file"
+                type="file"
+                name="avatar"
+                accept=".jpg, .gif, .png"
+              />
+              <IconButton
+                color="primary"
+                aria-label="upload avatar"
+                component="span"
+              >
+                <PhotoCamera />
+              </IconButton>
+            </label>
+          </Box>
+        </Box>
+        <Box sx={{ ml: 2 }}>
+          <Typography
+            variant="body1"
+            color="info.light"
+            sx={{ display: { xs: "none", sm: "inline" } }}
+          >
+            Allowed JPG, GIF or PNG. Max size of 5MB
+          </Typography>
+          {errors.avatar && (
+            <Typography variant="body1" color="error.main">
+              {errors.avatar.message}
+            </Typography>
+          )}
+        </Box>
+      </Box>
+
+      <Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+          }}
+        >
+          <TextInputField
+            control={control}
+            name="firstName"
+            label="First name"
+          />
+
+          <TextInputField control={control} name="lastName" label="Last name" />
+        </Box>
+        <TextInputField control={control} name="email" label="Email" />
+        {currentUser.activated === false && (
+          <Alert
+            sx={{ mb: 1 }}
+            severity="warning"
+            action={
+              <Button
+                color="inherit"
+                onClick={async () => {
+                  await activateUser(currentUser.id);
+                }}
+                size="small"
+                endIcon={<SendIcon />}
+              >
+                Resend
+              </Button>
+            }
+          >
+            Your email is not confirmed. Please check your inbox.
+          </Alert>
+        )}
+        <TextInputField control={control} name="address" label="Address" />
+        <TextInputField
+          control={control}
           name="phoneNumber"
           label="Phone number"
-          spacingClass="mb-5"
-          error={errors.phoneNumber}
         />
-        <Input
-          register={register}
+        <DatePickerField
+          control={control}
           name="birthday"
           label="Date of Birth"
-          spacingClass="mb-5"
-          error={errors.birthday}
-          type="date"
         />
-        {currentUser.activated === false && (
-          <div className="alert alert-warning mt-3">
-            Your email is not confirmed. Please check your inbox.
-            <br />
-            <button
-              type="button"
-              onClick={async () => {
-                await activateUser(currentUser.id);
-              }}
-              className="btn btn-dark btn-block mt-1"
-            >
-              Resend confirmation
-            </button>
-          </div>
-        )}
-        <Button
-          label="Update"
-          alignClass="d-flex justify-content-center mb-3"
-          styleClass="btn-success text-white"
-        />
-      </form>
-    </div>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            my: 1,
+          }}
+        >
+          <FormButton label="Update" disabled={!isDirty || !isValid} />
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

@@ -57,6 +57,8 @@ const slice = createSlice({
     passwordForgotten: (session, action) => {
       const { email } = action.payload;
       session.currentUser.email = email;
+      if (session.currentUser.reset_email_sent === true)
+        toast.success("Reset email successfully");
       session.currentUser.reset_email_sent = true;
     },
     passwordReset: (session) => {

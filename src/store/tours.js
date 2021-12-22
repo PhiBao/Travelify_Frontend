@@ -11,14 +11,15 @@ const slice = createSlice({
   name: "tours",
   initialState: {
     list: [],
-    currentPage: 1,
-    order: ["createAt"],
-    loading: false,
+    vehicles: [],
   },
   reducers: {
     toursLoaded: (tours, action) => {},
     tourCreated: () => {
       toast.success("The tour has been created successfully!");
+    },
+    vehiclesLoaded: (tours, action) => {
+      tours.vehicles = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -36,13 +37,14 @@ const slice = createSlice({
   },
 });
 
-export const { toursLoaded, tourCreated } = slice.actions;
+export const { toursLoaded, tourCreated, vehiclesLoaded } = slice.actions;
 
 export default slice.reducer;
 
 // Action Creators
 
 const url = "/tours";
+const vehicles_url = "/vehicles";
 
 export const loadTours = (params) => (dispatch) => {
   return dispatch(
@@ -63,6 +65,19 @@ export const createTour = (data) => (dispatch) => {
       data,
       onSuccess: tourCreated.type,
       headers: { "Content-Type": "multipart/form-data" },
+    })
+  );
+};
+
+export const loadVehicles = (dispatch, getState) => {
+  const vehicles = getState().entities.tours.vehicles;
+  if (vehicles.length > 0) return;
+
+  return dispatch(
+    apiCallBegan({
+      url: vehicles_url,
+      method: "GET",
+      onSuccess: vehiclesLoaded.type,
     })
   );
 };

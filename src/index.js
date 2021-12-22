@@ -2,11 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap/dist/js/bootstrap.bundle";
 import App from "./App";
 import configureStore from "./store/configureStore";
-import "./index.scss";
+import "./index.css";
 
 const store = configureStore();
 

@@ -1,8 +1,5 @@
 import React from "react";
 import { connect } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle, faBookmark } from "@fortawesome/free-solid-svg-icons";
-import "./featured.scss";
 
 const Featured = () => {
   return (
@@ -21,11 +18,9 @@ const Featured = () => {
         </span>
         <div className="buttons">
           <button className="mark">
-            <FontAwesomeIcon icon={faBookmark} />
             <span>Mark</span>
           </button>
           <button className="more">
-            <FontAwesomeIcon icon={faInfoCircle} />
             <span>More</span>
           </button>
         </div>

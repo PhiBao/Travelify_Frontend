@@ -1,14 +1,19 @@
-import React from "react";
+import { useState } from "react";
 import * as Yup from "yup";
 import moment from "moment";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { Navigate, Link } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { InputAdornment, IconButton } from "@mui/material";
+import { makeStyles } from "@material-ui/core";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
+import { TextInputField, FormButton, DatePickerField } from "../common/form";
 import { createSession } from "../../store/session";
-import { Input, Button } from "../common/form";
 import Loading from "../layout/loading";
-import "../common/form.scss";
 
 const schema = Yup.object().shape({
   firstName: Yup.string().max(20),
@@ -39,14 +44,57 @@ const schema = Yup.object().shape({
   ),
 });
 
+const useStyles = makeStyles((theme) => ({
+  card: {
+    display: "flex",
+    flexDirection: "column",
+    borderRadius: "15px !important",
+    padding: theme.spacing(3),
+  },
+}));
+
 export const Registration = (props) => {
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors },
+    formState: { isValid, isDirty },
   } = useForm({
+    defaultValues: {
+      birthday: "2000-01-01",
+      password: "",
+      passwordConfirmation: "",
+      lastName: "",
+      firstName: "",
+      phoneNumber: "",
+      address: "",
+      email: "",
+    },
+    mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  const classes = useStyles();
+
+  const [showPassword, setShowPassword] = useState({
+    current: false,
+    confirm: false,
+  });
+
+  const handleClickShowPassword = (type) => {
+    type === "password"
+      ? setShowPassword({
+          ...showPassword,
+          current: !showPassword.current,
+        })
+      : setShowPassword({
+          ...showPassword,
+          confirm: !showPassword.confirm,
+        });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   const { session, createSession } = props;
   const { currentUser, loading } = session;
@@ -59,105 +107,133 @@ export const Registration = (props) => {
   if (currentUser.id !== 0) return <Navigate to="/" replace />;
 
   return (
-    <section className="vh-100 pt-5">
+    <Box
+      mt={5}
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="100vh"
+    >
       {loading && <Loading />}
-      <div className="mask d-flex align-items-center h-100">
-        <div className="container h-100">
-          <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="col-12 col-md-9 col-lg-7 col-xl-6">
-              <div className="card" style={{ borderRadius: "15px" }}>
-                <div className="card-body p-5">
-                  <h2 className="text-uppercase text-center mb-5">
-                    Create an account
-                  </h2>
-                  <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="row">
-                      <div className="col-md-6">
-                        <Input
-                          register={register}
-                          name="firstName"
-                          spacingClass="mb-5"
-                          label="First name"
-                          error={errors.firstName}
-                        />
-                      </div>
-                      <div className="col-md-6 ">
-                        <Input
-                          register={register}
-                          spacingClass="mb-5"
-                          name="lastName"
-                          label="Last name"
-                          error={errors.lastName}
-                        />
-                      </div>
-                    </div>
-                    <Input
-                      register={register}
-                      name="email"
-                      label="Email"
-                      spacingClass="mb-5"
-                      error={errors.email}
-                    />
-                    <Input
-                      register={register}
-                      name="address"
-                      label="Address"
-                      spacingClass="mb-5"
-                      error={errors.address}
-                    />
-                    <Input
-                      register={register}
-                      name="phoneNumber"
-                      label="Phone number"
-                      spacingClass="mb-5"
-                      error={errors.phoneNumber}
-                    />
-                    <Input
-                      register={register}
-                      name="birthday"
-                      label="Date of Birth"
-                      spacingClass="mb-5"
-                      error={errors.birthday}
-                      type="date"
-                      value="2000-01-01"
-                    />
-                    <Input
-                      register={register}
-                      name="password"
-                      label="Password"
-                      type="password"
-                      spacingClass="mb-5"
-                      error={errors.password}
-                    />
-                    <Input
-                      register={register}
-                      name="passwordConfirmation"
-                      label="Password confirmation"
-                      type="password"
-                      spacingClass="mb-5"
-                      error={errors.passwordConfirmation}
-                    />
+      <Card className={classes.card}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Typography variant="h3" gutterBottom component="div" mt={5}>
+            Create an account
+          </Typography>
+        </Box>
+        <Box>
+          <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+              }}
+            >
+              <TextInputField
+                control={control}
+                name="firstName"
+                label="First name"
+              />
 
-                    <Button
-                      label="Register"
-                      alignClass="d-flex justify-content-center"
-                      styleClass="btn-success text-body"
-                    />
-
-                    <p className="text-center text-muted mt-2 mb-0">
-                      Have already an account?{" "}
-                      <Link to="/login" className="fw-bold text-body">
-                        <u>Login here</u>
-                      </Link>
-                    </p>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+              <TextInputField
+                control={control}
+                name="lastName"
+                label="Last name"
+              />
+            </Box>
+            <TextInputField control={control} name="email" label="Email" />
+            <TextInputField control={control} name="address" label="Address" />
+            <TextInputField
+              control={control}
+              name="phoneNumber"
+              label="Phone number"
+            />
+            <DatePickerField
+              control={control}
+              name="birthday"
+              label="Date of Birth"
+            />
+            <TextInputField
+              control={control}
+              name="password"
+              label="Password"
+              type={showPassword.current ? "text" : "password"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => handleClickShowPassword("password")}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword.current ? (
+                        <VisibilityOff />
+                      ) : (
+                        <Visibility />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextInputField
+              control={control}
+              name="passwordConfirmation"
+              label="Password confirmation"
+              type={showPassword.confirm ? "text" : "password"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() =>
+                        handleClickShowPassword("passwordConfirmation")
+                      }
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword.confirm ? (
+                        <VisibilityOff />
+                      ) : (
+                        <Visibility />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                my: 3,
+              }}
+            >
+              <FormButton
+                label="Register"
+                fullWidth
+                disabled={!isDirty || !isValid}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                my: 3,
+              }}
+            >
+              <p>
+                Have already an account?{" "}
+                <Link to="/login" className="fw-bold text-body">
+                  <u>Login here</u>
+                </Link>
+              </p>
+            </Box>
+          </form>
+        </Box>
+      </Card>
+    </Box>
   );
 };
 

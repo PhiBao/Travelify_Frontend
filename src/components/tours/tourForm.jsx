@@ -1,15 +1,28 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import * as Yup from "yup";
 import moment from "moment";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createTour } from "../../store/tours";
-import { Input, Button, Select } from "../common/form";
+import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import { makeStyles } from "@material-ui/core";
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
+import { createTour, loadVehicles } from "../../store/tours";
+import { toast } from "react-toastify";
+import {
+  TextInputField,
+  FormButton,
+  Select,
+  DateTimePickerField,
+} from "../common/form";
+import { cities, kinds } from "../../helpers/tour_helper";
 import Loading from "../layout/loading";
-import "../common/form.scss";
-import "./tourForm.scss";
 
 const schema = Yup.object().shape({
   name: Yup.string().max(255).required(),
@@ -19,9 +32,7 @@ const schema = Yup.object().shape({
     .required()
     .positive()
     .integer(),
-  kind: Yup.string()
-    .oneOf(["single", "fixed"], "Tour must belongs to a kind")
-    .required(),
+  kind: Yup.object().nullable().required("Kind is a required field"),
   limit: Yup.number().when("kind", {
     is: "fixed",
     then: Yup.number()
@@ -33,12 +44,12 @@ const schema = Yup.object().shape({
   }),
   beginDate: Yup.date().when("kind", {
     is: "fixed",
-    then: Yup.date().required("Fixed tour must has departure day"),
+    then: Yup.date().required("Fixed tour must has departure date"),
     otherwise: Yup.date().nullable(),
   }),
   returnDate: Yup.date().when("kind", {
     is: "fixed",
-    then: Yup.date().required("Fixed tour must has terminal day"),
+    then: Yup.date().required("Fixed tour must has terminal date"),
     otherwise: Yup.date().nullable(),
   }),
   time: Yup.string().when("kind", {
@@ -66,27 +77,68 @@ const schema = Yup.object().shape({
       }
       return true;
     }),
-  departure: Yup.string().required(),
+  departure: Yup.object().nullable().required(),
+  vehicles: Yup.array().min(1, "The tour must have at least one vehicle"),
 });
+
+const useStyles = makeStyles((theme) => ({
+  images: {
+    position: "relative",
+  },
+  upload: {
+    position: "absolute",
+    right: -25,
+    bottom: -25,
+  },
+  fileInput: {
+    display: "none",
+  },
+  card: {
+    display: "flex",
+    flexDirection: "column",
+    borderRadius: "15px !important",
+    padding: theme.spacing(3),
+  },
+}));
 
 export const TourForm = (props) => {
   const {
     register,
+    control,
     handleSubmit,
-    formState: { errors },
+    formState: { isValid, isDirty, errors },
     resetField,
     clearErrors,
-    setError,
   } = useForm({
+    defaultValues: {
+      departure: "",
+      kind: "",
+      vehicles: [],
+      beginDate: null,
+      returnDate: null,
+      price: 0,
+      limit: 0,
+      description: "",
+      name: "",
+      time: "",
+      images: [],
+    },
+    mode: "onChange",
     resolver: yupResolver(schema),
   });
 
-  const { loading, createTour } = props;
+  const classes = useStyles();
+  const { loading, vehicles, createTour, loadVehicles } = props;
   const navigate = useNavigate();
+  const [images, setImages] = useState([]);
+  const [kind, setKind] = useState("");
+
+  useEffect(async () => {
+    await loadVehicles();
+  }, []);
 
   const handleKindChange = (e) => {
-    const { value } = e.target;
-    switch (value) {
+    switch (e.value) {
       case "fixed":
         resetField("time");
         break;
@@ -99,33 +151,34 @@ export const TourForm = (props) => {
         return;
     }
     clearErrors();
-    setKind(value);
+    setKind(e.value);
   };
 
-  const [kind, setKind] = useState("");
-  const cites = [
-    "Hanoi",
-    "Tp.HCM",
-    "Danang",
-    "Cantho",
-    "Haiphong",
-    "Quangninh",
-  ];
+  const handleImageChange = (e) => {
+    e.preventDefault();
+
+    let newImages = [];
+    const length = e.target?.files?.length;
+    for (let i = 0; i < length; i++) {
+      newImages.push(URL.createObjectURL(e.target.files[i]));
+    }
+
+    if (newImages.length > 0) {
+      setImages(newImages);
+    }
+  };
 
   const onSubmit = async (tour, e) => {
     e.preventDefault();
-
-    if (tour.kind === "fixed") {
+    if (tour.kind.value === "fixed") {
       const time = moment(tour.returnDate).diff(
         moment(tour.beginDate),
         "hours"
       );
       if (time < 6) {
-        setError("returnDate", {
-          type: "manual",
-          message:
-            "Terminal day must be after at least six hours departure day",
-        });
+        toast.error(
+          "Terminal date must be after at least six hours departure date"
+        );
         return;
       }
     }
@@ -133,161 +186,184 @@ export const TourForm = (props) => {
     const formData = new FormData();
     formData.append("name", tour.name);
     formData.append("description", tour.description);
-    formData.append("kind", tour.kind);
-    formData.append("kind", tour.departure);
-    if (tour.kind === "fixed") {
+    formData.append("kind", tour.kind.value);
+    formData.append("departure", tour.departure.value);
+    if (tour.kind.value === "fixed") {
       formData.append("limit", tour.limit);
       formData.append("begin_date", tour.beginDate);
       formData.append("return_date", tour.returnDate);
     }
-    if (tour.kind === "single") formData.append("time", tour.time);
+    if (tour.kind.value === "single") formData.append("time", tour.time);
     formData.append("price", tour.price);
     for (let i = 0; i < tour.images.length; i++) {
       formData.append("images[]", tour.images[i]);
     }
+    const tVA = tour.vehicles.map((item) => ({ vehicle_id: item.value }));
+    formData.append("vehicles", JSON.stringify(tVA));
 
     await createTour(formData);
     navigate("/tours");
   };
 
-  return (
-    <section className="vh-100 pt-5">
-      {loading && <Loading />}
-      <div className="mask d-flex align-items-center h-100">
-        <div className="container h-100">
-          <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="col-12 col-md-9 col-lg-7 col-xl-6">
-              <div className="card" style={{ borderRadius: "15px" }}>
-                <div className="card-body p-5">
-                  <h2 className="text-uppercase text-center mb-5">
-                    Create a tour
-                  </h2>
-                  <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="row ms-1 mb-3">
-                      <label
-                        htmlFor="images"
-                        className="mb-3 d-none fs-5 d-inline-flex align-items-center justify-content-center
-                                   col-3 badge bg-warning text-dark col-form-label d-sm-block"
-                      >
-                        Images
-                      </label>
-                      <div className="col">
-                        <input
-                          {...register("images")}
-                          className="custom-file-input btn button border form-control form-control-lg"
-                          type="file"
-                          multiple
-                          name="images"
-                          accept=".jpg, .gif, .png"
-                        />
-                        <p className="text-muted d-none d-sm-block">
-                          Allowed JPG, GIF or PNG. Max size of 5MB
-                        </p>
-                      </div>
-                      <div className="alert text-danger p-0 mb-0 fade show">
-                        {errors.images?.message}
-                      </div>
-                    </div>
-                    <Input
-                      register={register}
-                      name="name"
-                      label="Name"
-                      spacingClass="mb-4 pb-4"
-                      error={errors.name}
-                    />
-                    <Input
-                      register={register}
-                      name="description"
-                      label="Description"
-                      spacingClass="mb-5"
-                      error={errors.description}
-                    />
-                    <Select
-                      register={register}
-                      name="kind"
-                      label="Kind"
-                      options={["single", "fixed"]}
-                      custom={{
-                        onChange: handleKindChange,
-                        onBlur: handleKindChange,
-                      }}
-                      error={errors.kind}
-                      value={kind}
-                    />
-                    <Select
-                      register={register}
-                      name="departure"
-                      label="Departure"
-                      options={cites}
-                      error={errors.departure}
-                    />
-                    {kind === "fixed" && (
-                      <>
-                        <Input
-                          register={register}
-                          name="limit"
-                          label="Limit"
-                          spacingClass="pt-5"
-                          error={errors.limit}
-                          type="number"
-                        />
-                        <Input
-                          register={register}
-                          name="beginDate"
-                          label="Departure day"
-                          spacingClass="mb-5"
-                          error={errors.beginDate}
-                          type="datetime-local"
-                        />
-                        <Input
-                          register={register}
-                          name="returnDate"
-                          label="Terminal day"
-                          spacingClass="mb-5"
-                          error={errors.returnDate}
-                          type="datetime-local"
-                        />
-                      </>
-                    )}
-                    {kind === "single" && (
-                      <Input
-                        register={register}
-                        name="time"
-                        label="Time"
-                        spacingClass="pb-5"
-                        error={errors.time}
-                      />
-                    )}
-                    <Input
-                      register={register}
-                      name="price"
-                      label="Price"
-                      spacingClass="pt-5"
-                      error={errors.price}
-                      type="number"
-                    />
+  const imagesField = register("images");
 
-                    <Button
-                      label="Create"
-                      alignClass="d-flex justify-content-center"
-                      styleClass="btn-success text-body"
+  return (
+    <Box
+      my={10}
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="100vh"
+    >
+      {loading && <Loading />}
+      <Card className={classes.card}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Typography variant="h3" gutterBottom component="div" mt={5}>
+            Create a tour
+          </Typography>
+        </Box>
+        <Box
+          component="form"
+          autoComplete="off"
+          p={2}
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <Box className={classes.images}>
+            {images.length === 0 ? (
+              <Typography
+                sx={{ display: { xs: "none", sm: "inline" } }}
+                variant="body2"
+                component="div"
+              >
+                Images will be displayed here
+              </Typography>
+            ) : (
+              <ImageList sx={{ maxWidth: 800, maxHeight: 450 }} cols={3}>
+                {images.map((item, index) => (
+                  <ImageListItem key={item}>
+                    <img
+                      src={item}
+                      srcSet={item}
+                      alt={`images-${index}`}
+                      loading="lazy"
                     />
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+                  </ImageListItem>
+                ))}
+              </ImageList>
+            )}
+            <Box className={classes.upload}>
+              <label htmlFor="icon-button-file">
+                <input
+                  {...imagesField}
+                  onChange={(e) => {
+                    imagesField.onChange(e);
+                    handleImageChange(e);
+                  }}
+                  className={classes.fileInput}
+                  multiple
+                  id="icon-button-file"
+                  type="file"
+                  name="images"
+                  accept=".jpg, .gif, .png"
+                />
+                <IconButton
+                  color="primary"
+                  aria-label="upload avatar"
+                  component="span"
+                >
+                  <PhotoCamera sx={{ width: 64, height: 64 }} />
+                </IconButton>
+              </label>
+            </Box>
+          </Box>
+          <TextInputField control={control} name="name" label="Name" />
+          <TextInputField
+            control={control}
+            name="description"
+            label="Description"
+          />
+          <Select
+            control={control}
+            name="kind"
+            label="Kind"
+            options={kinds}
+            placeholder="Select a kind of this tour"
+            handleChange={handleKindChange}
+            error={errors.kind}
+          />
+          <Select
+            control={control}
+            name="departure"
+            label="Departure"
+            options={cities}
+            placeholder="Select a departure of this tour"
+            error={errors.departure}
+          />
+          {kind === "fixed" && (
+            <>
+              <TextInputField
+                control={control}
+                name="limit"
+                label="Limit"
+                type="number"
+              />
+              <DateTimePickerField
+                control={control}
+                name="beginDate"
+                label="Begin date"
+              />
+              <DateTimePickerField
+                control={control}
+                name="returnDate"
+                label="Return date"
+              />
+            </>
+          )}
+          {kind === "single" && (
+            <TextInputField control={control} name="time" label="Time" />
+          )}
+          <TextInputField
+            control={control}
+            name="price"
+            label="Price"
+            type="number"
+          />
+          <Select
+            control={control}
+            name="vehicles"
+            label="Vehicles"
+            options={vehicles}
+            placeholder="Select vehicles of this tour"
+            error={errors.vehicles}
+            isMulti={true}
+            isClearable={true}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              my: 2,
+            }}
+          >
+            <FormButton
+              label="Create"
+              disabled={!isDirty || !isValid}
+              fullWidth
+            />
+          </Box>
+        </Box>
+      </Card>
+    </Box>
   );
 };
 
 const mapStateToProps = (state) => ({
   loading: state.entities.tours.loading,
+  vehicles: state.entities.tours.vehicles,
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  loadVehicles: () => dispatch(loadVehicles),
   createTour: (data) => dispatch(createTour(data)),
 });
 

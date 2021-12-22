@@ -1,13 +1,18 @@
-import React from "react";
+import { useState } from "react";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { Navigate, useSearchParams, useNavigate } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { InputAdornment, IconButton } from "@mui/material";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
+import { makeStyles } from "@material-ui/core";
 import { resetPassword } from "../../store/session";
-import { Input, Button } from "../common/form";
+import { TextInputField, FormButton } from "../common/form";
 import Loading from "../layout/loading";
-import "../common/form.scss";
 
 const schema = Yup.object().shape({
   password: Yup.string()
@@ -22,13 +27,54 @@ const schema = Yup.object().shape({
   ),
 });
 
+const useStyles = makeStyles((theme) => ({
+  card: {
+    display: "flex",
+    flexDirection: "column",
+    borderRadius: "15px !important",
+    padding: theme.spacing(3),
+    maxWidth: 800,
+  },
+}));
+
 export const ResetPassword = (props) => {
   const navigate = useNavigate();
   const [q] = useSearchParams();
+  const classes = useStyles();
 
-  const { register, handleSubmit, formState } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid, isDirty },
+  } = useForm({
+    defaultValues: {
+      password: "",
+      passwordConfirmation: "",
+    },
+    mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  const [showPassword, setShowPassword] = useState({
+    current: false,
+    confirm: false,
+  });
+
+  const handleClickShowPassword = (type) => {
+    type === "password"
+      ? setShowPassword({
+          ...showPassword,
+          current: !showPassword.current,
+        })
+      : setShowPassword({
+          ...showPassword,
+          confirm: !showPassword.confirm,
+        });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   const { session, resetPassword } = props;
   const { currentUser, loading } = session;
@@ -42,53 +88,74 @@ export const ResetPassword = (props) => {
     navigate("/login", { replace: true });
   };
 
-  const { errors } = formState;
-
   if (currentUser.id !== 0) return <Navigate to="/" replace />;
 
   return (
-    <section className="vh-100">
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="100vh"
+    >
       {loading && <Loading />}
-      <div className="mask d-flex align-items-center h-100">
-        <div className="container h-100">
-          <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="col-12 col-md-9 col-lg-7 col-xl-6">
-              <div className="card" style={{ borderRadius: "15px" }}>
-                <div className="card-body p-5">
-                  <h2 className="text-uppercase text-center mb-5">
-                    Reset your password
-                  </h2>
-                  <form onSubmit={handleSubmit(onSubmit)}>
-                    <Input
-                      register={register}
-                      name="password"
-                      label="Password"
-                      type="password"
-                      spacingClass="mb-4 pb-3"
-                      error={errors.password}
-                    />
-                    <Input
-                      register={register}
-                      name="passwordConfirmation"
-                      label="Password confirmation"
-                      type="password"
-                      spacingClass="mb-4 pb-3"
-                      error={errors.passwordConfirmation}
-                    />
 
-                    <Button
-                      label="Reset password"
-                      alignClass="d-flex justify-content-center"
-                      styleClass="btn-success text-body"
-                    />
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      <Card className={classes.card}>
+        <Typography variant="h3">Reset your password</Typography>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <TextInputField
+            control={control}
+            name="password"
+            label="Password"
+            type={showPassword.current ? "text" : "password"}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => handleClickShowPassword("password")}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword.current ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextInputField
+            control={control}
+            name="passwordConfirmation"
+            label="Password confirmation"
+            type={showPassword.confirm ? "text" : "password"}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() =>
+                      handleClickShowPassword("passwordConfirmation")
+                    }
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword.confirm ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          <Box sx={{ mt: 2 }}>
+            <FormButton
+              disabled={!isDirty || !isValid}
+              label="Reset password"
+              fullWidth
+            />
+          </Box>
+        </form>
+      </Card>
+    </Box>
   );
 };
 

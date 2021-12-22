@@ -1,108 +1,155 @@
-import React from "react";
+import { Controller } from "react-hook-form";
+import ReactSelect from "react-select";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import { DateTimePicker, DatePicker } from "@mui/lab";
+import {
+  TextField,
+  Button,
+  Checkbox,
+  FormControlLabel,
+} from "@material-ui/core";
+import Box from "@mui/material/Box";
+import Alert from "@mui/material/Alert";
+import Chip from "@mui/material/Chip";
 
-export const Input = ({
-  register,
+export const TextInputField = ({
+  control,
   name,
   label,
-  error,
   type = "text",
-  spacingClass,
   ...rest
 }) => {
   return (
-    <>
-      <div className={`form-outline ${spacingClass}`}>
-        <input
-          {...register(name)}
-          className={`form-control form-control-lg form__input ${
-            error ? "is-invalid" : ""
-          }`}
-          placeholder=" "
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState: { error } }) => (
+        <TextField
+          {...field}
+          helperText={error?.message}
+          id={name}
+          error={!!error}
+          label={label}
+          size="medium"
+          margin="normal"
+          variant="standard"
           type={type}
+          fullWidth
           {...rest}
         />
-        <label htmlFor={name} className="form-label form__label">
-          {label}
-        </label>
-      </div>
-      <div className="alert text-danger px-0 mb-0 fade show">
-        {error?.message}
-      </div>
-    </>
+      )}
+    />
   );
 };
 
-export const Button = ({ label, alignClass, styleClass, ...rest }) => {
+export const FormButton = ({ label, ...rest }) => {
   return (
-    <div className={`${alignClass} pt-1`}>
-      <button
-        className={`${styleClass} btn btn-block btn-lg`}
-        {...rest}
-        type="submit"
-      >
-        {label}
-      </button>
-    </div>
+    <Button type="submit" variant="contained" {...rest}>
+      {label}
+    </Button>
   );
 };
 
-export const Checkbox = ({ register, name, label, ...rest }) => {
+export const FormCheckbox = ({ control, name, label, ...rest }) => {
   return (
-    <div className="form-check">
-      <input
-        {...register(name)}
-        className="form-check-input"
-        type="checkbox"
-        value=""
-        id={name}
-        {...rest}
-      />
-      <label className="form-check-label" htmlFor={name}>
-        {" "}
-        {label}{" "}
-      </label>
-    </div>
+    <Controller
+      name={name}
+      control={control}
+      render={() => (
+        <FormControlLabel control={<Checkbox {...rest} />} label={label} />
+      )}
+    />
   );
 };
 
 export const Select = ({
-  register,
-  options,
   name,
-  custom,
+  handleChange,
   label,
+  control,
   error,
   ...rest
 }) => {
   return (
-    <div className="row ms-1">
-      <label
-        htmlFor={name}
-        className="fs-5 overflow-hidden d-inline-flex align-items-center justify-content-center col-3 badge bg-warning text-dark col-form-label"
-      >
-        {label}
-      </label>
-      <div className="col">
-        <select
-          {...register(name, custom)}
-          className={`form-control form-control-lg ${
-            error ? "is-invalid" : ""
-          }`}
-          {...rest}
-        >
-          <option value="" disabled>
-            Select a {name}
-          </option>
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="alert text-danger px-0 mb-0 fade show">
-        {error?.message}
-      </div>
-    </div>
+    <Box sx={{ mt: 3 }}>
+      <Chip label={label} sx={{ borderRadius: 0, fontWeight: 500 }} />
+      <Controller
+        name={name}
+        control={control}
+        render={({ field: { onChange } }) => (
+          <ReactSelect
+            menuPortalTarget={document.body}
+            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+            onChange={(e) => {
+              onChange(e);
+              if (handleChange) handleChange(e);
+            }}
+            {...rest}
+          />
+        )}
+      />
+      {error && <Alert severity="error">{error.message}</Alert>}
+    </Box>
+  );
+};
+
+export const DatePickerField = ({ name, label, control, ...rest }) => {
+  return (
+    <section>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+            <DatePicker
+              value={value}
+              onChange={(e) => onChange(e)}
+              label={label}
+              {...rest}
+              renderInput={(params) => (
+                <TextField
+                  error={!!error}
+                  helperText={error?.message}
+                  margin="normal"
+                  fullWidth
+                  {...params}
+                />
+              )}
+            />
+          )}
+        />
+      </LocalizationProvider>
+    </section>
+  );
+};
+
+export const DateTimePickerField = ({ name, label, control, ...rest }) => {
+  return (
+    <section>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+            <DateTimePicker
+              value={value}
+              onChange={(e) => onChange(e)}
+              label={label}
+              {...rest}
+              renderInput={(params) => (
+                <TextField
+                  error={!!error}
+                  helperText={error?.message}
+                  margin="normal"
+                  fullWidth
+                  {...params}
+                />
+              )}
+            />
+          )}
+        />
+      </LocalizationProvider>
+    </section>
   );
 };
