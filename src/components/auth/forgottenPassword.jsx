@@ -107,38 +107,40 @@ export const ForgottenPassword = (props) => {
             </CardActions>
           </Box>
         ) : (
-          <Box>
+          <Box
+            component="form"
+            autoComplete="off"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <Typography variant="h3">Forgot password</Typography>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <TextInputField
-                control={control}
-                name="email"
-                label="Enter your email address"
+            <TextInputField
+              control={control}
+              name="email"
+              label="Enter your email address"
+            />
+            <Box sx={{ mt: 2 }}>
+              <FormButton
+                disabled={!isDirty || !isValid}
+                label="Reset"
+                fullWidth
               />
-              <Box sx={{ mt: 2 }}>
-                <FormButton
-                  disabled={!isDirty || !isValid}
-                  label="Reset"
-                  fullWidth
-                />
-              </Box>
+            </Box>
 
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  my: 3,
-                }}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                my: 3,
+              }}
+            >
+              <i>Have you not had an account yet?</i>
+              <Link
+                style={{ paddingLeft: "5px", fontWeight: "500" }}
+                to="/register"
               >
-                <i>Have you not had an account yet?</i>
-                <Link
-                  style={{ paddingLeft: "5px", fontWeight: "500" }}
-                  to="/register"
-                >
-                  <u>Register here</u>
-                </Link>
-              </Box>
-            </form>
+                <u>Register here</u>
+              </Link>
+            </Box>
           </Box>
         )}
       </Card>

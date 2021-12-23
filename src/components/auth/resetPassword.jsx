@@ -102,7 +102,11 @@ export const ResetPassword = (props) => {
       <Card className={classes.card}>
         <Typography variant="h3">Reset your password</Typography>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <Box
+          component="form"
+          autoComplete="off"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <TextInputField
             control={control}
             name="password"
@@ -153,7 +157,7 @@ export const ResetPassword = (props) => {
               fullWidth
             />
           </Box>
-        </form>
+        </Box>
       </Card>
     </Box>
   );

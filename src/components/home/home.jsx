@@ -1,11 +1,18 @@
-import React from "react";
+import Grid from "@mui/material/Grid";
 import Featured from "../featured/featured";
 
 const Home = () => {
   return (
-    <div className="home">
-      <Featured />
-    </div>
+    <Grid
+      sx={{
+        minHeight: "100vh",
+        maxWidth: "100%",
+      }}
+    >
+      <Grid item xs={12}>
+        <Featured />
+      </Grid>
+    </Grid>
   );
 };
 

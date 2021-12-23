@@ -157,84 +157,87 @@ export const Login = (props) => {
           alt="Welcome to Travelify"
           sx={{ maxWidth: 450, display: { xs: "none", md: "flex" } }}
         />
-        <Box className={classes.rightCard}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className={classes.loginHeader}>
-              <CardTravelIcon
-                style={{
-                  color: "#ff6219",
-                  fontSize: 60,
-                  marginRight: 10,
-                }}
-              />
-              <Typography variant="h3" component="span">
-                Welcome to Travelify
-              </Typography>
-            </div>
-            <Typography variant="h5" component="h5">
-              Sign into your account
+        <Box
+          className={classes.rightCard}
+          component="form"
+          autoComplete="off"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className={classes.loginHeader}>
+            <CardTravelIcon
+              style={{
+                color: "#ff6219",
+                fontSize: 60,
+                marginRight: 10,
+              }}
+            />
+            <Typography variant="h3" component="span">
+              Welcome to Travelify
             </Typography>
+          </div>
+          <Typography variant="h5" component="h5">
+            Sign into your account
+          </Typography>
 
-            <TextInputField control={control} name="email" label="Email" />
+          <TextInputField control={control} name="email" label="Email" />
 
-            <TextInputField
+          <TextInputField
+            control={control}
+            name="password"
+            label="Password"
+            type="password"
+          />
+
+          <Box className={classes.boxOption}>
+            <FormCheckbox
+              label="Remember me"
               control={control}
-              name="password"
-              label="Password"
-              type="password"
+              name="rememberMe"
             />
+            <Link
+              style={{ fontWeight: 500, fontStyle: "italic" }}
+              to="/forgotten_password"
+            >
+              Forgot password?
+            </Link>
+          </Box>
 
-            <Box className={classes.boxOption}>
-              <FormCheckbox
-                label="Remember me"
-                control={control}
-                name="rememberMe"
-              />
-              <Link
-                style={{ fontWeight: 500, fontStyle: "italic" }}
-                to="/forgotten_password"
+          <Box>
+            <FormButton
+              label="LOG IN"
+              disabled={!isDirty || !isValid}
+              fullWidth
+            />
+          </Box>
+          <Divider sx={{ my: 2 }}>
+            <Chip label="OR" />
+          </Divider>
+
+          <FacebookLogin
+            cssClass={classes.facebookLogin}
+            appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+            autoLoad={false}
+            fields="first_name,last_name,email,picture"
+            scope="public_profile,email"
+            callback={responseFacebook}
+            icon={<FacebookIcon className={classes.icons} />}
+          />
+
+          <GoogleLogin
+            clientId={process.env.REACT_APP_GOOGLE_APP_ID}
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+            render={(renderProps) => (
+              <button
+                className={classes.googleLogin}
+                onClick={renderProps.onClick}
               >
-                Forgot password?
-              </Link>
-            </Box>
-
-            <Box>
-              <FormButton
-                label="LOG IN"
-                disabled={!isDirty || !isValid}
-                fullWidth
-              />
-            </Box>
-            <Divider sx={{ my: 2 }}>
-              <Chip label="OR" />
-            </Divider>
-
-            <FacebookLogin
-              cssClass={classes.facebookLogin}
-              appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-              autoLoad={false}
-              fields="first_name,last_name,email,picture"
-              scope="public_profile,email"
-              callback={responseFacebook}
-              icon={<FacebookIcon className={classes.icons} />}
-            />
-
-            <GoogleLogin
-              clientId={process.env.REACT_APP_GOOGLE_APP_ID}
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              render={(renderProps) => (
-                <button
-                  className={classes.googleLogin}
-                  onClick={renderProps.onClick}
-                >
-                  <GoogleIcon className={classes.icons} />
-                  Login with Google
-                </button>
-              )}
-              cookiePolicy={"single_host_origin"}
-            />
-          </form>
+                <GoogleIcon className={classes.icons} />
+                Login with Google
+              </button>
+            )}
+            cookiePolicy={"single_host_origin"}
+          />
         </Box>
       </Card>
     </Box>

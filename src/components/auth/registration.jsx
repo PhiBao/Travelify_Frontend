@@ -121,116 +121,110 @@ export const Registration = (props) => {
             Create an account
           </Typography>
         </Box>
-        <Box>
-          <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", sm: "row" },
-              }}
-            >
-              <TextInputField
-                control={control}
-                name="firstName"
-                label="First name"
-              />
+        <Box
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
+          autoComplete="off"
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+            }}
+          >
+            <TextInputField
+              control={control}
+              name="firstName"
+              label="First name"
+            />
 
-              <TextInputField
-                control={control}
-                name="lastName"
-                label="Last name"
-              />
-            </Box>
-            <TextInputField control={control} name="email" label="Email" />
-            <TextInputField control={control} name="address" label="Address" />
             <TextInputField
               control={control}
-              name="phoneNumber"
-              label="Phone number"
+              name="lastName"
+              label="Last name"
             />
-            <DatePickerField
-              control={control}
-              name="birthday"
-              label="Date of Birth"
+          </Box>
+          <TextInputField control={control} name="email" label="Email" />
+          <TextInputField control={control} name="address" label="Address" />
+          <TextInputField
+            control={control}
+            name="phoneNumber"
+            label="Phone number"
+          />
+          <DatePickerField
+            control={control}
+            name="birthday"
+            label="Date of Birth"
+          />
+          <TextInputField
+            control={control}
+            name="password"
+            label="Password"
+            type={showPassword.current ? "text" : "password"}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => handleClickShowPassword("password")}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword.current ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextInputField
+            control={control}
+            name="passwordConfirmation"
+            label="Password confirmation"
+            type={showPassword.confirm ? "text" : "password"}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() =>
+                      handleClickShowPassword("passwordConfirmation")
+                    }
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword.confirm ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              my: 3,
+            }}
+          >
+            <FormButton
+              label="Register"
+              fullWidth
+              disabled={!isDirty || !isValid}
             />
-            <TextInputField
-              control={control}
-              name="password"
-              label="Password"
-              type={showPassword.current ? "text" : "password"}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => handleClickShowPassword("password")}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword.current ? (
-                        <VisibilityOff />
-                      ) : (
-                        <Visibility />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextInputField
-              control={control}
-              name="passwordConfirmation"
-              label="Password confirmation"
-              type={showPassword.confirm ? "text" : "password"}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() =>
-                        handleClickShowPassword("passwordConfirmation")
-                      }
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword.confirm ? (
-                        <VisibilityOff />
-                      ) : (
-                        <Visibility />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                my: 3,
-              }}
-            >
-              <FormButton
-                label="Register"
-                fullWidth
-                disabled={!isDirty || !isValid}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                my: 3,
-              }}
-            >
-              <p>
-                Have already an account?{" "}
-                <Link to="/login" className="fw-bold text-body">
-                  <u>Login here</u>
-                </Link>
-              </p>
-            </Box>
-          </form>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              my: 3,
+            }}
+          >
+            <p>
+              Have already an account?{" "}
+              <Link to="/login" className="fw-bold text-body">
+                <u>Login here</u>
+              </Link>
+            </p>
+          </Box>
         </Box>
       </Card>
     </Box>
