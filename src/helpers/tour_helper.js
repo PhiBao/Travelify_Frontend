@@ -17,7 +17,7 @@ export const kinds = [
 ];
 
 export const vehicles = [
-  { icon: <FlightTakeoffIcon />, key: "airplane" },
-  { icon: <DirectionsBoatIcon />, key: "boat" },
-  { icon: <DirectionsBusIcon />, key: "bus" },
+  { icon: <FlightTakeoffIcon key="airplane" />, key: "airplane" },
+  { icon: <DirectionsBoatIcon key="boat" />, key: "boat" },
+  { icon: <DirectionsBusIcon key="bus" />, key: "bus" },
 ];

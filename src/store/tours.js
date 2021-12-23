@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
+import _ from "lodash";
 import {
   apiCallBegan,
   apiCallSuccess,
@@ -12,14 +13,20 @@ const slice = createSlice({
   initialState: {
     list: [],
     vehicles: [],
+    tags: [],
   },
   reducers: {
     toursLoaded: (tours, action) => {},
-    tourCreated: () => {
+    tourCreated: (tours, action) => {
+      const { tour } = action.payload;
+      const { tags } = tour;
+      tours.tags = _.unionBy(tours.tags, tags, "value");
       toast.success("The tour has been created successfully!");
     },
-    vehiclesLoaded: (tours, action) => {
-      tours.vehicles = action.payload;
+    helpersLoaded: (tours, action) => {
+      const { vehicles, tags } = action.payload;
+      tours.vehicles = vehicles;
+      tours.tags = tags;
     },
   },
   extraReducers: (builder) => {
@@ -37,14 +44,14 @@ const slice = createSlice({
   },
 });
 
-export const { toursLoaded, tourCreated, vehiclesLoaded } = slice.actions;
+export const { toursLoaded, tourCreated, helpersLoaded } = slice.actions;
 
 export default slice.reducer;
 
 // Action Creators
 
 const url = "/tours";
-const vehicles_url = "/vehicles";
+const helpers_url = "/helpers";
 
 export const loadTours = (params) => (dispatch) => {
   return dispatch(
@@ -69,15 +76,15 @@ export const createTour = (data) => (dispatch) => {
   );
 };
 
-export const loadVehicles = (dispatch, getState) => {
+export const loadHelpers = (dispatch, getState) => {
   const vehicles = getState().entities.tours.vehicles;
   if (vehicles.length > 0) return;
 
   return dispatch(
     apiCallBegan({
-      url: vehicles_url,
+      url: helpers_url,
       method: "GET",
-      onSuccess: vehiclesLoaded.type,
+      onSuccess: helpersLoaded.type,
     })
   );
 };

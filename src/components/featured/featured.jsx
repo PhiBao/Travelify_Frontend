@@ -91,7 +91,11 @@ const Featured = () => {
           </Typography>
           <Stack direction="row" gap={1} sx={{ mt: 1 }}>
             {tags.map((tag) => (
-              <Button variant="outlined" startIcon={<CheckCircleOutlineIcon />}>
+              <Button
+                key={tag}
+                variant="outlined"
+                startIcon={<CheckCircleOutlineIcon />}
+              >
                 {tag}
               </Button>
             ))}

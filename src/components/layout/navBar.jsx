@@ -139,7 +139,7 @@ const NavBar = (props) => {
                 key="tours"
                 onClick={handleCloseNavMenu}
                 component={Link}
-                to="/tours"
+                to="/tours/new"
               >
                 <Typography textAlign="center">Tours</Typography>
               </MenuItem>
@@ -178,7 +178,7 @@ const NavBar = (props) => {
             </Button>
             <Button
               component={Link}
-              to="/tours"
+              to="/tours/new"
               key="tours"
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}

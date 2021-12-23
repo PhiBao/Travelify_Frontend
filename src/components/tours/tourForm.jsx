@@ -13,13 +13,14 @@ import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import { makeStyles } from "@material-ui/core";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import { createTour, loadVehicles } from "../../store/tours";
 import { toast } from "react-toastify";
+import { createTour, loadHelpers } from "../../store/tours";
 import {
   TextInputField,
   FormButton,
   Select,
   DateTimePickerField,
+  Creatable,
 } from "../common/form";
 import { cities, kinds } from "../../helpers/tour_helper";
 import Loading from "../layout/loading";
@@ -79,6 +80,7 @@ const schema = Yup.object().shape({
     }),
   departure: Yup.object().nullable().required(),
   vehicles: Yup.array().min(1, "The tour must have at least one vehicle"),
+  tags: Yup.array().nullable(),
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -98,6 +100,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     borderRadius: "15px !important",
     padding: theme.spacing(3),
+    maxWidth: "md",
   },
 }));
 
@@ -122,19 +125,20 @@ export const TourForm = (props) => {
       name: "",
       time: "",
       images: [],
+      tags: [],
     },
     mode: "onChange",
     resolver: yupResolver(schema),
   });
 
   const classes = useStyles();
-  const { loading, vehicles, createTour, loadVehicles } = props;
+  const { loading, vehicles, tags, createTour, loadHelpers } = props;
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [kind, setKind] = useState("");
 
   useEffect(async () => {
-    await loadVehicles();
+    await loadHelpers();
   }, []);
 
   const handleKindChange = (e) => {
@@ -200,6 +204,11 @@ export const TourForm = (props) => {
     }
     const tVA = tour.vehicles.map((item) => ({ vehicle_id: item.value }));
     formData.append("vehicles", JSON.stringify(tVA));
+    const tTA = tour.tags.map((item) => {
+      if (item.__isNew__) return { tag_attributes: { name: item.value } };
+      else return { tag_id: item.value };
+    });
+    formData.append("tags", JSON.stringify(tTA));
 
     await createTour(formData);
     navigate("/tours");
@@ -338,6 +347,14 @@ export const TourForm = (props) => {
             isMulti={true}
             isClearable={true}
           />
+          <Creatable
+            control={control}
+            name="tags"
+            label="Tags"
+            options={tags}
+            placeholder="Select tags of this tour"
+            error={errors.tags}
+          />
           <Box
             sx={{
               display: "flex",
@@ -360,10 +377,11 @@ export const TourForm = (props) => {
 const mapStateToProps = (state) => ({
   loading: state.entities.tours.loading,
   vehicles: state.entities.tours.vehicles,
+  tags: state.entities.tours.tags,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loadVehicles: () => dispatch(loadVehicles),
+  loadHelpers: () => dispatch(loadHelpers),
   createTour: (data) => dispatch(createTour(data)),
 });
 

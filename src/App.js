@@ -47,11 +47,7 @@ const App = (props) => {
   return (
     <Router>
       <NavBar />
-      <Container
-        maxWidth={false}
-        disableGutters={true}
-        style={{ backgroundColor: "#cfe8fc" }}
-      >
+      <Container maxWidth={false} disableGutters={true}>
         <ToastContainer theme="dark" className={classes.toast} />
         <Routes>
           <Route path="/" element={<Home />} />
