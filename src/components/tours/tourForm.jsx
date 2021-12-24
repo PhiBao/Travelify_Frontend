@@ -13,7 +13,6 @@ import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import { makeStyles } from "@material-ui/core";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import { toast } from "react-toastify";
 import { createTour, loadHelpers } from "../../store/tours";
 import {
   TextInputField,
@@ -34,7 +33,7 @@ const schema = Yup.object().shape({
     .positive()
     .integer(),
   kind: Yup.object().nullable().required("Kind is a required field"),
-  limit: Yup.number().when("kind", {
+  limit: Yup.number().when("kind.value", {
     is: "fixed",
     then: Yup.number()
       .typeError("Must specify a number")
@@ -43,17 +42,17 @@ const schema = Yup.object().shape({
       .integer(),
     otherwise: Yup.number().typeError("Must specify a number").nullable(),
   }),
-  beginDate: Yup.date().when("kind", {
+  beginDate: Yup.date().when("kind.value", {
     is: "fixed",
     then: Yup.date().required("Fixed tour must has departure date"),
     otherwise: Yup.date().nullable(),
   }),
-  returnDate: Yup.date().when("kind", {
+  returnDate: Yup.date().when("kind.value", {
     is: "fixed",
     then: Yup.date().required("Fixed tour must has terminal date"),
     otherwise: Yup.date().nullable(),
   }),
-  time: Yup.string().when("kind", {
+  time: Yup.string().when("kind.value", {
     is: "single",
     then: Yup.string()
       .required("Single tour must has a time")
@@ -80,7 +79,7 @@ const schema = Yup.object().shape({
     }),
   departure: Yup.object().nullable().required(),
   vehicles: Yup.array().min(1, "The tour must have at least one vehicle"),
-  tags: Yup.array().nullable(),
+  tags: Yup.array().max(4).nullable(),
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -112,6 +111,7 @@ export const TourForm = (props) => {
     formState: { isValid, isDirty, errors },
     resetField,
     clearErrors,
+    setError,
   } = useForm({
     defaultValues: {
       departure: "",
@@ -180,9 +180,12 @@ export const TourForm = (props) => {
         "hours"
       );
       if (time < 6) {
-        toast.error(
-          "Terminal date must be after at least six hours departure date"
-        );
+        setError("returnDate", {
+          type: "manual",
+          message:
+            "Terminal date must be after at least six hours departure date",
+        });
+        console.log(!errors.returnDate);
         return;
       }
     }
@@ -320,11 +323,13 @@ export const TourForm = (props) => {
                 control={control}
                 name="beginDate"
                 label="Begin date"
+                error={errors.beginDate}
               />
               <DateTimePickerField
                 control={control}
                 name="returnDate"
                 label="Return date"
+                error={errors.returnDate}
               />
             </>
           )}

@@ -125,62 +125,58 @@ export const Creatable = ({
   );
 };
 
-export const DatePickerField = ({ name, label, control, ...rest }) => {
+export const DatePickerField = ({ name, label, control, error, ...rest }) => {
   return (
     <Box>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Controller
           name={name}
           control={control}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({ field: { onChange, value } }) => (
             <DatePicker
               value={value}
               onChange={(e) => onChange(e)}
               label={label}
               {...rest}
               renderInput={(params) => (
-                <TextField
-                  error={!!error}
-                  helperText={error?.message}
-                  margin="normal"
-                  fullWidth
-                  {...params}
-                />
+                <TextField margin="normal" fullWidth {...params} />
               )}
             />
           )}
         />
       </LocalizationProvider>
+      {error && <Alert severity="error">{error.message}</Alert>}
     </Box>
   );
 };
 
-export const DateTimePickerField = ({ name, label, control, ...rest }) => {
+export const DateTimePickerField = ({
+  name,
+  label,
+  control,
+  error,
+  ...rest
+}) => {
   return (
     <Box>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Controller
           name={name}
           control={control}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({ field: { onChange, value } }) => (
             <DateTimePicker
               value={value}
               onChange={(e) => onChange(e)}
               label={label}
               {...rest}
               renderInput={(params) => (
-                <TextField
-                  error={!!error}
-                  helperText={error?.message}
-                  margin="normal"
-                  fullWidth
-                  {...params}
-                />
+                <TextField margin="normal" fullWidth {...params} />
               )}
             />
           )}
         />
       </LocalizationProvider>
+      {error && <Alert severity="error">{error.message}</Alert>}
     </Box>
   );
 };

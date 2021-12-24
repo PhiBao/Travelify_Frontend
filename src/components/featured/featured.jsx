@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     objectFit: "cover",
     overflow: "auto",
+    boxShadow: "0 10px 8px #bdbdbd",
   },
   card: {
     position: "absolute",
@@ -89,7 +90,7 @@ const Featured = () => {
             <TripOriginIcon sx={{ pr: 1 }} /> Departure from
             <b style={{ paddingLeft: "5px" }}>Tp. Hồ Chí Minh</b>
           </Typography>
-          <Stack direction="row" gap={1} sx={{ mt: 1 }}>
+          <Stack direction={{ xs: "column", sm: "row" }} gap={1} sx={{ mt: 1 }}>
             {tags.map((tag) => (
               <Button
                 key={tag}

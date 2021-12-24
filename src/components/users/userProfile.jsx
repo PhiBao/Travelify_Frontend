@@ -241,6 +241,7 @@ export const UserProfile = (props) => {
           control={control}
           name="birthday"
           label="Date of Birth"
+          error={errors.birthday}
         />
         <Box
           sx={{

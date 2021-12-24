@@ -57,7 +57,7 @@ export const Registration = (props) => {
   const {
     control,
     handleSubmit,
-    formState: { isValid, isDirty },
+    formState: { errors, isValid, isDirty },
   } = useForm({
     defaultValues: {
       birthday: "2000-01-01",
@@ -155,6 +155,7 @@ export const Registration = (props) => {
             control={control}
             name="birthday"
             label="Date of Birth"
+            error={errors.birthday}
           />
           <TextInputField
             control={control}
