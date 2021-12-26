@@ -14,9 +14,27 @@ const slice = createSlice({
     list: [],
     vehicles: [],
     tags: [],
+    home: {
+      hotTours: [],
+      newTours: [],
+      hotTags: [],
+      featured: {
+        id: "",
+        name: "",
+        description: "",
+        kind: "",
+        images: [],
+        time: "",
+        limit: "",
+        returnDate: "",
+        beginDate: "",
+        vehicles: [],
+        tags: [],
+        price: [],
+      },
+    },
   },
   reducers: {
-    toursLoaded: (tours, action) => {},
     tourCreated: (tours, action) => {
       const { tour } = action.payload;
       const { tags } = tour;
@@ -44,7 +62,7 @@ const slice = createSlice({
   },
 });
 
-export const { toursLoaded, tourCreated, helpersLoaded } = slice.actions;
+export const { tourCreated, helpersLoaded } = slice.actions;
 
 export default slice.reducer;
 
@@ -52,17 +70,6 @@ export default slice.reducer;
 
 const url = "/tours";
 const helpers_url = "/helpers";
-
-export const loadTours = (params) => (dispatch) => {
-  return dispatch(
-    apiCallBegan({
-      url,
-      method: "GET",
-      params,
-      onSuccess: toursLoaded.type,
-    })
-  );
-};
 
 export const createTour = (data) => (dispatch) => {
   return dispatch(
@@ -77,7 +84,7 @@ export const createTour = (data) => (dispatch) => {
 };
 
 export const loadHelpers = (dispatch, getState) => {
-  const vehicles = getState().entities.tours.vehicles;
+  const { vehicles } = getState().entities.tours;
   if (vehicles.length > 0) return;
 
   return dispatch(

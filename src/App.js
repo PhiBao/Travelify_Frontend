@@ -8,19 +8,20 @@ import {
   Navigate,
 } from "react-router-dom";
 import { connect } from "react-redux";
+import { makeStyles } from "@material-ui/core";
 import Login from "./components/auth/login";
 import NavBar from "./components/layout/navBar";
 import Logout from "./components/auth/logout";
 import Registration from "./components/auth/registration";
 import ForgottenPassword from "./components/auth/forgottenPassword";
 import ResetPassword from "./components/auth/resetPassword";
-import UserSettings from "./components/users/userSettings";
-import UserActivation from "./components/users/userActivation";
 import TourForm from "./components/tours/tourForm";
 import Home from "./components/home/home";
-import { makeStyles } from "@material-ui/core";
-import { getSession } from "./store/session";
+import Footer from "./components/layout/footer";
 import ProtectedRoute from "./components/common/protectedRoute";
+import UserSettings from "./components/users/userSettings";
+import UserActivation from "./components/users/userActivation";
+import { getSession } from "./store/session";
 import { getCurrentUser } from "./store/session";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -64,6 +65,7 @@ const App = (props) => {
           <Route path="/tours/new" element={<TourForm />} />
         </Routes>
       </Container>
+      <Footer />
     </Router>
   );
 };

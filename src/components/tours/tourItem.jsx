@@ -6,51 +6,62 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
+import { red, blue } from "@mui/material/colors";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import { makeStyles } from "@material-ui/core";
 import TripOriginIcon from "@mui/icons-material/TripOrigin";
+import Box from "@mui/material/Box";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import Tooltip from "@mui/material/Tooltip";
+import { Link } from "react-router-dom";
 import StyledRating from "../common/rating";
 import { vehicles as vh } from "../../helpers/tour_helper";
 import CardMedia from "@mui/material/CardMedia";
+import { timeSentence } from "../../helpers/tour_helper";
 
 const useStyles = makeStyles((theme) => ({
-  img: {
-    width: "100%",
-    height: "auto",
-    [theme.breakpoints.down("sm")]: {
-      width: "auto",
+  card: {
+    height: 600,
+    [theme.breakpoints.down("768")]: {
+      height: 700,
+    },
+    [theme.breakpoints.down("465")]: {
+      height: 600,
     },
   },
-  card: {
-    width: 500,
-    [theme.breakpoints.down(1430)]: {
-      width: 600,
+  img: {
+    height: 280,
+    [theme.breakpoints.down("1281")]: {
+      height: 250,
     },
-    [theme.breakpoints.down(1110)]: {
-      width: 420,
+    [theme.breakpoints.down("768")]: {
+      height: 330,
     },
-    [theme.breakpoints.down(960)]: {
-      width: "auto",
+    [theme.breakpoints.down("466")]: {
+      height: 220,
     },
+  },
+  price: {
+    display: "flex",
+    justifyContent: "start",
+    alignItems: "center",
   },
 }));
 
-const TourItem = () => {
+const TourItem = ({ item }) => {
   const classes = useStyles();
-
-  const tags = ["Romantics", "Discover", "Relax", "Selfie"];
-  const vehicles = ["boat", "airplane"];
+  const { id, name, kind, details, price, departure, vehicles, tags, images } =
+    item;
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
 
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} sx={{ mr: 2 }}>
       <CardHeader
         sx={{
           "& .css-et1ao3-MuiTypography-root": {
@@ -59,32 +70,50 @@ const TourItem = () => {
           },
         }}
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            F
-          </Avatar>
+          <Tooltip
+            title={kind === "fixed" ? "Fixed tour" : "Single tour"}
+            placement="top"
+          >
+            <Avatar
+              sx={{ bgcolor: kind === "fixed" ? red[500] : blue[500] }}
+              aria-label="recipe"
+            >
+              {kind === "fixed" ? "F" : "S"}
+            </Avatar>
+          </Tooltip>
         }
         action={
           <IconButton aria-label="settings">
             <BookmarkAddIcon />
           </IconButton>
         }
-        title="Tour Hà Nội - Quảng Ning - Đà Nẵng"
-        subheader="September 14, 2016"
+        title={<Link to={`/tours/${id}`}>{name}</Link>}
+        subheader={timeSentence(kind, details)}
       />
       <CardMedia
         component="img"
         className={classes.img}
-        image={`${process.env.PUBLIC_URL}/assets/images/夏夜の晨曦.jpg`}
-        alt="Paella dish"
+        image={images?.[0]}
+        alt="Tour image"
       />
       <CardContent>
         <Typography
-          sx={{ fontSize: 18, display: "flex", alignItems: "center" }}
+          sx={{
+            fontSize: 18,
+            display: "flex",
+            alignItems: "center",
+            overFlow: "hidden",
+          }}
           color="text.secondary"
           gutterBottom
         >
-          <TripOriginIcon sx={{ pr: 1 }} /> Departure from
-          <b style={{ paddingLeft: "5px" }}>Tp. Hồ Chí Minh</b>
+          <TripOriginIcon sx={{ pr: 1 }} />{" "}
+          <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+            Departure from
+          </Box>
+          <span style={{ paddingLeft: "5px", fontWeight: "bold" }}>
+            {departure}
+          </span>
         </Typography>
         <Stack direction={{ xs: "column", sm: "row" }} gap={1} sx={{ mt: 1 }}>
           {tags.map((tag) => (
@@ -110,6 +139,10 @@ const TourItem = () => {
             icon={<FavoriteIcon fontSize="inherit" />}
             emptyIcon={<FavoriteBorderIcon fontSize="inherit" max={10} />}
           />
+        </Typography>
+        <Typography variant="h6" className={classes.price}>
+          <AttachMoneyIcon />
+          {price}
         </Typography>
       </CardContent>
       <CardActions>

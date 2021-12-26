@@ -1,9 +1,20 @@
+import { useEffect } from "react";
 import Grid from "@mui/material/Grid";
+import { connect } from "react-redux";
 import MobileDetect from "mobile-detect";
 import Featured from "../featured/featured";
 import TourList from "../tours/tourList";
+import HotTags from "./hotTags";
+import { loadHome } from "../../store/home";
 
-const Home = () => {
+const Home = (props) => {
+  const { home, loadHome } = props;
+
+  useEffect(async () => {
+    await loadHome();
+  }, []);
+
+  const { hotTours, newTours, hotTags, featured } = home;
   return (
     <Grid
       sx={{
@@ -12,13 +23,16 @@ const Home = () => {
       }}
     >
       <Grid item xs={12}>
-        <Featured />
+        <Featured tour={featured} />
       </Grid>
       <Grid item xs={12}>
-        <TourList title="Popular Tours" />
+        <TourList title="Popular Tours" list={hotTours} />
       </Grid>
       <Grid item xs={12}>
-        <TourList title="New Tours" />
+        <TourList title="New Tours" list={newTours} />
+      </Grid>
+      <Grid item xs={12}>
+        <HotTags list={hotTags} />
       </Grid>
     </Grid>
   );
@@ -43,4 +57,12 @@ TourList.getInitialProps = ({ req }) => {
   return { deviceType };
 };
 
-export default Home;
+const mapStateToProps = (state) => ({
+  home: state.entities.home,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  loadHome: () => dispatch(loadHome()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

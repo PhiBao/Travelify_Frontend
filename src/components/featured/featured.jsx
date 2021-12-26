@@ -7,7 +7,7 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
+import { red, blue } from "@mui/material/colors";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import { makeStyles } from "@material-ui/core";
@@ -16,8 +16,12 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import Tooltip from "@mui/material/Tooltip";
 import StyledRating from "../common/rating";
 import { vehicles as vh } from "../../helpers/tour_helper";
+import { timeSentence } from "../../helpers/tour_helper";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   featured: {
@@ -28,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     height: "100%",
     objectFit: "cover",
-    overflow: "auto",
     boxShadow: "0 10px 8px #bdbdbd",
   },
   card: {
@@ -43,23 +46,23 @@ const useStyles = makeStyles((theme) => ({
       bottom: 50,
     },
   },
+  price: {
+    display: "flex",
+    justifyContent: "start",
+    alignItems: "center",
+  },
 }));
 
-const Featured = () => {
+const Featured = ({ tour }) => {
   const classes = useStyles();
-
-  const tags = ["Romantics", "Discover", "Relax", "Selfie"];
-  const vehicles = ["boat", "airplane"];
+  const { id, name, kind, details, price, departure, vehicles, tags, images } =
+    tour;
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
 
   return (
     <Box className={classes.featured}>
-      <img
-        className={classes.img}
-        src={`${process.env.PUBLIC_URL}/assets/images/夏夜の晨曦.jpg`}
-        alt="featured images"
-      />
+      <img className={classes.img} src={images?.[0]} alt="featured images" />
       <Card className={classes.card}>
         <CardHeader
           sx={{
@@ -69,17 +72,25 @@ const Featured = () => {
             },
           }}
           avatar={
-            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-              F
-            </Avatar>
+            <Tooltip
+              title={kind === "fixed" ? "Fixed tour" : "Single tour"}
+              placement="top"
+            >
+              <Avatar
+                sx={{ bgcolor: kind === "fixed" ? red[500] : blue[500] }}
+                aria-label="recipe"
+              >
+                {kind === "fixed" ? "F" : "S"}
+              </Avatar>
+            </Tooltip>
           }
           action={
             <IconButton aria-label="settings">
               <BookmarkAddIcon />
             </IconButton>
           }
-          title="Tour Hà Nội - Quảng Ning - Đà Nẵng"
-          subheader="September 14, 2016"
+          title={<Link to={`/tours/${id}`}>{name}</Link>}
+          subheader={timeSentence(kind, details)}
         />
         <CardContent>
           <Typography
@@ -88,7 +99,7 @@ const Featured = () => {
             gutterBottom
           >
             <TripOriginIcon sx={{ pr: 1 }} /> Departure from
-            <b style={{ paddingLeft: "5px" }}>Tp. Hồ Chí Minh</b>
+            <b style={{ paddingLeft: "5px" }}>{departure}</b>
           </Typography>
           <Stack direction={{ xs: "column", sm: "row" }} gap={1} sx={{ mt: 1 }}>
             {tags.map((tag) => (
@@ -116,6 +127,10 @@ const Featured = () => {
               icon={<FavoriteIcon fontSize="inherit" />}
               emptyIcon={<FavoriteBorderIcon fontSize="inherit" max={10} />}
             />
+          </Typography>
+          <Typography variant="h6" className={classes.price}>
+            <AttachMoneyIcon />
+            {price}
           </Typography>
         </CardContent>
         <CardActions>

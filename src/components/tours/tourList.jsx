@@ -5,35 +5,26 @@ import TourItem from "./tourItem";
 
 const responsive = {
   desktop: {
-    breakpoint: {
-      max: 3000,
-      min: 1430,
-    },
+    breakpoint: { max: 3000, min: 1280 },
     items: 3,
     slidesToSlide: 2,
     partialVisibilityGutter: 40,
   },
   tablet: {
-    breakpoint: {
-      max: 1429,
-      min: 960,
-    },
+    breakpoint: { max: 1280, min: 767 },
     items: 2,
     slidesToSlide: 1,
     partialVisibilityGutter: 30,
   },
   mobile: {
-    breakpoint: {
-      max: 959,
-      min: 0,
-    },
+    breakpoint: { max: 767, min: 0 },
     items: 1,
     slidesToSlide: 1,
     partialVisibilityGutter: 30,
   },
 };
 
-const TourList = ({ title, deviceType }) => {
+const TourList = ({ list, title, deviceType }) => {
   return (
     <Box sx={{ mt: 3, ml: 3 }}>
       <Typography sx={{ mb: 2 }} variant="h4" component="div">
@@ -47,16 +38,11 @@ const TourList = ({ title, deviceType }) => {
         keyBoardControl={true}
         partialVisible
         infinite
+        itemClass="carousel-item-padding-40-px"
       >
-        <TourItem key="1" />
-        <TourItem key="2" />
-        <TourItem key="3" />
-        <TourItem key="4" />
-        <TourItem key="5" />
-        <TourItem key="6" />
-        <TourItem key="7" />
-        <TourItem key="8" />
-        <TourItem key="9" />
+        {list.map((item) => {
+          return <TourItem key={item.id} item={item} />;
+        })}
       </Carousel>
     </Box>
   );
