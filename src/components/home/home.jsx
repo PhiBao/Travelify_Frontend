@@ -5,6 +5,7 @@ import MobileDetect from "mobile-detect";
 import Featured from "../featured/featured";
 import TourList from "../tours/tourList";
 import HotTags from "./hotTags";
+import Loading from "../layout/loading";
 import { loadHome } from "../../store/home";
 
 const Home = (props) => {
@@ -14,7 +15,8 @@ const Home = (props) => {
     await loadHome();
   }, []);
 
-  const { hotTours, newTours, hotTags, featured } = home;
+  const { list, hotTours, newTours, hotTags, featured, loading } = home;
+  const index = list.findIndex((tour) => tour.id === featured);
   return (
     <Grid
       sx={{
@@ -22,14 +24,21 @@ const Home = (props) => {
         maxWidth: "100%",
       }}
     >
+      {loading && <Loading />}
       <Grid item xs={12}>
-        <Featured tour={featured} />
+        <Featured tour={list[index]} />
       </Grid>
       <Grid item xs={12}>
-        <TourList title="Popular Tours" list={hotTours} />
+        <TourList
+          title="Popular Tours"
+          list={list.filter((tour) => hotTours.includes(tour.id))}
+        />
       </Grid>
       <Grid item xs={12}>
-        <TourList title="New Tours" list={newTours} />
+        <TourList
+          title="New Tours"
+          list={list.filter((tour) => newTours.includes(tour.id))}
+        />
       </Grid>
       <Grid item xs={12}>
         <HotTags list={hotTags} />

@@ -7,6 +7,7 @@ import {
   apiCallFailed,
   apiCallPrepare,
 } from "./api";
+import { setRecentlyWatched } from "../services/tourService";
 
 const slice = createSlice({
   name: "tours",
@@ -14,25 +15,12 @@ const slice = createSlice({
     list: [],
     vehicles: [],
     tags: [],
-    home: {
-      hotTours: [],
-      newTours: [],
-      hotTags: [],
-      featured: {
-        id: "",
-        name: "",
-        description: "",
-        kind: "",
-        images: [],
-        time: "",
-        limit: "",
-        returnDate: "",
-        beginDate: "",
-        vehicles: [],
-        tags: [],
-        price: [],
-      },
+    current: {
+      self: {},
+      related: [],
+      recently: [],
     },
+    loading: false,
   },
   reducers: {
     tourCreated: (tours, action) => {
@@ -45,6 +33,13 @@ const slice = createSlice({
       const { vehicles, tags } = action.payload;
       tours.vehicles = vehicles;
       tours.tags = tags;
+    },
+    tourGotten: (tours, action) => {
+      const { self, related, recently } = action.payload;
+      tours.current.self = self;
+      tours.current.related = related;
+      tours.current.recently = recently;
+      setRecentlyWatched(self.id);
     },
   },
   extraReducers: (builder) => {
@@ -62,7 +57,7 @@ const slice = createSlice({
   },
 });
 
-export const { tourCreated, helpersLoaded } = slice.actions;
+export const { tourCreated, helpersLoaded, tourGotten } = slice.actions;
 
 export default slice.reducer;
 
@@ -92,6 +87,17 @@ export const loadHelpers = (dispatch, getState) => {
       url: helpers_url,
       method: "GET",
       onSuccess: helpersLoaded.type,
+    })
+  );
+};
+
+export const getTour = (tourId, data) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + `/${tourId}`,
+      method: "GET",
+      params: data,
+      onSuccess: tourGotten.type,
     })
   );
 };

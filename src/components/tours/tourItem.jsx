@@ -1,4 +1,3 @@
-import React from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import Button from "@mui/material/Button";
@@ -9,12 +8,13 @@ import Typography from "@mui/material/Typography";
 import { red, blue } from "@mui/material/colors";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { makeStyles } from "@material-ui/core";
-import TripOriginIcon from "@mui/icons-material/TripOrigin";
 import Box from "@mui/material/Box";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Tooltip from "@mui/material/Tooltip";
@@ -88,7 +88,9 @@ const TourItem = ({ item }) => {
           </IconButton>
         }
         title={<Link to={`/tours/${id}`}>{name}</Link>}
-        subheader={timeSentence(kind, details)}
+        subheader={
+          <Typography noWrap>{timeSentence(kind, details)}</Typography>
+        }
       />
       <CardMedia
         component="img"
@@ -107,24 +109,24 @@ const TourItem = ({ item }) => {
           color="text.secondary"
           gutterBottom
         >
-          <TripOriginIcon sx={{ pr: 1 }} />{" "}
-          <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
-            Departure from
-          </Box>
-          <span style={{ paddingLeft: "5px", fontWeight: "bold" }}>
+          <LocationOnIcon sx={{ pr: 1 }} />
+          <Box component="span" sx={{ paddingLeft: "5px", fontWeight: "bold" }}>
             {departure}
-          </span>
+          </Box>
         </Typography>
-        <Stack direction={{ xs: "column", sm: "row" }} gap={1} sx={{ mt: 1 }}>
-          {tags.map((tag) => (
-            <Button
-              key={tag}
-              variant="outlined"
-              startIcon={<CheckCircleOutlineIcon />}
-            >
-              {tag}
-            </Button>
-          ))}
+        <Stack direction="column" gap={1} sx={{ mt: 1 }}>
+          <ButtonGroup disableElevation variant="contained">
+            {tags.map((tag) => (
+              <Button
+                key={tag}
+                variant="outlined"
+                sx={{ fontSize: { xs: "10px", sm: "12px" } }}
+                startIcon={<CheckCircleOutlineIcon />}
+              >
+                {tag}
+              </Button>
+            ))}
+          </ButtonGroup>
         </Stack>
         <Stack direction="row" gap={1} sx={{ my: 1 }}>
           {vehicleIcons.map((vehicle) => vehicle.icon)}
@@ -132,7 +134,7 @@ const TourItem = ({ item }) => {
         <Typography variant="body2">
           <StyledRating
             name="customized-color"
-            defaultValue={2}
+            defaultValue={8}
             getLabelText={(value) => `${value} Heart${value !== 1 ? "s" : ""}`}
             precision={0.5}
             max={10}
@@ -140,7 +142,7 @@ const TourItem = ({ item }) => {
             emptyIcon={<FavoriteBorderIcon fontSize="inherit" max={10} />}
           />
         </Typography>
-        <Typography variant="h6" className={classes.price}>
+        <Typography variant="h6" component="div" className={classes.price}>
           <AttachMoneyIcon />
           {price}
         </Typography>

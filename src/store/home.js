@@ -9,25 +9,18 @@ import {
 const slice = createSlice({
   name: "home",
   initialState: {
+    list: [],
     hotTours: [],
     newTours: [],
     hotTags: [],
-    featured: {
-      id: "",
-      name: "",
-      description: "",
-      kind: "",
-      images: [],
-      details: {},
-      vehicles: [],
-      tags: [],
-      price: "",
-    },
+    featured: 0,
+    loading: false,
   },
   reducers: {
     homeLoaded: (home, action) => {
       const { data } = action.payload;
-      const { hotTours, newTours, hotTags, featured } = data;
+      const { list, hotTours, newTours, hotTags, featured } = data;
+      home.list = list;
       home.hotTours = hotTours;
       home.newTours = newTours;
       home.hotTags = hotTags;

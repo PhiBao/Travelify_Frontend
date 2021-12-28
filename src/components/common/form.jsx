@@ -18,6 +18,7 @@ export const TextInputField = ({
   control,
   name,
   label,
+  handleChange,
   type = "text",
   ...rest
 }) => {
@@ -33,6 +34,10 @@ export const TextInputField = ({
           error={!!error}
           label={label}
           size="medium"
+          onChange={(e) => {
+            if (handleChange) handleChange(e);
+            field.onChange(e);
+          }}
           margin="normal"
           variant="standard"
           type={type}

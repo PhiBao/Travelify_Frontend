@@ -29,8 +29,23 @@ export const timeSentence = (kind, details) => {
     const arr = time.split("-");
     return `${arr[0]} Days - ${arr[1]} Nights`;
   } else {
-    return `Depart at ${moment(details?.beginDate)
+    return `${moment(details?.beginDate)
       .add(process.env.REACT_APP_TIME_ZONE_DIFF, "hours")
-      .format("H:mm, dddd, D-MM-gg")}`;
+      .format("llll")}`;
   }
+};
+
+export const state = (kind, details) => {
+  if (kind === "single") {
+    return "Contact";
+  } else {
+    if (details?.limit > 0) return "Available";
+    else return "Full";
+  }
+};
+
+export const dateFormatter = (date) => {
+  return moment(date)
+    .add(process.env.REACT_APP_TIME_ZONE_DIFF, "hours")
+    .format("llll");
 };

@@ -21,6 +21,7 @@ import Footer from "./components/layout/footer";
 import ProtectedRoute from "./components/common/protectedRoute";
 import UserSettings from "./components/users/userSettings";
 import UserActivation from "./components/users/userActivation";
+import TourDetail from "./components/tours/tourDetail";
 import { getSession } from "./store/session";
 import { getCurrentUser } from "./store/session";
 import "react-toastify/dist/ReactToastify.css";
@@ -63,6 +64,7 @@ const App = (props) => {
           </Route>
           <Route path="*" element={<Navigate replace to="/" />} />
           <Route path="/tours/new" element={<TourForm />} />
+          <Route path="/tours/:id" element={<TourDetail />} />
         </Routes>
       </Container>
       <Footer />

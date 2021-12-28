@@ -1,4 +1,3 @@
-import React from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -11,12 +10,13 @@ import { red, blue } from "@mui/material/colors";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import { makeStyles } from "@material-ui/core";
-import TripOriginIcon from "@mui/icons-material/TripOrigin";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import Tooltip from "@mui/material/Tooltip";
 import StyledRating from "../common/rating";
 import { vehicles as vh } from "../../helpers/tour_helper";
@@ -55,8 +55,17 @@ const useStyles = makeStyles((theme) => ({
 
 const Featured = ({ tour }) => {
   const classes = useStyles();
-  const { id, name, kind, details, price, departure, vehicles, tags, images } =
-    tour;
+  const {
+    id,
+    name,
+    kind,
+    details,
+    price,
+    departure,
+    vehicles = [],
+    tags = [],
+    images = [],
+  } = tour || {};
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
 
@@ -89,7 +98,7 @@ const Featured = ({ tour }) => {
               <BookmarkAddIcon />
             </IconButton>
           }
-          title={<Link to={`/tours/${id}`}>{name}</Link>}
+          title={<Link to={`/tours/${id ? id : ""}`}>{name}</Link>}
           subheader={timeSentence(kind, details)}
         />
         <CardContent>
@@ -98,19 +107,27 @@ const Featured = ({ tour }) => {
             color="text.secondary"
             gutterBottom
           >
-            <TripOriginIcon sx={{ pr: 1 }} /> Departure from
-            <b style={{ paddingLeft: "5px" }}>{departure}</b>
+            <LocationOnIcon sx={{ pr: 1 }} />
+            <Box
+              component="span"
+              sx={{ paddingLeft: "5px", fontWeight: "bold" }}
+            >
+              {departure}
+            </Box>
           </Typography>
-          <Stack direction={{ xs: "column", sm: "row" }} gap={1} sx={{ mt: 1 }}>
-            {tags.map((tag) => (
-              <Button
-                key={tag}
-                variant="outlined"
-                startIcon={<CheckCircleOutlineIcon />}
-              >
-                {tag}
-              </Button>
-            ))}
+          <Stack direction="column" gap={1} sx={{ mt: 1 }}>
+            <ButtonGroup disableElevation variant="contained">
+              {tags.map((tag) => (
+                <Button
+                  key={tag}
+                  variant="outlined"
+                  sx={{ fontSize: { xs: "10px", sm: "12px" } }}
+                  startIcon={<CheckCircleOutlineIcon />}
+                >
+                  {tag}
+                </Button>
+              ))}
+            </ButtonGroup>
           </Stack>
           <Stack direction="row" gap={1} sx={{ my: 1 }}>
             {vehicleIcons.map((vehicle) => vehicle.icon)}
@@ -118,7 +135,7 @@ const Featured = ({ tour }) => {
           <Typography variant="body2">
             <StyledRating
               name="customized-color"
-              defaultValue={2}
+              defaultValue={8}
               getLabelText={(value) =>
                 `${value} Heart${value !== 1 ? "s" : ""}`
               }

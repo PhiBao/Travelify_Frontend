@@ -4,8 +4,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import Box from "@mui/material/Box";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { InputAdornment, IconButton } from "@mui/material";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Visibility from "@mui/icons-material/Visibility";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
 import { TextInputField, FormButton } from "../common/form";
 import { changePassword } from "../../store/users";
 
