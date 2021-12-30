@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import { Carousel } from "react-responsive-carousel";
@@ -15,31 +15,48 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import Chip from "@mui/material/Chip";
+import Button from "@mui/material/Button";
 import moment from "moment";
 import Stack from "@mui/material/Stack";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Tooltip from "@mui/material/Tooltip";
+import Modal from "@mui/material/Modal";
 import { makeStyles } from "@material-ui/core";
 import Paper from "@mui/material/Paper";
 import Loading from "../layout/loading";
 import { vehicles as vh } from "../../helpers/tour_helper";
-import { getTour } from "../../store/tours";
-import { dateFormatter, state } from "../../helpers/tour_helper";
+import { getTour, requestBookingTour, payTour } from "../../store/tours";
+import { dateFormatter, state, timeFormatter } from "../../helpers/tour_helper";
 import TourItem from "./tourItem";
 import { getRecentlyWatched } from "../../services/tourService";
-import { TextInputField, FormButton, DatePickerField } from "../common/form";
+import { TextInputField, DatePickerField } from "../common/form";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-const schema = Yup.object().shape({
+const booking_schema = Yup.object().shape({
   departureDate: Yup.date()
     .min(new Date(), "Departure date must be later than today.")
     .required(),
   adults: Yup.number().min(1).required(),
   children: Yup.number().min(0).nullable(),
+});
+
+const guest_schema = Yup.object().shape({
+  name: Yup.string().max(50),
+  phoneNumber: Yup.string()
+    .matches(/^[0-9]+$/, "Must be only digits")
+    .min(9)
+    .max(11),
+  email: Yup.string().required().email(),
+  note: Yup.string().max(500),
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -74,20 +91,59 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const modal = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: { xs: "100%", sm: 500 },
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
 const TourDetail = (props) => {
+  const location = useLocation();
   const classes = useStyles();
   const { id } = useParams();
   const {
     current: { self, related, recently },
     loading,
+    currentUser,
     getTour,
+    requestBookingTour,
+    payTour,
   } = props;
+
+  const [openModal, setOpenModal] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [dataRequest, setDataRequest] = useState({});
+  const [disabled, setDisabled] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [date, setDate] = useState("");
+
+  const handleCloseModal = () => setOpenModal(false);
+  const handleClickOpenForm = () => {
+    setOpenForm(true);
+    setOpenModal(false);
+  };
+  const handleCloseForm = () => setOpenForm(false);
+  const handleCloseAlert = () => setOpenAlert(false);
+  const handleClickPayButton = async (e) => {
+    e.preventDefault();
+    setOpenModal(false);
+    await payTour({ checkout: { ...dataRequest, tourId: id } });
+    setDisabled(true);
+  };
 
   const {
     control,
     handleSubmit,
     setValue,
     getValues,
+    setError,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -95,7 +151,17 @@ const TourDetail = (props) => {
       adults: 2,
       children: 0,
     },
-    resolver: yupResolver(schema),
+    resolver: yupResolver(booking_schema),
+  });
+
+  const { control: control2, handleSubmit: handleSubmit2 } = useForm({
+    defaultValues: {
+      name: "",
+      phoneNumber: "",
+      email: "",
+      note: "",
+    },
+    resolver: yupResolver(guest_schema),
   });
 
   const {
@@ -111,7 +177,6 @@ const TourDetail = (props) => {
   } = self || {};
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
-  const [total, setTotal] = useState(0);
 
   useEffect(async () => {
     await getTour(id, getRecentlyWatched());
@@ -120,11 +185,53 @@ const TourDetail = (props) => {
   useEffect(() => {
     if (kind === "fixed") setValue("departureDate", moment(details?.beginDate));
     setTotal(price * 2);
+    setDate(getValues("departureDate"));
   }, [details?.beginDate, price]);
 
   const onSubmit = (data, e) => {
     e.preventDefault();
-    console.log(data);
+    if (data.adults + data.children / 2 > details?.limit - details?.quantity) {
+      setError("adults", {
+        type: "manual",
+        message: "There is not enough space left in this tour",
+      });
+      return;
+    }
+    setOpenModal(true);
+    setDataRequest(data);
+  };
+
+  const onSubmitInfo = async (data, e) => {
+    e.preventDefault();
+    const submitData = {
+      ...dataRequest,
+      travellerAttributes: data,
+      tourId: id,
+      status: "confirming",
+      total: total,
+    };
+    setOpenForm(false);
+    await requestBookingTour({ booking: submitData });
+    setDisabled(true);
+  };
+
+  const handleLoggedInRequest = async (e) => {
+    e.preventDefault();
+    if (currentUser.phoneNumber && currentUser.email) {
+      const submitData = {
+        ...dataRequest,
+        user_id: currentUser.id,
+        tourId: id,
+        status: "confirming",
+        total: total,
+      };
+      setOpenModal(false);
+      await requestBookingTour({ booking: submitData });
+      setDisabled(true);
+    } else {
+      setOpenModal(false);
+      setOpenAlert(true);
+    }
   };
 
   const handleNumChange = (e) => {
@@ -277,7 +384,9 @@ const TourDetail = (props) => {
                   <TableHead>
                     <TableRow>
                       <TableCell align="left">Begin date</TableCell>
-                      <TableCell align="left">Return date</TableCell>
+                      <TableCell align="left">
+                        {kind === "fixed" ? "Return date" : "Time"}
+                      </TableCell>
                       <TableCell align="left">State</TableCell>
                       <TableCell align="left">Price</TableCell>
                     </TableRow>
@@ -285,10 +394,14 @@ const TourDetail = (props) => {
                   <TableBody>
                     <TableRow sx={{ bgcolor: "action.hover" }}>
                       <TableCell align="left">
-                        {dateFormatter(details?.beginDate)}
+                        {kind === "fixed"
+                          ? dateFormatter(details?.beginDate)
+                          : dateFormatter(date)}
                       </TableCell>
                       <TableCell align="left">
-                        {dateFormatter(details?.returnDate)}
+                        {kind === "fixed"
+                          ? dateFormatter(details?.returnDate)
+                          : timeFormatter(details?.time)}
                       </TableCell>
                       <TableCell align="left">{state(kind, details)}</TableCell>
                       <TableCell
@@ -333,6 +446,7 @@ const TourDetail = (props) => {
           <Grid item xs={12} md={4}>
             <Box
               component="form"
+              id="bookingForm"
               autoComplete="off"
               className={classes.sidebar}
               onSubmit={handleSubmit(onSubmit)}
@@ -349,6 +463,7 @@ const TourDetail = (props) => {
                 name="departureDate"
                 label="Departure date"
                 disabled={kind === "fixed"}
+                handleChange={(e) => setDate(e)}
                 error={errors.departureDate}
               />
               <TextInputField
@@ -387,21 +502,164 @@ const TourDetail = (props) => {
                 }}
               >
                 {kind === "fixed" && moment(details?.beginDate) < moment() ? (
-                  <FormButton
+                  <Button
                     style={{ backgroundColor: "#ffa726" }}
-                    label="This tour is invalid now!"
                     disabled={true}
                     fullWidth
-                  />
+                    type="submit"
+                    variant="contained"
+                  >
+                    This tour is invalid now!
+                  </Button>
                 ) : (
-                  <FormButton
+                  <Button
                     style={{ backgroundColor: "#ffa726" }}
-                    label="Request booking"
+                    disabled={disabled}
                     fullWidth
-                  />
+                    type="submit"
+                    variant="contained"
+                  >
+                    Request booking
+                  </Button>
                 )}
               </Box>
             </Box>
+            <Modal
+              open={openModal}
+              onClose={handleCloseModal}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={modal}>
+                {currentUser.id === 0 ? (
+                  <Box>
+                    <Typography
+                      id="modal-modal-title"
+                      variant="h6"
+                      component="h2"
+                    >
+                      We need your information!
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                      Please{" "}
+                      <Box
+                        sx={{ fontWeight: 600, fontStyle: "italic" }}
+                        component={Link}
+                        to="/login"
+                        state={{
+                          from: location,
+                        }}
+                      >
+                        login
+                      </Box>
+                      . If you are new here, you can{" "}
+                      <Box
+                        sx={{ fontWeight: 600, fontStyle: "italic" }}
+                        component={Link}
+                        to="/register"
+                        state={{
+                          from: location,
+                        }}
+                      >
+                        register
+                      </Box>
+                      . Or you can provider{" "}
+                      <Button variant="text" onClick={handleClickOpenForm}>
+                        your information
+                      </Button>
+                      .
+                    </Typography>
+                  </Box>
+                ) : (
+                  <Box>
+                    <Typography
+                      id="modal-modal-title"
+                      variant="h6"
+                      component="h2"
+                    >
+                      We need your information!
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                      If you want us to contact you with your account
+                      information. Please click
+                      <Button
+                        sx={{ marginBottom: "1px" }}
+                        variant="text"
+                        onClick={handleLoggedInRequest}
+                      >
+                        here
+                      </Button>
+                      <br /> Or you can provide
+                      <Button variant="text" onClick={handleClickOpenForm}>
+                        other information
+                      </Button>
+                      <br />
+                      {currentUser.activated === true && (
+                        <Box component="span">
+                          If you satisfied with this tour. You can{" "}
+                          <Button onClick={handleClickPayButton}>Pay</Button>{" "}
+                          for it.
+                        </Box>
+                      )}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            </Modal>
+            <Dialog open={openForm} onClose={handleCloseForm}>
+              <Box
+                id="guestForm"
+                component="form"
+                onSubmit={handleSubmit2(onSubmitInfo)}
+                autoComplete="off"
+              >
+                <DialogTitle>Request booking Tour</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    Please type your information below. Travelify will contact
+                    you after a few minutes
+                  </DialogContentText>
+
+                  <TextInputField control={control2} name="name" label="Name" />
+                  <TextInputField
+                    control={control2}
+                    name="phoneNumber"
+                    label="Phone number"
+                  />
+                  <TextInputField
+                    control={control2}
+                    name="email"
+                    label="Email"
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseForm}>Cancel</Button>
+                  <Button type="submit">Send request</Button>
+                </DialogActions>
+              </Box>
+            </Dialog>
+            <Dialog
+              open={openAlert}
+              onClose={handleCloseAlert}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                Your account doesn't have enough information
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  We need your phone number and email address. Please add those
+                  fields!
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseAlert}>Cancel</Button>
+                <Button component={Link} to="/settings" autoFocus>
+                  Go to settings page
+                </Button>
+              </DialogActions>
+            </Dialog>
           </Grid>
         </Grid>
       </Grid>
@@ -444,10 +702,13 @@ const TourDetail = (props) => {
 const mapStateToProps = (state) => ({
   current: state.entities.tours.current,
   loading: state.entities.tours.loading,
+  currentUser: state.entities.session.currentUser,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getTour: (id, data) => dispatch(getTour(id, data)),
+  requestBookingTour: (data) => dispatch(requestBookingTour(data)),
+  payTour: (data) => dispatch(payTour(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TourDetail);

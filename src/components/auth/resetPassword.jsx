@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { Navigate, useSearchParams, useNavigate } from "react-router-dom";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
+import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -13,7 +14,7 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@material-ui/core";
 import { resetPassword } from "../../store/session";
-import { TextInputField, FormButton } from "../common/form";
+import { TextInputField } from "../common/form";
 import Loading from "../layout/loading";
 
 const schema = Yup.object().shape({
@@ -44,11 +45,7 @@ export const ResetPassword = (props) => {
   const [q] = useSearchParams();
   const classes = useStyles();
 
-  const {
-    control,
-    handleSubmit,
-    formState: { isValid, isDirty },
-  } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       password: "",
       passwordConfirmation: "",
@@ -152,12 +149,19 @@ export const ResetPassword = (props) => {
             }}
           />
 
-          <Box sx={{ mt: 2 }}>
-            <FormButton
-              disabled={!isDirty || !isValid}
-              label="Reset password"
-              fullWidth
-            />
+          <Box
+            sx={{ mt: 2 }}
+            component={Button}
+            type="submit"
+            variant="contained"
+            style={{
+              backgroundColor: "#26c6da",
+              color: "#212121",
+              fontWeight: 700,
+            }}
+            fullWidth
+          >
+            Reset password
           </Box>
         </Box>
       </Card>

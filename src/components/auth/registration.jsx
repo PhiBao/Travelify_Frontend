@@ -4,16 +4,17 @@ import moment from "moment";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
-import { Navigate, Link } from "react-router-dom";
+import { Navigate, Link, useNavigate, useLocation } from "react-router-dom";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import InputAdornment from "@mui/material/InputAdornment";
+import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { makeStyles } from "@material-ui/core";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
-import { TextInputField, FormButton, DatePickerField } from "../common/form";
+import { TextInputField, DatePickerField } from "../common/form";
 import { createSession } from "../../store/session";
 import Loading from "../layout/loading";
 
@@ -56,10 +57,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Registration = (props) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid, isDirty },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       birthday: "2000-01-01",
@@ -104,6 +107,7 @@ export const Registration = (props) => {
   const onSubmit = async (user, e) => {
     e.preventDefault();
     await createSession({ user });
+    navigate(location.state?.from.pathname || "/");
   };
 
   if (currentUser.id !== 0) return <Navigate to="/" replace />;
@@ -202,18 +206,24 @@ export const Registration = (props) => {
             }}
           />
           <Box
+            type="submit"
+            variant="contained"
+            component={Button}
             sx={{
               display: "flex",
               justifyContent: "center",
               my: 3,
             }}
+            style={{
+              backgroundColor: "#26c6da",
+              color: "#212121",
+              fontWeight: 700,
+            }}
+            fullWidth
           >
-            <FormButton
-              label="Register"
-              fullWidth
-              disabled={!isDirty || !isValid}
-            />
+            Register
           </Box>
+
           <Box
             sx={{
               display: "flex",

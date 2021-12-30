@@ -3,12 +3,7 @@ import ReactSelect from "react-select";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { DateTimePicker, DatePicker } from "@mui/lab";
-import {
-  TextField,
-  Button,
-  Checkbox,
-  FormControlLabel,
-} from "@material-ui/core";
+import { TextField, Checkbox, FormControlLabel } from "@material-ui/core";
 import CreatableSelect from "react-select/creatable";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
@@ -46,14 +41,6 @@ export const TextInputField = ({
         />
       )}
     />
-  );
-};
-
-export const FormButton = ({ label, ...rest }) => {
-  return (
-    <Button type="submit" variant="contained" {...rest}>
-      {label}
-    </Button>
   );
 };
 
@@ -130,7 +117,14 @@ export const Creatable = ({
   );
 };
 
-export const DatePickerField = ({ name, label, control, error, ...rest }) => {
+export const DatePickerField = ({
+  name,
+  label,
+  control,
+  handleChange,
+  error,
+  ...rest
+}) => {
   return (
     <Box>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -140,7 +134,10 @@ export const DatePickerField = ({ name, label, control, error, ...rest }) => {
           render={({ field: { onChange, value } }) => (
             <DatePicker
               value={value}
-              onChange={(e) => onChange(e)}
+              onChange={(e) => {
+                onChange(e);
+                if (handleChange) handleChange(e);
+              }}
               label={label}
               {...rest}
               renderInput={(params) => (

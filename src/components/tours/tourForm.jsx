@@ -9,6 +9,7 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import { makeStyles } from "@material-ui/core";
@@ -16,7 +17,6 @@ import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import { createTour, loadHelpers } from "../../store/tours";
 import {
   TextInputField,
-  FormButton,
   Select,
   DateTimePickerField,
   Creatable,
@@ -108,7 +108,7 @@ export const TourForm = (props) => {
     register,
     control,
     handleSubmit,
-    formState: { isValid, isDirty, errors },
+    formState: { errors },
     resetField,
     clearErrors,
     setError,
@@ -185,7 +185,6 @@ export const TourForm = (props) => {
           message:
             "Terminal date must be after at least six hours departure date",
         });
-        console.log(!errors.returnDate);
         return;
       }
     }
@@ -366,12 +365,17 @@ export const TourForm = (props) => {
               justifyContent: "center",
               my: 2,
             }}
+            fullWidth
+            type="submit"
+            style={{
+              backgroundColor: "#26c6da",
+              color: "#212121",
+              fontWeight: 700,
+            }}
+            variant="contained"
+            component={Button}
           >
-            <FormButton
-              label="Create"
-              disabled={!isDirty || !isValid}
-              fullWidth
-            />
+            Create
           </Box>
         </Box>
       </Card>

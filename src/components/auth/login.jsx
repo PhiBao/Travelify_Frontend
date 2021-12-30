@@ -11,11 +11,12 @@ import Divider from "@mui/material/Divider";
 import Chip from "@mui/material/Chip";
 import FacebookLogin from "react-facebook-login";
 import GoogleLogin from "react-google-login";
+import Button from "@mui/material/Button";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "@mui/icons-material/Google";
 import CardTravelIcon from "@mui/icons-material/CardTravel";
 import Box from "@material-ui/core/Box";
-import { TextInputField, FormButton, FormCheckbox } from "../common/form";
+import { TextInputField, FormCheckbox } from "../common/form";
 import Loading from "../layout/loading";
 import { receiveSession, loginSocial } from "../../store/session";
 
@@ -76,11 +77,7 @@ export const Login = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const classes = useStyles();
-  const {
-    control,
-    handleSubmit,
-    formState: { isValid, isDirty },
-  } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       email: "",
       password: "",
@@ -119,6 +116,7 @@ export const Login = (props) => {
     };
 
     await loginSocial(data, headers);
+    navigate(location.state?.from.pathname || "/");
   };
 
   const responseGoogle = async (response) => {
@@ -139,6 +137,7 @@ export const Login = (props) => {
     };
 
     await loginSocial(data, headers);
+    navigate(location.state?.from.pathname || "/");
   };
 
   return (
@@ -202,13 +201,20 @@ export const Login = (props) => {
             </Link>
           </Box>
 
-          <Box>
-            <FormButton
-              label="LOG IN"
-              disabled={!isDirty || !isValid}
-              fullWidth
-            />
+          <Box
+            component={Button}
+            type="submit"
+            variant="contained"
+            style={{
+              backgroundColor: "#26c6da",
+              color: "#212121",
+              fontWeight: 700,
+            }}
+            fullWidth
+          >
+            LOG IN
           </Box>
+
           <Divider sx={{ my: 2 }}>
             <Chip label="OR" />
           </Divider>

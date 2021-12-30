@@ -35,12 +35,18 @@ export const timeSentence = (kind, details) => {
   }
 };
 
+export const timeFormatter = (time) => {
+  if (time === undefined) return "";
+  const arr = time.split("-");
+  return `${arr[0]} Days - ${arr[1]} Nights`;
+};
+
 export const state = (kind, details) => {
   if (kind === "single") {
     return "Contact";
   } else {
-    if (details?.limit > 0) return "Available";
-    else return "Full";
+    if ((details?.quantity ^ details?.limit) === 0) return "Full";
+    else return `${details?.quantity}/${details?.limit}`;
   }
 };
 

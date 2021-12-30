@@ -13,7 +13,7 @@ import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import { TextInputField, FormButton, DatePickerField } from "../common/form";
+import { TextInputField, DatePickerField } from "../common/form";
 import { updateUser, activateUser } from "../../store/session";
 
 const schema = Yup.object().shape({
@@ -72,7 +72,7 @@ export const UserProfile = (props) => {
     register,
     handleSubmit,
     setValue,
-    formState: { errors, isDirty, isValid },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       firstName: "",
@@ -249,8 +249,11 @@ export const UserProfile = (props) => {
             justifyContent: "center",
             my: 1,
           }}
+          type="submit"
+          variant="contained"
+          component={Button}
         >
-          <FormButton label="Update" disabled={!isDirty || !isValid} />
+          Update
         </Box>
       </Box>
     </Box>

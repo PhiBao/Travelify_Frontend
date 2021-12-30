@@ -22,9 +22,11 @@ axios.interceptors.response.use(null, (error) => {
     error.response &&
     error.response.status >= 400 &&
     error.response.status < 500;
+
   if (!expectedError) {
     toast.error("An unexpected error occurred");
   }
+
   return Promise.reject(error);
 });
 
@@ -62,13 +64,14 @@ const api =
     } catch (error) {
       // General
       dispatch(actions.apiCallFailed(error.message));
+      // Specific
+      if (onError) dispatch({ type: onError, payload: error.message });
 
       if (error.response && error.response.data.messages) {
         error.response.data.messages.map((message) => toast.error(message));
-        return Promise.reject(error);
       }
-      // Specific
-      if (onError) dispatch({ type: onError, payload: error.message });
+
+      return Promise.reject(error);
     }
   };
 

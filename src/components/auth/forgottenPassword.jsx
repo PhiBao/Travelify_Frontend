@@ -7,13 +7,14 @@ import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
 import { Link as MuiLink } from "@mui/material";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
+import Button from "@mui/material/Button";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@material-ui/core";
 import { forgottenPassword } from "../../store/session";
-import { TextInputField, FormButton } from "../common/form";
+import { TextInputField } from "../common/form";
 import Loading from "../layout/loading";
 
 const schema = Yup.object().shape({
@@ -31,11 +32,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const ForgottenPassword = (props) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { isValid, isDirty },
-  } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       email: "",
     },
@@ -118,12 +115,19 @@ export const ForgottenPassword = (props) => {
               name="email"
               label="Enter your email address"
             />
-            <Box sx={{ mt: 2 }}>
-              <FormButton
-                disabled={!isDirty || !isValid}
-                label="Reset"
-                fullWidth
-              />
+            <Box
+              component={Button}
+              type="submit"
+              variant="contained"
+              sx={{ mt: 2 }}
+              style={{
+                backgroundColor: "#26c6da",
+                color: "#212121",
+                fontWeight: 700,
+              }}
+              fullWidth
+            >
+              Reset
             </Box>
 
             <Box

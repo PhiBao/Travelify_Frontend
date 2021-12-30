@@ -5,10 +5,11 @@ import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import Box from "@mui/material/Box";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Button from "@mui/material/Button";
 import Visibility from "@mui/icons-material/Visibility";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-import { TextInputField, FormButton } from "../common/form";
+import { TextInputField } from "../common/form";
 import { changePassword } from "../../store/users";
 
 const schema = Yup.object().shape({
@@ -26,12 +27,7 @@ const schema = Yup.object().shape({
 });
 
 export const PasswordChange = (props) => {
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { isValid, isDirty },
-  } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       currentPassword: "",
       newPassword: "",
@@ -157,8 +153,11 @@ export const PasswordChange = (props) => {
           justifyContent: "center",
           my: 1,
         }}
+        type="submit"
+        variant="contained"
+        component={Button}
       >
-        <FormButton label="Change" disabled={!isDirty || !isValid} />
+        Change
       </Box>
     </Box>
   );
