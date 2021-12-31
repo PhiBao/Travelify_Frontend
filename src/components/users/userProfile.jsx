@@ -13,8 +13,10 @@ import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
+import axios from "axios";
+import { toast } from "react-toastify";
 import { TextInputField, DatePickerField } from "../common/form";
-import { updateUser, activateUser } from "../../store/session";
+import { updateUser } from "../../store/session";
 
 const schema = Yup.object().shape({
   firstName: Yup.string().max(20).nullable(),
@@ -64,7 +66,7 @@ const useStyles = makeStyles({
 });
 
 export const UserProfile = (props) => {
-  const { currentUser, updateUser, activateUser } = props;
+  const { currentUser, updateUser } = props;
   const classes = useStyles();
 
   const {
@@ -218,8 +220,15 @@ export const UserProfile = (props) => {
             action={
               <Button
                 color="inherit"
-                onClick={async () => {
-                  await activateUser(currentUser.id);
+                onClick={() => {
+                  axios
+                    .get(`/users?id=${currentUser.id}`)
+                    .then(() =>
+                      toast.success(
+                        "We have just sent you a email, please check and confirm your account"
+                      )
+                    )
+                    .catch(() => toast.error("An unexpected error occurred"));
                 }}
                 size="small"
                 endIcon={<SendIcon />}
@@ -266,7 +275,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   updateUser: (data, id) => dispatch(updateUser(data, id)),
-  activateUser: (id) => dispatch(activateUser(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);

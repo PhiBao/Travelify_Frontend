@@ -24,6 +24,8 @@ import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import Chip from "@mui/material/Chip";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import Button from "@mui/material/Button";
 import moment from "moment";
 import Stack from "@mui/material/Stack";
@@ -33,13 +35,17 @@ import Modal from "@mui/material/Modal";
 import { makeStyles } from "@material-ui/core";
 import Paper from "@mui/material/Paper";
 import Loading from "../layout/loading";
+import CheckoutForm from "../common/checkoutForm";
 import { vehicles as vh } from "../../helpers/tour_helper";
-import { getTour, requestBookingTour, payTour } from "../../store/tours";
+import { getTour, requestBookingTour } from "../../store/tours";
 import { dateFormatter, state, timeFormatter } from "../../helpers/tour_helper";
 import TourItem from "./tourItem";
 import { getRecentlyWatched } from "../../services/tourService";
+import axios from "axios";
 import { TextInputField, DatePickerField } from "../common/form";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
 
 const booking_schema = Yup.object().shape({
   departureDate: Yup.date()
@@ -113,30 +119,26 @@ const TourDetail = (props) => {
     currentUser,
     getTour,
     requestBookingTour,
-    payTour,
   } = props;
 
+  const [clientSecret, setClientSecret] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
+  const [openPayment, setOpenPayment] = useState(false);
   const [dataRequest, setDataRequest] = useState({});
   const [disabled, setDisabled] = useState(false);
   const [total, setTotal] = useState(0);
   const [date, setDate] = useState("");
 
   const handleCloseModal = () => setOpenModal(false);
+  const handleClosePayment = () => setOpenPayment(false);
   const handleClickOpenForm = () => {
     setOpenForm(true);
     setOpenModal(false);
   };
   const handleCloseForm = () => setOpenForm(false);
   const handleCloseAlert = () => setOpenAlert(false);
-  const handleClickPayButton = async (e) => {
-    e.preventDefault();
-    setOpenModal(false);
-    await payTour({ checkout: { ...dataRequest, tourId: id } });
-    setDisabled(true);
-  };
 
   const {
     control,
@@ -187,6 +189,30 @@ const TourDetail = (props) => {
     setTotal(price * 2);
     setDate(getValues("departureDate"));
   }, [details?.beginDate, price]);
+
+  const appearance = {
+    theme: "stripe",
+  };
+  const options = {
+    clientSecret,
+    appearance,
+  };
+
+  const handleClickPayButton = async (e) => {
+    e.preventDefault();
+    setOpenModal(false);
+    const data = {
+      checkout: {
+        ...dataRequest,
+        tourId: id,
+        userId: currentUser?.id,
+        total: total,
+      },
+    };
+    const res = await axios.post("/checkout", data);
+    setClientSecret(res.data.clientSecret);
+    setOpenPayment(true);
+  };
 
   const onSubmit = (data, e) => {
     e.preventDefault();
@@ -660,6 +686,13 @@ const TourDetail = (props) => {
                 </Button>
               </DialogActions>
             </Dialog>
+            <Dialog open={openPayment} onClose={handleClosePayment}>
+              <DialogContent>
+                <Elements stripe={stripePromise} options={options}>
+                  <CheckoutForm />
+                </Elements>
+              </DialogContent>
+            </Dialog>
           </Grid>
         </Grid>
       </Grid>
@@ -708,7 +741,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getTour: (id, data) => dispatch(getTour(id, data)),
   requestBookingTour: (data) => dispatch(requestBookingTour(data)),
-  payTour: (data) => dispatch(payTour(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TourDetail);

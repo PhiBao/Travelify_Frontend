@@ -9,9 +9,11 @@ import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import HistoryIcon from "@mui/icons-material/History";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 import Loading from "../layout/loading";
 import UserProfile from "./userProfile";
+import UserHistory from "./userHistory";
 import PasswordChange from "./passwordChange";
 
 export const UserSettings = (props) => {
@@ -63,6 +65,12 @@ export const UserSettings = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Change password" />
               </ListItemButton>
+              <ListItemButton component={Link} to="history">
+                <ListItemIcon>
+                  <HistoryIcon />
+                </ListItemIcon>
+                <ListItemText primary="History" />
+              </ListItemButton>
               <ListItemButton component={Link} to="notifications">
                 <ListItemIcon>
                   <CircleNotificationsIcon />
@@ -75,6 +83,7 @@ export const UserSettings = (props) => {
             <Routes>
               <Route path="general" element={<UserProfile />} />
               <Route path="change_password" element={<PasswordChange />} />
+              <Route path="history" element={<UserHistory />} />
               <Route path="/" element={<UserProfile />} />
             </Routes>
           </Grid>

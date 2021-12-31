@@ -44,9 +44,6 @@ const slice = createSlice({
     tourRequestBooking: () => {
       toast.success("Please wait a moment, Travelify will contact you soon");
     },
-    tourPaid: () => {
-      toast.success("Paid successfully! Thank you for your support.");
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -78,7 +75,6 @@ export default slice.reducer;
 const url = "/tours";
 const helpers_url = "/helpers";
 const bookings_url = "/bookings";
-const checkout_url = "/checkout";
 
 export const createTour = (data) => (dispatch) => {
   return dispatch(
@@ -123,17 +119,6 @@ export const requestBookingTour = (data) => (dispatch) => {
       method: "POST",
       data,
       onSuccess: tourRequestBooking.type,
-    })
-  );
-};
-
-export const payTour = (data) => (dispatch) => {
-  return dispatch(
-    apiCallBegan({
-      url: checkout_url,
-      method: "POST",
-      data,
-      onSuccess: tourPaid.type,
     })
   );
 };

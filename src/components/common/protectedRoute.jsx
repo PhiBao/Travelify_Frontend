@@ -1,19 +1,15 @@
 import * as React from "react";
-import { connect } from "react-redux";
 import { Navigate, useLocation, Outlet } from "react-router-dom";
+import auth from "../../services/authService";
 
-const ProtectedRoute = (props) => {
+const ProtectedRoute = () => {
   const location = useLocation();
 
-  return props.session.currentUser.id !== 0 ? (
+  return auth.getCurrentUser() ? (
     <Outlet />
   ) : (
     <Navigate to="/login" state={{ from: location }} />
   );
 };
 
-const mapStateToProps = (state) => ({
-  session: state.entities.session,
-});
-
-export default connect(mapStateToProps, null)(ProtectedRoute);
+export default ProtectedRoute;

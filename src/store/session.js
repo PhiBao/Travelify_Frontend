@@ -74,11 +74,6 @@ const slice = createSlice({
       session.currentUser = user;
       toast.success("Update user info successfully");
     },
-    userActivated: () => {
-      toast.success(
-        "We have just sent you a email, please check and confirm your account"
-      );
-    },
     userConfirmed: (session) => {
       session.currentUser.activated = true;
       toast.success("Congratulation! your account has been activated");
@@ -114,7 +109,6 @@ export const {
   passwordReset,
   currentUserGotten,
   userUpdated,
-  userActivated,
   userConfirmed,
   socialLoggedIn,
 } = slice.actions;
@@ -200,16 +194,6 @@ export const updateUser = (data, id) => (dispatch) => {
       data,
       onSuccess: userUpdated.type,
       headers: { "Content-Type": "multipart/form-data" },
-    })
-  );
-};
-
-export const activateUser = (id) => (dispatch) => {
-  return dispatch(
-    apiCallBegan({
-      url: activate_url + `/${id}`,
-      method: "GET",
-      onSuccess: userActivated.type,
     })
   );
 };

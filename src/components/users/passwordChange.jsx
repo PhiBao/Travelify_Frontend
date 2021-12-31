@@ -9,8 +9,9 @@ import Button from "@mui/material/Button";
 import Visibility from "@mui/icons-material/Visibility";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
+import { toast } from "react-toastify";
+import axios from "axios";
 import { TextInputField } from "../common/form";
-import { changePassword } from "../../store/users";
 
 const schema = Yup.object().shape({
   currentPassword: Yup.string().min(8).required(),
@@ -74,8 +75,13 @@ export const PasswordChange = (props) => {
 
   const onChangePassword = async (data, e) => {
     e.preventDefault();
-    await props.changePassword({ data });
-    reset();
+    axios
+      .put(`/users/${props.id}/change_password`, data)
+      .then(() => {
+        toast.success("Password has changed");
+        reset();
+      })
+      .catch(() => toast.error("An unexpected error occurred"));
   };
 
   return (
@@ -163,8 +169,8 @@ export const PasswordChange = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  changePassword: (data) => dispatch(changePassword(data)),
+const mapStateToProps = (state) => ({
+  id: state.entities.session.currentUser.id,
 });
 
-export default connect(null, mapDispatchToProps)(PasswordChange);
+export default connect(mapStateToProps, null)(PasswordChange);
