@@ -15,7 +15,6 @@ export const UserHistory = (props) => {
     if (currentUser.id === 0) {
       await getSession();
     }
-    console.log(currentUser.id);
   };
 
   useEffect(() => {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
-import { Carousel } from "react-responsive-carousel";
+import Slider from "react-slick";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { connect } from "react-redux";
 import Typography from "@mui/material/Typography";
@@ -43,7 +43,6 @@ import TourItem from "./tourItem";
 import { getRecentlyWatched } from "../../services/tourService";
 import axios from "axios";
 import { TextInputField, DatePickerField } from "../common/form";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
 
@@ -96,6 +95,18 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
   },
 }));
+
+const settings = {
+  autoplay: true,
+  speed: 1500,
+  autoplaySpeed: 3000,
+  fade: true,
+  arrows: false,
+  infinite: true,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  pauseOnHover: true,
+};
 
 const modal = {
   position: "absolute",
@@ -179,6 +190,11 @@ const TourDetail = (props) => {
   } = self || {};
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
+  const validTour =
+    kind === "single" ||
+    (moment(details?.beginDate) > moment() &&
+      details?.limit > details?.quantity);
+  const validPayment = currentUser?.activated && kind === "fixed" && validTour;
 
   useEffect(async () => {
     await getTour(id, getRecentlyWatched());
@@ -296,7 +312,7 @@ const TourDetail = (props) => {
         <Grid container item xs={12} spacing={2}>
           <Grid item xs={12} md={8}>
             <Box>
-              <Carousel>
+              <Slider {...settings}>
                 {images.map((image, index) => {
                   return (
                     <img
@@ -306,7 +322,7 @@ const TourDetail = (props) => {
                     />
                   );
                 })}
-              </Carousel>
+              </Slider>
             </Box>
             <Box
               sx={{
@@ -527,27 +543,15 @@ const TourDetail = (props) => {
                   mt: 2,
                 }}
               >
-                {kind === "fixed" && moment(details?.beginDate) < moment() ? (
-                  <Button
-                    style={{ backgroundColor: "#ffa726" }}
-                    disabled={true}
-                    fullWidth
-                    type="submit"
-                    variant="contained"
-                  >
-                    This tour is invalid now!
-                  </Button>
-                ) : (
-                  <Button
-                    style={{ backgroundColor: "#ffa726" }}
-                    disabled={disabled}
-                    fullWidth
-                    type="submit"
-                    variant="contained"
-                  >
-                    Request booking
-                  </Button>
-                )}
+                <Button
+                  style={{ backgroundColor: "#ffa726" }}
+                  disabled={validTour ? disabled : true}
+                  fullWidth
+                  type="submit"
+                  variant="contained"
+                >
+                  {validTour ? "Request booking" : "Not available now!"}
+                </Button>
               </Box>
             </Box>
             <Modal
@@ -620,7 +624,7 @@ const TourDetail = (props) => {
                         other information
                       </Button>
                       <br />
-                      {currentUser.activated === true && (
+                      {validPayment && (
                         <Box component="span">
                           If you satisfied with this tour. You can{" "}
                           <Button onClick={handleClickPayButton}>Pay</Button>{" "}

@@ -3,7 +3,6 @@ import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { connect } from "react-redux";
 import { Routes, Route, Link } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
@@ -11,14 +10,11 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import HistoryIcon from "@mui/icons-material/History";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
-import Loading from "../layout/loading";
 import UserProfile from "./userProfile";
 import UserHistory from "./userHistory";
 import PasswordChange from "./passwordChange";
 
-export const UserSettings = (props) => {
-  const { loading } = props;
-
+export const UserSettings = () => {
   return (
     <Container>
       <Grid
@@ -30,7 +26,6 @@ export const UserSettings = (props) => {
         justifyContent="center"
         style={{ minHeight: "100vh" }}
       >
-        {loading && <Loading />}
         <Grid container spacing={2}>
           <Grid
             item
@@ -93,8 +88,4 @@ export const UserSettings = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  loading: state.entities.users.loading,
-});
-
-export default connect(mapStateToProps, null)(UserSettings);
+export default UserSettings;

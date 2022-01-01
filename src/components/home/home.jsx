@@ -16,7 +16,6 @@ const Home = (props) => {
   }, []);
 
   const { list, hotTours, newTours, hotTags, featured, loading } = home;
-  const index = list.findIndex((tour) => tour.id === featured);
   return (
     <Grid
       sx={{
@@ -26,7 +25,7 @@ const Home = (props) => {
     >
       {loading && <Loading />}
       <Grid item xs={12}>
-        <Featured tour={list[index]} />
+        <Featured list={list.filter((tour) => featured.includes(tour.id))} />
       </Grid>
       <Grid item xs={12}>
         <TourList

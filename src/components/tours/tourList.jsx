@@ -1,49 +1,41 @@
 import { Box, Typography } from "@mui/material";
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
+import Slider from "react-slick";
 import TourItem from "./tourItem";
 
-const responsive = {
-  desktop: {
-    breakpoint: { max: 3000, min: 1280 },
-    items: 3,
-    slidesToSlide: 2,
-    partialVisibilityGutter: 40,
-  },
-  tablet: {
-    breakpoint: { max: 1280, min: 767 },
-    items: 2,
-    slidesToSlide: 1,
-    partialVisibilityGutter: 30,
-  },
-  mobile: {
-    breakpoint: { max: 767, min: 0 },
-    items: 1,
-    slidesToSlide: 1,
-    partialVisibilityGutter: 30,
-  },
+const settings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 4,
+  swipeToSlide: true,
+  slidesToScroll: 2,
+  responsive: [
+    {
+      breakpoint: 1280,
+      settings: { slidesToShow: 3, slidesToSlide: 1 },
+    },
+    {
+      breakpoint: 1024,
+      settings: { slidesToShow: 2, slidesToSlide: 1 },
+    },
+    {
+      breakpoint: 700,
+      settings: { slidesToShow: 1, slidesToSlide: 1 },
+    },
+  ],
 };
 
-const TourList = ({ list, title, deviceType }) => {
+const TourList = ({ list, title }) => {
   return (
-    <Box sx={{ mt: 3, ml: 3 }}>
+    <Box sx={{ mt: 3, mx: 4 }}>
       <Typography sx={{ mb: 2 }} variant="h4" component="div">
         {title}
       </Typography>
-      <Carousel
-        deviceType={deviceType}
-        ssr
-        slidesToSlide={1}
-        responsive={responsive}
-        keyBoardControl={true}
-        partialVisible
-        infinite
-        itemClass="carousel-item-padding-40-px"
-      >
+      <Slider {...settings}>
         {list.map((item) => {
           return <TourItem key={item.id} item={item} />;
         })}
-      </Carousel>
+      </Slider>
     </Box>
   );
 };

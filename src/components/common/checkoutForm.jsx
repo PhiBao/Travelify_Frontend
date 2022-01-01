@@ -5,6 +5,8 @@ import {
   useElements,
   PaymentElement,
 } from "@stripe/react-stripe-js";
+import Loader from "react-loader-spinner";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { makeStyles } from "@material-ui/core";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
@@ -26,7 +28,7 @@ export const CheckoutForm = () => {
   const elements = useElements();
 
   const [message, setMessage] = useState(null);
-  //const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +37,7 @@ export const CheckoutForm = () => {
       return;
     }
 
-    //setIsLoading(true);
+    setIsLoading(true);
 
     const { error } = await stripe.confirmPayment({
       elements,
@@ -50,7 +52,7 @@ export const CheckoutForm = () => {
       setMessage("An unexpected error occured.");
     }
 
-    //setIsLoading(false);
+    setIsLoading(false);
   };
 
   return (
@@ -67,9 +69,24 @@ export const CheckoutForm = () => {
         sx={{ mt: 3 }}
         type="submit"
         variant="contained"
+        disabled={isLoading}
         fullWidth
       >
-        Pay now
+        {isLoading ? (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+            component="span"
+          >
+            <Loader type="Circles" color="#000" height={20} width={20} />
+            <Loader type="Circles" color="#000" height={20} width={20} />
+            <Loader type="Circles" color="#000" height={20} width={20} />
+          </Box>
+        ) : (
+          "Pay now"
+        )}
       </Box>
       {message && (
         <Alert sx={{ mt: 1 }} severity="info" onClose={() => {}}>

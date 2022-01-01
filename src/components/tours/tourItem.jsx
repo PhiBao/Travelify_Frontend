@@ -27,23 +27,14 @@ import { timeSentence } from "../../helpers/tour_helper";
 const useStyles = makeStyles((theme) => ({
   card: {
     height: 600,
-    [theme.breakpoints.down("768")]: {
-      height: 700,
-    },
-    [theme.breakpoints.down("465")]: {
-      height: 600,
+    [theme.breakpoints.down("701")]: {
+      height: 650,
     },
   },
   img: {
-    height: 280,
-    [theme.breakpoints.down("1281")]: {
-      height: 250,
-    },
-    [theme.breakpoints.down("768")]: {
-      height: 330,
-    },
-    [theme.breakpoints.down("466")]: {
-      height: 220,
+    height: 250,
+    [theme.breakpoints.down("701")]: {
+      height: 300,
     },
   },
   price: {

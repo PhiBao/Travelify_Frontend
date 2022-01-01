@@ -13,7 +13,7 @@ const slice = createSlice({
     hotTours: [],
     newTours: [],
     hotTags: [],
-    featured: 0,
+    featured: [],
     loading: false,
   },
   reducers: {
