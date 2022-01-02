@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -18,6 +19,12 @@ import TableRow from "@mui/material/TableRow";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import StyledRating from "../common/rating";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Collapse from "@mui/material/Collapse";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import * as Yup from "yup";
@@ -34,6 +41,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Modal from "@mui/material/Modal";
 import { makeStyles } from "@material-ui/core";
 import Paper from "@mui/material/Paper";
+import IconButton from "@mui/material/IconButton";
 import Loading from "../layout/loading";
 import CheckoutForm from "../common/checkoutForm";
 import { vehicles as vh } from "../../helpers/tour_helper";
@@ -94,6 +102,14 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "5px",
     padding: theme.spacing(1),
   },
+
+  rating: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#fffde7",
+    padding: theme.spacing(1),
+  },
 }));
 
 const settings = {
@@ -137,6 +153,7 @@ const TourDetail = (props) => {
   const [openForm, setOpenForm] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [openPayment, setOpenPayment] = useState(false);
+  const [openCollapse, setOpenCollapse] = useState(false);
   const [dataRequest, setDataRequest] = useState({});
   const [disabled, setDisabled] = useState(false);
   const [total, setTotal] = useState(0);
@@ -184,10 +201,11 @@ const TourDetail = (props) => {
     details,
     price,
     departure,
-    vehicles = [],
-    tags = [],
-    images = [],
-  } = self || {};
+    vehicles,
+    tags,
+    images,
+    rate,
+  } = self;
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
   const validTour =
@@ -461,12 +479,35 @@ const TourDetail = (props) => {
                 </Table>
               </TableContainer>
             </Box>
+            <Box className={classes.rating}>
+              <Box>
+                <Chip
+                  sx={{ bgcolor: "#f4511e", fontWeight: 800, color: "#fff" }}
+                  label={`${rate === 0 ? 7 : rate}/10.0`}
+                />
+              </Box>
+              <Box mt={1} component={Typography} variant="body2">
+                <StyledRating
+                  name="customized-color"
+                  value={rate === 0 ? 7 : rate}
+                  getLabelText={(value) =>
+                    `${value} Heart${value !== 1 ? "s" : ""}`
+                  }
+                  readOnly={true}
+                  precision={0.5}
+                  max={10}
+                  icon={<FavoriteIcon fontSize="inherit" />}
+                  emptyIcon={<FavoriteBorderIcon fontSize="inherit" max={10} />}
+                />
+              </Box>
+              <Box component={IconButton} aria-label="mark">
+                <BookmarkAddIcon />
+              </Box>
+            </Box>
             <Box
               sx={{
                 bgcolor: "background.paper",
-                pl: 2,
-                pt: 3,
-                pb: 1,
+                p: 2,
                 fontStyle: "italic",
               }}
               component={Typography}
@@ -483,6 +524,40 @@ const TourDetail = (props) => {
                   to="/"
                 ></Chip>
               ))}
+            </Box>
+            <Box
+              sx={{
+                bgcolor: "background.paper",
+                pl: 2,
+              }}
+            >
+              <Box component={Typography} variant="h6">
+                113 Reviews{" "}
+                <IconButton
+                  aria-label="expand reviews"
+                  size="small"
+                  onClick={() => setOpenCollapse(!openCollapse)}
+                >
+                  {openCollapse ? (
+                    <KeyboardArrowUpIcon />
+                  ) : (
+                    <KeyboardArrowDownIcon />
+                  )}
+                </IconButton>
+              </Box>
+              <Collapse in={openCollapse} timeout="auto" unmountOnExit>
+                <Box
+                  sx={{
+                    p: 2,
+                    lineHeight: 2,
+                    fontSize: "18px",
+                  }}
+                  component={Typography}
+                  variant="body1"
+                >
+                  {description}
+                </Box>
+              </Collapse>
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>

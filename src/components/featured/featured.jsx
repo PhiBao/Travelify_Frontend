@@ -1,7 +1,16 @@
 import FeaturedItem from "./featuredItem";
 import Slider from "react-slick";
+import { makeStyles } from "@material-ui/core";
+
+const useStyles = makeStyles({
+  slider: {
+    "& .slick-slide": { pointerEvents: "none" },
+    "& .slick-active": { pointerEvents: "auto" },
+  },
+});
 
 const Featured = ({ list }) => {
+  const classes = useStyles();
   const settings = {
     dots: true,
     autoplay: true,
@@ -14,7 +23,7 @@ const Featured = ({ list }) => {
     slidesToScroll: 1,
   };
   return (
-    <Slider {...settings}>
+    <Slider className={classes.slider} {...settings}>
       {list.map((item) => (
         <FeaturedItem key={item.id} tour={item} />
       ))}

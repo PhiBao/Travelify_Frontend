@@ -62,10 +62,11 @@ const FeaturedItem = ({ tour }) => {
     details,
     price,
     departure,
-    vehicles = [],
-    tags = [],
-    images = [],
-  } = tour || {};
+    vehicles,
+    tags,
+    images,
+    rate,
+  } = tour;
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
 
@@ -96,7 +97,7 @@ const FeaturedItem = ({ tour }) => {
             </Tooltip>
           }
           action={
-            <IconButton aria-label="settings">
+            <IconButton aria-label="mark">
               <BookmarkAddIcon />
             </IconButton>
           }
@@ -137,7 +138,8 @@ const FeaturedItem = ({ tour }) => {
           <Typography variant="body2">
             <StyledRating
               name="customized-color"
-              defaultValue={8}
+              value={rate === 0 ? 7 : rate}
+              readOnly={true}
               getLabelText={(value) =>
                 `${value} Heart${value !== 1 ? "s" : ""}`
               }

@@ -46,8 +46,18 @@ const useStyles = makeStyles((theme) => ({
 
 const TourItem = ({ item }) => {
   const classes = useStyles();
-  const { id, name, kind, details, price, departure, vehicles, tags, images } =
-    item;
+  const {
+    id,
+    name,
+    kind,
+    details,
+    price,
+    departure,
+    vehicles,
+    tags,
+    images,
+    rate,
+  } = item;
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
 
@@ -74,7 +84,7 @@ const TourItem = ({ item }) => {
           </Tooltip>
         }
         action={
-          <IconButton aria-label="settings">
+          <IconButton aria-label="mark">
             <BookmarkAddIcon />
           </IconButton>
         }
@@ -125,7 +135,8 @@ const TourItem = ({ item }) => {
         <Typography variant="body2">
           <StyledRating
             name="customized-color"
-            defaultValue={8}
+            value={rate === 0 ? 7 : rate}
+            readOnly={true}
             getLabelText={(value) => `${value} Heart${value !== 1 ? "s" : ""}`}
             precision={0.5}
             max={10}
