@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import { connect } from "react-redux";
-import MobileDetect from "mobile-detect";
 import Featured from "../featured/featured";
 import TourList from "../tours/tourList";
 import HotTags from "./hotTags";
@@ -44,25 +43,6 @@ const Home = (props) => {
       </Grid>
     </Grid>
   );
-};
-
-TourList.getInitialProps = ({ req }) => {
-  let userAgent;
-  let deviceType;
-  if (req) {
-    userAgent = req.headers["user-agent"];
-  } else {
-    userAgent = navigator.userAgent;
-  }
-  const md = new MobileDetect(userAgent);
-  if (md.tablet()) {
-    deviceType = "tablet";
-  } else if (md.mobile()) {
-    deviceType = "mobile";
-  } else {
-    deviceType = "desktop";
-  }
-  return { deviceType };
 };
 
 const mapStateToProps = (state) => ({

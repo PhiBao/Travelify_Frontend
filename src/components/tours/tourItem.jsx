@@ -13,9 +13,11 @@ import { makeStyles } from "@material-ui/core";
 import Box from "@mui/material/Box";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
+import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { useDispatch } from "react-redux";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Tooltip from "@mui/material/Tooltip";
 import { Link } from "react-router-dom";
@@ -23,6 +25,7 @@ import StyledRating from "../common/rating";
 import { vehicles as vh } from "../../helpers/tour_helper";
 import CardMedia from "@mui/material/CardMedia";
 import { timeSentence } from "../../helpers/tour_helper";
+import { markTour } from "../../store/home";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -46,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TourItem = ({ item }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const {
     id,
     name,
@@ -57,9 +61,15 @@ const TourItem = ({ item }) => {
     tags,
     images,
     rate,
+    marked,
   } = item;
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
+
+  const handleMark = async (e) => {
+    e.preventDefault();
+    await dispatch(markTour(id));
+  };
 
   return (
     <Card className={classes.card} sx={{ mr: 2 }}>
@@ -84,8 +94,12 @@ const TourItem = ({ item }) => {
           </Tooltip>
         }
         action={
-          <IconButton aria-label="mark">
-            <BookmarkAddIcon />
+          <IconButton aria-label="mark" size="large" onClick={handleMark}>
+            {marked ? (
+              <BookmarkRemoveIcon fontSize="inherit" />
+            ) : (
+              <BookmarkAddIcon fontSize="inherit" />
+            )}
           </IconButton>
         }
         title={<Link to={`/tours/${id}`}>{name}</Link>}

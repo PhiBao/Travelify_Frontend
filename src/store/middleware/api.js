@@ -37,10 +37,18 @@ const api =
   async (action) => {
     if (action.type !== actions.apiCallBegan.type) return next(action);
 
-    const { url, method, data, onSuccess, onError, params, headers } =
-      action.payload;
+    const {
+      url,
+      method,
+      data,
+      onSuccess,
+      onError,
+      params,
+      headers,
+      skipLoading,
+    } = action.payload;
 
-    dispatch(actions.apiCallPrepare());
+    if (skipLoading !== true) dispatch(actions.apiCallPrepare());
 
     next(action);
 

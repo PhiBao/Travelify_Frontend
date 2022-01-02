@@ -26,6 +26,11 @@ const slice = createSlice({
       home.hotTags = hotTags;
       home.featured = featured;
     },
+    tourMarked: (home, action) => {
+      const { id } = action.payload;
+      const index = home.list.findIndex((tour) => tour.id === id);
+      home.list[index].marked = !home.list[index].marked;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -42,7 +47,7 @@ const slice = createSlice({
   },
 });
 
-export const { homeLoaded } = slice.actions;
+export const { homeLoaded, tourMarked } = slice.actions;
 
 export default slice.reducer;
 
@@ -56,6 +61,17 @@ export const loadHome = () => (dispatch) => {
       url,
       method: "GET",
       onSuccess: homeLoaded.type,
+    })
+  );
+};
+
+export const markTour = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: `/tours/${id}/mark`,
+      method: "GET",
+      onSuccess: tourMarked.type,
+      skipLoading: true,
     })
   );
 };

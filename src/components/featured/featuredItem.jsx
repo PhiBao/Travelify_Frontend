@@ -16,12 +16,15 @@ import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import { useDispatch } from "react-redux";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Tooltip from "@mui/material/Tooltip";
+import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
 import StyledRating from "../common/rating";
 import { vehicles as vh } from "../../helpers/tour_helper";
 import { timeSentence } from "../../helpers/tour_helper";
 import { Link } from "react-router-dom";
+import { markTour } from "../../store/home";
 
 const useStyles = makeStyles((theme) => ({
   featured: {
@@ -55,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
 
 const FeaturedItem = ({ tour }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const {
     id,
     name,
@@ -66,9 +70,15 @@ const FeaturedItem = ({ tour }) => {
     tags,
     images,
     rate,
+    marked,
   } = tour;
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
+
+  const handleMark = async (e) => {
+    e.preventDefault();
+    await dispatch(markTour(id));
+  };
 
   return (
     <Box className={classes.featured}>
@@ -97,8 +107,12 @@ const FeaturedItem = ({ tour }) => {
             </Tooltip>
           }
           action={
-            <IconButton aria-label="mark">
-              <BookmarkAddIcon />
+            <IconButton aria-label="mark" size="large" onClick={handleMark}>
+              {marked ? (
+                <BookmarkRemoveIcon fontSize="inherit" />
+              ) : (
+                <BookmarkAddIcon fontSize="inherit" />
+              )}
             </IconButton>
           }
           title={<Link to={`/tours/${id ? id : ""}`}>{name}</Link>}

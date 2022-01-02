@@ -16,18 +16,7 @@ const slice = createSlice({
     vehicles: [],
     tags: [],
     current: {
-      self: {
-        name: "",
-        description: "",
-        kind: "",
-        details: {},
-        price: 0,
-        departure: "",
-        vehicles: [],
-        tags: [],
-        images: [],
-        rate: 0,
-      },
+      self: 0,
       related: [],
       recently: [],
     },
@@ -46,14 +35,20 @@ const slice = createSlice({
       tours.tags = tags;
     },
     tourGotten: (tours, action) => {
-      const { self, related, recently } = action.payload;
+      const { list, self, related, recently } = action.payload;
+      tours.list = list;
       tours.current.self = self;
       tours.current.related = related;
       tours.current.recently = recently;
-      setRecentlyWatched(self.id);
+      setRecentlyWatched(self);
     },
     tourRequestBooking: () => {
       toast.success("Please wait a moment, Travelify will contact you soon");
+    },
+    tourMarked: (tours, action) => {
+      const { id } = action.payload;
+      const index = tours.list.findIndex((tour) => tour.id === id);
+      tours.list[index].marked = !tours.list[index].marked;
     },
   },
   extraReducers: (builder) => {
@@ -77,6 +72,7 @@ export const {
   tourGotten,
   tourRequestBooking,
   tourPaid,
+  tourMarked,
 } = slice.actions;
 
 export default slice.reducer;
@@ -130,6 +126,17 @@ export const requestBookingTour = (data) => (dispatch) => {
       method: "POST",
       data,
       onSuccess: tourRequestBooking.type,
+    })
+  );
+};
+
+export const markTour = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: `${url}/${id}/mark`,
+      method: "GET",
+      onSuccess: tourMarked.type,
+      skipLoading: true,
     })
   );
 };

@@ -35,6 +35,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import Button from "@mui/material/Button";
 import moment from "moment";
+import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
 import Stack from "@mui/material/Stack";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Tooltip from "@mui/material/Tooltip";
@@ -42,6 +43,7 @@ import Modal from "@mui/material/Modal";
 import { makeStyles } from "@material-ui/core";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
+import axios from "axios";
 import Loading from "../layout/loading";
 import CheckoutForm from "../common/checkoutForm";
 import { vehicles as vh } from "../../helpers/tour_helper";
@@ -49,7 +51,6 @@ import { getTour, requestBookingTour } from "../../store/tours";
 import { dateFormatter, state, timeFormatter } from "../../helpers/tour_helper";
 import TourItem from "./tourItem";
 import { getRecentlyWatched } from "../../services/tourService";
-import axios from "axios";
 import { TextInputField, DatePickerField } from "../common/form";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
@@ -141,6 +142,7 @@ const TourDetail = (props) => {
   const classes = useStyles();
   const { id } = useParams();
   const {
+    list,
     current: { self, related, recently },
     loading,
     currentUser,
@@ -158,6 +160,7 @@ const TourDetail = (props) => {
   const [disabled, setDisabled] = useState(false);
   const [total, setTotal] = useState(0);
   const [date, setDate] = useState("");
+  const [mark, setMark] = useState(false);
 
   const handleCloseModal = () => setOpenModal(false);
   const handleClosePayment = () => setOpenPayment(false);
@@ -194,6 +197,8 @@ const TourDetail = (props) => {
     resolver: yupResolver(guest_schema),
   });
 
+  const index = list.findIndex((tour) => (tour.id ^ self) === 0);
+
   const {
     name,
     description,
@@ -201,11 +206,12 @@ const TourDetail = (props) => {
     details,
     price,
     departure,
-    vehicles,
-    tags,
-    images,
-    rate,
-  } = self;
+    vehicles = [],
+    tags = [],
+    images = [],
+    rate = 0,
+    marked,
+  } = list[index] || {};
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
   const validTour =
@@ -221,8 +227,9 @@ const TourDetail = (props) => {
   useEffect(() => {
     if (kind === "fixed") setValue("departureDate", moment(details?.beginDate));
     setTotal(price * 2);
+    setMark(marked);
     setDate(getValues("departureDate"));
-  }, [details?.beginDate, price]);
+  }, [details?.beginDate, price, marked]);
 
   const appearance = {
     theme: "stripe",
@@ -292,6 +299,12 @@ const TourDetail = (props) => {
       setOpenModal(false);
       setOpenAlert(true);
     }
+  };
+
+  const handleMark = async (e) => {
+    e.preventDefault();
+    await axios.get(`/tours/${id}/mark`);
+    setMark(!mark);
   };
 
   const handleNumChange = (e) => {
@@ -500,8 +513,17 @@ const TourDetail = (props) => {
                   emptyIcon={<FavoriteBorderIcon fontSize="inherit" max={10} />}
                 />
               </Box>
-              <Box component={IconButton} aria-label="mark">
-                <BookmarkAddIcon />
+              <Box
+                component={IconButton}
+                aria-label="mark"
+                size="large"
+                onClick={handleMark}
+              >
+                {mark ? (
+                  <BookmarkRemoveIcon fontSize="inherit" />
+                ) : (
+                  <BookmarkAddIcon fontSize="inherit" />
+                )}
               </Box>
             </Box>
             <Box
@@ -785,9 +807,11 @@ const TourDetail = (props) => {
             Related tours
           </Typography>
           <Box className={classes.stack}>
-            {related.map((tour) => {
-              return <TourItem key={tour.id} item={tour} />;
-            })}
+            {list
+              .filter((item) => related.includes(item.id))
+              .map((tour) => {
+                return <TourItem key={tour.id} item={tour} />;
+              })}
           </Box>
         </Box>
       </Grid>
@@ -801,9 +825,11 @@ const TourDetail = (props) => {
             You have watched tours recently
           </Typography>
           <Box className={classes.stack}>
-            {recently.map((tour) => {
-              return <TourItem key={tour.id} item={tour} />;
-            })}
+            {list
+              .filter((item) => recently.includes(item.id))
+              .map((tour) => {
+                return <TourItem key={tour.id} item={tour} />;
+              })}
           </Box>
         </Box>
       </Grid>
@@ -812,6 +838,7 @@ const TourDetail = (props) => {
 };
 
 const mapStateToProps = (state) => ({
+  list: state.entities.tours.list,
   current: state.entities.tours.current,
   loading: state.entities.tours.loading,
   currentUser: state.entities.session.currentUser,
