@@ -46,8 +46,9 @@ import IconButton from "@mui/material/IconButton";
 import axios from "axios";
 import Loading from "../layout/loading";
 import CheckoutForm from "../common/checkoutForm";
+import Review from "../review/review";
 import { vehicles as vh } from "../../helpers/tour_helper";
-import { getTour, requestBookingTour } from "../../store/tours";
+import { getTour, requestBookingTour, markTour } from "../../store/tours";
 import { dateFormatter, state, timeFormatter } from "../../helpers/tour_helper";
 import TourItem from "./tourItem";
 import { getRecentlyWatched } from "../../services/tourService";
@@ -197,8 +198,6 @@ const TourDetail = (props) => {
     resolver: yupResolver(guest_schema),
   });
 
-  const index = list.findIndex((tour) => (tour.id ^ self) === 0);
-
   const {
     name,
     description,
@@ -206,12 +205,13 @@ const TourDetail = (props) => {
     details,
     price,
     departure,
-    vehicles = [],
-    tags = [],
-    images = [],
-    rate = 0,
+    vehicles,
+    tags,
+    images,
+    rate,
     marked,
-  } = list[index] || {};
+    reviews,
+  } = self;
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
   const validTour =
@@ -554,7 +554,7 @@ const TourDetail = (props) => {
               }}
             >
               <Box component={Typography} variant="h6">
-                113 Reviews{" "}
+                {reviews.length} Reviews{" "}
                 <IconButton
                   aria-label="expand reviews"
                   size="small"
@@ -568,17 +568,9 @@ const TourDetail = (props) => {
                 </IconButton>
               </Box>
               <Collapse in={openCollapse} timeout="auto" unmountOnExit>
-                <Box
-                  sx={{
-                    p: 2,
-                    lineHeight: 2,
-                    fontSize: "18px",
-                  }}
-                  component={Typography}
-                  variant="body1"
-                >
-                  {description}
-                </Box>
+                {reviews.map((review) => (
+                  <Review key={`review-${review.id}`} review={review} />
+                ))}
               </Collapse>
             </Box>
           </Grid>
@@ -810,7 +802,9 @@ const TourDetail = (props) => {
             {list
               .filter((item) => related.includes(item.id))
               .map((tour) => {
-                return <TourItem key={tour.id} item={tour} />;
+                return (
+                  <TourItem key={tour.id} item={tour} markTour={markTour} />
+                );
               })}
           </Box>
         </Box>

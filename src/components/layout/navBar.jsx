@@ -240,7 +240,7 @@ const NavBar = (props) => {
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       src={
-                        currentUser.avatar?.url ||
+                        currentUser.avatarUrl ||
                         `${process.env.PUBLIC_URL}/assets/images/unknown.png`
                       }
                       alt="avatar"

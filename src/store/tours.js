@@ -16,7 +16,20 @@ const slice = createSlice({
     vehicles: [],
     tags: [],
     current: {
-      self: 0,
+      self: {
+        name: "",
+        description: "",
+        kind: "",
+        details: {},
+        price: 0,
+        departure: "",
+        vehicles: [],
+        tags: [],
+        images: [],
+        rate: 0,
+        marked: false,
+        reviews: [],
+      },
       related: [],
       recently: [],
     },
@@ -40,7 +53,7 @@ const slice = createSlice({
       tours.current.self = self;
       tours.current.related = related;
       tours.current.recently = recently;
-      setRecentlyWatched(self);
+      setRecentlyWatched(self.id);
     },
     tourRequestBooking: () => {
       toast.success("Please wait a moment, Travelify will contact you soon");

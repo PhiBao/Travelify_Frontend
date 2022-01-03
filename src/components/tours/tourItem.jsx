@@ -25,7 +25,6 @@ import StyledRating from "../common/rating";
 import { vehicles as vh } from "../../helpers/tour_helper";
 import CardMedia from "@mui/material/CardMedia";
 import { timeSentence } from "../../helpers/tour_helper";
-import { markTour } from "../../store/home";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -47,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TourItem = ({ item }) => {
+const TourItem = ({ item, markTour }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {

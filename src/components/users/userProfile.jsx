@@ -93,7 +93,7 @@ export const UserProfile = (props) => {
   const [image, setImage] = useState(null);
 
   useEffect(() => {
-    setImage(currentUser.avatar?.url);
+    setImage(currentUser.avatarUrl);
 
     const fields = [
       "firstName",

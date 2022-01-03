@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import Slider from "react-slick";
 import TourItem from "./tourItem";
+import { markTour } from "../../store/home";
 
 const settings = {
   dots: true,
@@ -33,7 +34,7 @@ const TourList = ({ list, title }) => {
       </Typography>
       <Slider {...settings}>
         {list.map((item) => {
-          return <TourItem key={item.id} item={item} />;
+          return <TourItem key={item.id} item={item} markTour={markTour} />;
         })}
       </Slider>
     </Box>

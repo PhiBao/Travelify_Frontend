@@ -13,11 +13,7 @@ const slice = createSlice({
   initialState: {
     currentUser: {
       id: 0,
-      avatar: {
-        byteSize: 0,
-        url: "",
-        name: "",
-      },
+      avatarUrl: "",
       firstName: "",
       lastName: "",
       address: "",
