@@ -63,6 +63,13 @@ const slice = createSlice({
       const index = tours.list.findIndex((tour) => tour.id === id);
       tours.list[index].marked = !tours.list[index].marked;
     },
+    reviewDeleted: (tours, action) => {
+      const { id } = action.payload;
+      const index = tours.current.self.reviews.findIndex(
+        (review) => review.id === id
+      );
+      tours.current.self.reviews.splice(index, 1);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -86,6 +93,7 @@ export const {
   tourRequestBooking,
   tourPaid,
   tourMarked,
+  reviewDeleted,
 } = slice.actions;
 
 export default slice.reducer;
@@ -95,6 +103,7 @@ export default slice.reducer;
 const url = "/tours";
 const helpers_url = "/helpers";
 const bookings_url = "/bookings";
+const reviews_url = "/reviews";
 
 export const createTour = (data) => (dispatch) => {
   return dispatch(
@@ -149,6 +158,17 @@ export const markTour = (id) => (dispatch) => {
       url: `${url}/${id}/mark`,
       method: "GET",
       onSuccess: tourMarked.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const deleteReview = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: `${reviews_url}/${id}`,
+      method: "DELETE",
+      onSuccess: reviewDeleted.type,
       skipLoading: true,
     })
   );

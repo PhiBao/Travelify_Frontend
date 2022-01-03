@@ -74,7 +74,7 @@ export const Registration = (props) => {
       address: "",
       email: "",
     },
-    mode: "onChange",
+    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 

@@ -50,7 +50,7 @@ export const ResetPassword = (props) => {
       password: "",
       passwordConfirmation: "",
     },
-    mode: "onChange",
+    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 

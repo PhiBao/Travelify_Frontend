@@ -127,7 +127,7 @@ export const TourForm = (props) => {
       images: [],
       tags: [],
     },
-    mode: "onChange",
+    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 

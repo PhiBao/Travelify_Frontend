@@ -82,7 +82,7 @@ export const Login = (props) => {
       email: "",
       password: "",
     },
-    mode: "onChange",
+    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 

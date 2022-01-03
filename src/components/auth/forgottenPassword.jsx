@@ -36,7 +36,7 @@ export const ForgottenPassword = (props) => {
     defaultValues: {
       email: "",
     },
-    mode: "onChange",
+    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 
