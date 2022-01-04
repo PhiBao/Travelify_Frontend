@@ -3,61 +3,42 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Alert from "@mui/material/Alert";
 import Menu from "@mui/material/Menu";
-import Collapse from "@mui/material/Collapse";
 import MenuItem from "@mui/material/MenuItem";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import Collapse from "@mui/material/Collapse";
 import Badge from "@mui/material/Badge";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import TextareaAutosize from "@mui/material/TextareaAutosize";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
-import { connect } from "react-redux";
-import Comment from "./comment";
-import StyledRating from "../common/rating";
 import ReportDialog from "../common/reportDialog";
-import { dateFormatter } from "../../helpers/tour_helper";
-import {
-  deleteReview,
-  loadComments,
-  loadReplies,
-  deleteComment,
-} from "../../store/tours";
+import { fromNow } from "../../helpers/tour_helper";
 
-const Review = (props) => {
-  const {
-    commentsList,
-    review,
-    currentUser,
-    deleteReview,
-    loadComments,
-    loadReplies,
-    deleteComment,
-  } = props;
+const Comment = (props) => {
+  const { comment, currentUser, deleteComment, loadReplies, commentsList } =
+    props;
   const {
     user: { username, avatarUrl },
     id,
     body,
-    hearts,
     createAt,
     liked = false,
     likes = 0,
     state = "appear",
     size = 0,
-    comments = [],
-  } = review;
+    replies = [],
+    replyTo = "",
+  } = comment;
 
   const disabled = currentUser.id === 0;
   const [anchorEl, setAnchorEl] = useState(null);
@@ -68,7 +49,7 @@ const Review = (props) => {
   const [confirm, setConfirm] = useState(false);
   const [report, setReport] = useState(false);
   const [value, setValue] = useState("Negative words");
-  const [openComments, setOpenComments] = useState(false);
+  const [openReplies, setOpenReplies] = useState(false);
 
   const handleCloseDialog = () => {
     setConfirm(false);
@@ -81,7 +62,7 @@ const Review = (props) => {
   };
 
   const handleLike = async () => {
-    await axios.get(`reviews/${id}/like`);
+    await axios.get(`comments/${id}/like`);
     like ? setNumLikes(numLikes - 1) : setNumLikes(numLikes + 1);
     setLike(!like);
   };
@@ -97,7 +78,7 @@ const Review = (props) => {
         setAnchorEl(null);
         break;
       default:
-        await axios.get(`reviews/${id}/${type}`);
+        await axios.get(`comments/${id}/${type}`);
         setAnchorEl(null);
         setHidden(!hidden);
     }
@@ -105,7 +86,7 @@ const Review = (props) => {
 
   const handleConfirmDialog = async () => {
     setConfirm(false);
-    await deleteReview(id);
+    await deleteComment(id);
   };
 
   const handleCloseReport = (newValue) => {
@@ -116,14 +97,14 @@ const Review = (props) => {
     }
   };
 
-  const handleShowComments = async () => {
-    if (comments.length === 0) await loadComments(id, { page: 1 });
-    setOpenComments(!openComments);
+  const handleShowReplies = async () => {
+    if (replies.length === 0) await loadReplies(id, { page: 1 });
+    setOpenReplies(!openReplies);
   };
 
   const handleClickMore = async () => {
-    const page = comments.length / 10 + 1;
-    await loadComments(id, { page });
+    const page = replies.length / 10 + 1;
+    await loadReplies(id, { page });
   };
 
   return (
@@ -132,10 +113,11 @@ const Review = (props) => {
         sx={{
           display: "flex",
           flexDirection: "row",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           alignItems: "flex-start",
           mb: 2,
           pl: 2,
+          bgcolor: "#eeeeee",
         }}
       >
         <Box mt={1} mr={2}>
@@ -146,27 +128,24 @@ const Review = (props) => {
             }
           />
         </Box>
-        <Box sx={{ width: "100%" }}>
+        <Box
+          sx={{
+            width: "100%",
+          }}
+        >
           <Typography variant="h6" component="div">
-            {username}
+            {username}{" "}
           </Typography>
-          <Typography variant="body2">
-            <StyledRating
-              name="customized-color"
-              value={hearts}
-              readOnly={true}
-              getLabelText={(value) =>
-                `${value} Heart${value !== 1 ? "s" : ""}`
-              }
-              precision={0.5}
-              max={10}
-              icon={<FavoriteIcon fontSize="inherit" />}
-              emptyIcon={<FavoriteBorderIcon fontSize="inherit" max={10} />}
-            />
-          </Typography>
+          <Box
+            component={Typography}
+            sx={{ mr: 2, color: "#757575" }}
+            variant="body2"
+          >
+            {fromNow(createAt)}
+          </Box>
           {hidden && (
             <Alert sx={{ mr: 2 }} variant="filled" severity="info">
-              This review is hidden!
+              This comment is hidden!
             </Alert>
           )}
           <Box
@@ -179,27 +158,19 @@ const Review = (props) => {
             component={Typography}
             variant="body1"
           >
+            {replyTo && (
+              <Box
+                component="span"
+                sx={{
+                  display: "block",
+                  mr: 2,
+                  color: "#757575",
+                }}
+              >
+                reply to @{replyTo}
+              </Box>
+            )}
             {body}
-          </Box>
-          <Box
-            component={Typography}
-            sx={{ mr: 2, pb: 2, borderBottom: 1, color: "#757575" }}
-            variant="body2"
-          >
-            {dateFormatter(createAt)}
-          </Box>
-          <Box
-            component={Typography}
-            sx={{ mr: 2, py: 1, borderBottom: 1, color: "#757575" }}
-            variant="body2"
-          >
-            <Box
-              component="span"
-              sx={{ fontWeight: 700, fontSize: 16, color: "#111" }}
-            >
-              {numLikes}
-            </Box>{" "}
-            Likes
           </Box>
           <Stack
             direction="row"
@@ -207,9 +178,9 @@ const Review = (props) => {
             alignItems="center"
             spacing={2}
           >
-            <IconButton aria-label="comment" onClick={handleShowComments}>
+            <IconButton aria-label="comment" onClick={handleShowReplies}>
               <Badge badgeContent={size} color="secondary">
-                {openComments ? <ChatBubbleIcon /> : <ChatBubbleOutlineIcon />}
+                {openReplies ? <ChatBubbleIcon /> : <ChatBubbleOutlineIcon />}
               </Badge>
             </IconButton>
             <IconButton
@@ -217,7 +188,9 @@ const Review = (props) => {
               disabled={disabled}
               onClick={handleLike}
             >
-              {like ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}
+              <Badge badgeContent={numLikes} color="primary">
+                {like ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}
+              </Badge>
             </IconButton>
             <IconButton
               disabled={disabled}
@@ -268,7 +241,7 @@ const Review = (props) => {
             open={report}
             onClose={handleCloseReport}
             value={value}
-            type="review"
+            type="comment"
             targetId={id}
           />
           <Dialog
@@ -294,9 +267,9 @@ const Review = (props) => {
           </Dialog>
         </Box>
       </Box>
-      <Collapse in={openComments} timeout="auto" unmountOnExit>
+      <Collapse in={openReplies} timeout="auto" unmountOnExit>
         {commentsList
-          .filter((item) => comments.includes(item.id))
+          .filter((item) => replies.includes(item.id))
           .map((comment) => (
             <Comment
               key={`comment-${comment.id}`}
@@ -307,7 +280,7 @@ const Review = (props) => {
               deleteComment={deleteComment}
             />
           ))}
-        {size > comments.length && (
+        {size > replies.length && (
           <Box
             component={Button}
             onClick={handleClickMore}
@@ -317,28 +290,9 @@ const Review = (props) => {
             Show more...
           </Box>
         )}
-        <Box>
-          <TextareaAutosize
-            aria-label="comment"
-            minRows={3}
-            placeholder="Type your comment here"
-          />
-        </Box>
       </Collapse>
     </Box>
   );
 };
 
-const mapStateToProps = (state) => ({
-  currentUser: state.entities.session.currentUser,
-  commentsList: state.entities.tours.current.commentsList,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  deleteReview: (id) => dispatch(deleteReview(id)),
-  loadComments: (id, params) => dispatch(loadComments(id, params)),
-  loadReplies: (id, params) => dispatch(loadReplies(id, params)),
-  deleteComment: (id) => dispatch(deleteComment(id)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Review);
+export default Comment;

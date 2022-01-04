@@ -28,6 +28,7 @@ import Collapse from "@mui/material/Collapse";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import * as Yup from "yup";
+import Pagination from "@mui/material/Pagination";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import Chip from "@mui/material/Chip";
@@ -44,11 +45,17 @@ import { makeStyles } from "@material-ui/core";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import axios from "axios";
+import paginate from "../../utils/paginate";
 import Loading from "../layout/loading";
 import CheckoutForm from "../common/checkoutForm";
 import Review from "../review/review";
 import { vehicles as vh } from "../../helpers/tour_helper";
-import { getTour, requestBookingTour, markTour } from "../../store/tours";
+import {
+  getTour,
+  requestBookingTour,
+  markTour,
+  loadReviews,
+} from "../../store/tours";
 import { dateFormatter, state, timeFormatter } from "../../helpers/tour_helper";
 import TourItem from "./tourItem";
 import { getRecentlyWatched } from "../../services/tourService";
@@ -149,6 +156,7 @@ const TourDetail = (props) => {
     currentUser,
     getTour,
     requestBookingTour,
+    loadReviews,
   } = props;
 
   const [clientSecret, setClientSecret] = useState("");
@@ -162,6 +170,7 @@ const TourDetail = (props) => {
   const [total, setTotal] = useState(0);
   const [date, setDate] = useState("");
   const [mark, setMark] = useState(false);
+  const [page, setPage] = useState(1);
 
   const handleCloseModal = () => setOpenModal(false);
   const handleClosePayment = () => setOpenPayment(false);
@@ -211,6 +220,7 @@ const TourDetail = (props) => {
     rate,
     marked,
     reviews,
+    size,
   } = self;
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
@@ -321,6 +331,13 @@ const TourDetail = (props) => {
             100.0
         ) / 100.0
       );
+  };
+
+  const handlePageChange = async (e, value) => {
+    e.preventDefault();
+    if (reviews.length < (value - 1) * 10 + 1)
+      await loadReviews(id, { page: value });
+    setPage(value);
   };
 
   return (
@@ -550,11 +567,10 @@ const TourDetail = (props) => {
             <Box
               sx={{
                 bgcolor: "background.paper",
-                pl: 2,
               }}
             >
-              <Box component={Typography} variant="h6">
-                {reviews.length} Reviews{" "}
+              <Box pl={2} component={Typography} variant="h6">
+                {size} Reviews{" "}
                 <IconButton
                   aria-label="expand reviews"
                   size="small"
@@ -568,9 +584,22 @@ const TourDetail = (props) => {
                 </IconButton>
               </Box>
               <Collapse in={openCollapse} timeout="auto" unmountOnExit>
-                {reviews.map((review) => (
+                {paginate(reviews, page, 10).map((review) => (
                   <Review key={`review-${review.id}`} review={review} />
                 ))}
+                {Math.ceil(size / 10) > 1 && (
+                  <Pagination
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      mb: 1,
+                    }}
+                    count={Math.ceil(size / 10)}
+                    page={page}
+                    onChange={handlePageChange}
+                  />
+                )}
               </Collapse>
             </Box>
           </Grid>
@@ -841,6 +870,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getTour: (id, data) => dispatch(getTour(id, data)),
   requestBookingTour: (data) => dispatch(requestBookingTour(data)),
+  loadReviews: (id, params) => dispatch(loadReviews(id, params)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TourDetail);

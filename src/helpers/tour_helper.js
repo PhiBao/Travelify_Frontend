@@ -55,3 +55,17 @@ export const dateFormatter = (date) => {
     .add(process.env.REACT_APP_TIME_ZONE_DIFF, "hours")
     .format("llll");
 };
+
+export const fromNow = (date) => {
+  return moment(date)
+    .add(process.env.REACT_APP_TIME_ZONE_DIFF, "hours")
+    .fromNow();
+};
+
+export const reportOptions = [
+  "Negative words",
+  "Offensive content",
+  "Contempt for others",
+  "Contempt for religion, politics",
+  "Something else",
+];
