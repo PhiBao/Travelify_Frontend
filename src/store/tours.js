@@ -28,12 +28,38 @@ const slice = createSlice({
         images: [],
         rate: 0,
         marked: false,
-        reviews: [],
+        reviews: [
+          {
+            user: { username: "", avatarUrl: "" },
+            id: 0,
+            body: "",
+            hearts: 0,
+            createAt: "",
+            liked: false,
+            likes: 0,
+            state: "appear",
+            size: 0,
+            comments: [],
+          },
+        ],
         size: 0,
       },
       related: [],
       recently: [],
-      commentsList: [],
+      commentsList: [
+        {
+          user: { username: "", avatarUrl: "" },
+          id: 0,
+          body: "",
+          createAt: "",
+          liked: false,
+          likes: 0,
+          state: "appear",
+          size: 0,
+          replyTo: "",
+          replies: [],
+        },
+      ],
     },
     loading: false,
   },
@@ -102,19 +128,39 @@ const slice = createSlice({
           (review) => review.id === commentableId
         );
         tours.current.self.reviews[index].size -= 1;
-        tours.current.self.reviews[index]?.comments.filter(
-          (comment) => comment.id !== id
-        );
+        tours.current.self.reviews[index].comments = tours.current.self.reviews[
+          index
+        ].comments.filter((comment) => comment.id !== id);
       } else {
         const index = tours.current.commentsList.findIndex(
           (comment) => comment.id === commentableId
         );
         tours.current.commentsList[index].size -= 1;
-        tours.current.commentsList[index]?.replies.filter(
-          (comment) => comment.id !== id
-        );
+        tours.current.commentsList[index].replies = tours.current.commentsList[
+          index
+        ].replies.filter((comment) => comment.id !== id);
       }
-      tours.current.commentsList.filter((comment) => comment.id !== id);
+      tours.current.commentsList = tours.current.commentsList.filter(
+        (comment) => comment.id !== id
+      );
+    },
+    commentCreated: (tours, action) => {
+      const { comment, parentId } = action.payload;
+      const index = tours.current.self.reviews.findIndex(
+        (review) => review.id === parentId
+      );
+      tours.current.self.reviews[index].size += 1;
+      tours.current.self.reviews[index].comments.unshift(comment.id);
+      tours.current.commentsList.unshift(comment);
+    },
+    replyCreated: (tours, action) => {
+      const { reply, parentId } = action.payload;
+      const index = tours.current.commentsList.findIndex(
+        (comment) => comment.id === parentId
+      );
+      tours.current.commentsList[index].size += 1;
+      tours.current.commentsList[index].replies.unshift(reply.id);
+      tours.current.commentsList.unshift(reply);
     },
   },
   extraReducers: (builder) => {
@@ -144,6 +190,8 @@ export const {
   commentsLoaded,
   commentDeleted,
   repliesLoaded,
+  commentCreated,
+  replyCreated,
 } = slice.actions;
 
 export default slice.reducer;
@@ -267,6 +315,30 @@ export const deleteComment = (id) => (dispatch) => {
       url: `${comments_url}/${id}`,
       method: "DELETE",
       onSuccess: commentDeleted.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const createComment = (id, data) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: `${reviews_url}/${id}/comment`,
+      method: "POST",
+      data,
+      onSuccess: commentCreated.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const createReply = (id, data) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: `${comments_url}/${id}/reply`,
+      method: "POST",
+      data,
+      onSuccess: replyCreated.type,
       skipLoading: true,
     })
   );

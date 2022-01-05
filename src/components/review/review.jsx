@@ -21,19 +21,21 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import TextareaAutosize from "@mui/material/TextareaAutosize";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
 import { connect } from "react-redux";
 import Comment from "./comment";
 import StyledRating from "../common/rating";
 import ReportDialog from "../common/reportDialog";
+import CommentForm from "../common/commentForm";
 import { dateFormatter } from "../../helpers/tour_helper";
 import {
   deleteReview,
   loadComments,
   loadReplies,
   deleteComment,
+  createComment,
+  createReply,
 } from "../../store/tours";
 
 const Review = (props) => {
@@ -45,6 +47,8 @@ const Review = (props) => {
     loadComments,
     loadReplies,
     deleteComment,
+    createComment,
+    createReply,
   } = props;
   const {
     user: { username, avatarUrl },
@@ -52,10 +56,10 @@ const Review = (props) => {
     body,
     hearts,
     createAt,
-    liked = false,
-    likes = 0,
-    state = "appear",
-    size = 0,
+    liked,
+    likes,
+    state,
+    size,
     comments = [],
   } = review;
 
@@ -305,25 +309,28 @@ const Review = (props) => {
               commentsList={commentsList}
               loadReplies={loadReplies}
               deleteComment={deleteComment}
+              createReply={createReply}
             />
           ))}
         {size > comments.length && (
           <Box
             component={Button}
             onClick={handleClickMore}
-            sx={{ ml: 2, mt: -1 }}
+            sx={{ ml: 2, mt: -1, mb: 1 }}
             variant="text"
           >
             Show more...
           </Box>
         )}
-        <Box>
-          <TextareaAutosize
-            aria-label="comment"
-            minRows={3}
-            placeholder="Type your comment here"
+        {currentUser.id !== 0 && (
+          <CommentForm
+            username={username}
+            avatarUrl={avatarUrl}
+            label="Comment"
+            id={id}
+            handleOnSubmit={createComment}
           />
-        </Box>
+        )}
       </Collapse>
     </Box>
   );
@@ -339,6 +346,8 @@ const mapDispatchToProps = (dispatch) => ({
   loadComments: (id, params) => dispatch(loadComments(id, params)),
   loadReplies: (id, params) => dispatch(loadReplies(id, params)),
   deleteComment: (id) => dispatch(deleteComment(id)),
+  createComment: (id, data) => dispatch(createComment(id, data)),
+  createReply: (id, data) => dispatch(createReply(id, data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Review);

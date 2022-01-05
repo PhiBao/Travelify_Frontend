@@ -22,22 +22,29 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
 import ReportDialog from "../common/reportDialog";
+import CommentForm from "../common/commentForm";
 import { fromNow } from "../../helpers/tour_helper";
 
 const Comment = (props) => {
-  const { comment, currentUser, deleteComment, loadReplies, commentsList } =
-    props;
+  const {
+    comment,
+    currentUser,
+    deleteComment,
+    loadReplies,
+    commentsList,
+    createReply,
+  } = props;
   const {
     user: { username, avatarUrl },
     id,
     body,
     createAt,
-    liked = false,
-    likes = 0,
-    state = "appear",
-    size = 0,
+    liked,
+    likes,
+    state,
+    size,
     replies = [],
-    replyTo = "",
+    replyTo,
   } = comment;
 
   const disabled = currentUser.id === 0;
@@ -278,6 +285,7 @@ const Comment = (props) => {
               commentsList={commentsList}
               loadReplies={loadReplies}
               deleteComment={deleteComment}
+              createReply={createReply}
             />
           ))}
         {size > replies.length && (
@@ -289,6 +297,15 @@ const Comment = (props) => {
           >
             Show more...
           </Box>
+        )}
+        {currentUser.id !== 0 && (
+          <CommentForm
+            username={username}
+            avatarUrl={avatarUrl}
+            id={id}
+            label="Reply"
+            handleOnSubmit={createReply}
+          />
         )}
       </Collapse>
     </Box>
