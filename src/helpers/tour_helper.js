@@ -4,12 +4,12 @@ import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import moment from "moment";
 
 export const cities = [
-  { value: "Hà Nội", label: "Hà Nội" },
-  { value: "Tp.Hồ Chí Minh", label: "Tp.Hồ Chí Minh" },
-  { value: "Đà Nẵng", label: "Đà Nẵng" },
-  { value: "Cần Thơ", label: "Cần Thơ" },
-  { value: "Hải Phòng", label: "Hải Phòng" },
-  { value: "Quảng Ninh", label: "Quảng Ninh" },
+  { value: "Hanoi", label: "Hà Nội" },
+  { value: "HCMC", label: "Tp.Hồ Chí Minh" },
+  { value: "Danang", label: "Đà Nẵng" },
+  { value: "Cantho", label: "Cần Thơ" },
+  { value: "Haiphong", label: "Hải Phòng" },
+  { value: "Quangninh", label: "Quảng Ninh" },
 ];
 
 export const kinds = [
@@ -69,3 +69,5 @@ export const reportOptions = [
   "Contempt for religion, politics",
   "Something else",
 ];
+
+export const DEFAULT_DATE = moment().add(1, "days");

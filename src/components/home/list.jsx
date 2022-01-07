@@ -1,7 +1,9 @@
 import { Box, Typography } from "@mui/material";
+import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
+import Button from "@mui/material/Button";
+import { Link } from "react-router-dom";
 import Slider from "react-slick";
-import TourItem from "./tourItem";
-import { markTour } from "../../store/home";
+import TourItem from "../tours/tourItem";
 
 const settings = {
   dots: true,
@@ -26,19 +28,24 @@ const settings = {
   ],
 };
 
-const TourList = ({ list, title }) => {
+const List = ({ list, title, link }) => {
   return (
     <Box sx={{ mt: 3, mx: 4 }}>
-      <Typography sx={{ mb: 2 }} variant="h4" component="div">
-        {title}
-      </Typography>
+      <Box sx={{ display: "flex" }}>
+        <Typography sx={{ mb: 2, flexGrow: 1 }} variant="h4" component="div">
+          {title}
+        </Typography>
+        <Button component={Link} to={link}>
+          More <DoubleArrowIcon pl={1} />
+        </Button>
+      </Box>
       <Slider {...settings}>
         {list.map((item) => {
-          return <TourItem key={item.id} item={item} markTour={markTour} />;
+          return <TourItem key={item.id} item={item} />;
         })}
       </Slider>
     </Box>
   );
 };
 
-export default TourList;
+export default List;

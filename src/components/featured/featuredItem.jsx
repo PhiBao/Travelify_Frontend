@@ -21,9 +21,9 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import Tooltip from "@mui/material/Tooltip";
 import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
 import StyledRating from "../common/rating";
+import { Link, useNavigate } from "react-router-dom";
 import { vehicles as vh } from "../../helpers/tour_helper";
 import { timeSentence } from "../../helpers/tour_helper";
-import { Link } from "react-router-dom";
 import { markTour } from "../../store/home";
 
 const useStyles = makeStyles((theme) => ({
@@ -59,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
 const FeaturedItem = ({ tour }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     id,
     name,
@@ -136,12 +137,13 @@ const FeaturedItem = ({ tour }) => {
             <ButtonGroup disableElevation variant="contained">
               {tags.map((tag) => (
                 <Button
-                  key={tag}
+                  key={tag.value}
                   variant="outlined"
+                  onClick={() => navigate(`/tours?type=tags&uid=${tag.value}`)}
                   sx={{ fontSize: { xs: "10px", sm: "12px" } }}
                   startIcon={<CheckCircleOutlineIcon />}
                 >
-                  {tag}
+                  {tag.label}
                 </Button>
               ))}
             </ButtonGroup>
@@ -169,7 +171,9 @@ const FeaturedItem = ({ tour }) => {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small">Learn More</Button>
+          <Button onClick={() => navigate(`/tours/${id}`)} size="small">
+            Learn More
+          </Button>
         </CardActions>
       </Card>
     </Box>

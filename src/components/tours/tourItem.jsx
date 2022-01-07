@@ -20,11 +20,12 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useDispatch } from "react-redux";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Tooltip from "@mui/material/Tooltip";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import StyledRating from "../common/rating";
 import { vehicles as vh } from "../../helpers/tour_helper";
 import CardMedia from "@mui/material/CardMedia";
 import { timeSentence } from "../../helpers/tour_helper";
+import { markTour } from "../../store/tours";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -46,8 +47,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TourItem = ({ item, markTour }) => {
+const TourItem = ({ item }) => {
   const classes = useStyles();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
     id,
@@ -132,12 +134,13 @@ const TourItem = ({ item, markTour }) => {
           <ButtonGroup disableElevation variant="contained">
             {tags.map((tag) => (
               <Button
-                key={tag}
+                onClick={() => navigate(`/tours?type=tags&uid=${tag.value}`)}
+                key={tag.value}
                 variant="outlined"
                 sx={{ fontSize: { xs: "10px", sm: "12px" } }}
                 startIcon={<CheckCircleOutlineIcon />}
               >
-                {tag}
+                {tag.label}
               </Button>
             ))}
           </ButtonGroup>
@@ -163,7 +166,9 @@ const TourItem = ({ item, markTour }) => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Learn More</Button>
+        <Button onClick={() => navigate(`/tours/${id}`)} size="small">
+          Learn More
+        </Button>
       </CardActions>
     </Card>
   );

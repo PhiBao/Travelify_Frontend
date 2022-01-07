@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const ResetPassword = (props) => {
   const navigate = useNavigate();
-  const [q] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const classes = useStyles();
 
   const { control, handleSubmit } = useForm({
@@ -81,8 +81,8 @@ export const ResetPassword = (props) => {
   const onSubmit = async (data, e) => {
     e.preventDefault();
     await resetPassword(
-      { user: { ...data, email: q.get("email") } },
-      q.get("token")
+      { user: { ...data, email: searchParams.get("email") } },
+      searchParams.get("token")
     );
     navigate("/login", { replace: true });
   };

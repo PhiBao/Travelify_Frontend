@@ -13,6 +13,10 @@ const slice = createSlice({
   name: "tours",
   initialState: {
     list: [],
+    meta: {
+      total: 0,
+      sortColumn: { path: "createAt", order: "desc" },
+    },
     vehicles: [],
     tags: [],
     current: {
@@ -64,6 +68,11 @@ const slice = createSlice({
     loading: false,
   },
   reducers: {
+    toursLoaded: (tours, action) => {
+      const { list, meta } = action.payload;
+      tours.list = list;
+      tours.meta.total = meta.total;
+    },
     tourCreated: (tours, action) => {
       const { tour } = action.payload;
       const { tags } = tour;
@@ -192,6 +201,7 @@ export const {
   repliesLoaded,
   commentCreated,
   replyCreated,
+  toursLoaded,
 } = slice.actions;
 
 export default slice.reducer;
@@ -340,6 +350,17 @@ export const createReply = (id, data) => (dispatch) => {
       data,
       onSuccess: replyCreated.type,
       skipLoading: true,
+    })
+  );
+};
+
+export const loadTours = (params) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url,
+      method: "GET",
+      params,
+      onSuccess: toursLoaded.type,
     })
   );
 };

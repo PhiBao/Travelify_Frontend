@@ -50,13 +50,13 @@ import Loading from "../layout/loading";
 import CheckoutForm from "../common/checkoutForm";
 import Review from "../review/review";
 import { vehicles as vh } from "../../helpers/tour_helper";
+import { getTour, requestBookingTour, loadReviews } from "../../store/tours";
 import {
-  getTour,
-  requestBookingTour,
-  markTour,
-  loadReviews,
-} from "../../store/tours";
-import { dateFormatter, state, timeFormatter } from "../../helpers/tour_helper";
+  dateFormatter,
+  state,
+  timeFormatter,
+  DEFAULT_DATE,
+} from "../../helpers/tour_helper";
 import TourItem from "./tourItem";
 import { getRecentlyWatched } from "../../services/tourService";
 import { TextInputField, DatePickerField } from "../common/form";
@@ -85,8 +85,8 @@ const useStyles = makeStyles((theme) => ({
   stack: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "start",
-    alignItems: "start",
+    justifyContent: "flex-start",
+    alignItems: "center",
     [theme.breakpoints.down(900)]: {
       flexDirection: "column",
       "& .MuiPaper-root": {
@@ -190,7 +190,7 @@ const TourDetail = (props) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      departureDate: moment().add(1, "days"),
+      departureDate: DEFAULT_DATE,
       adults: 2,
       children: 0,
     },
@@ -556,11 +556,11 @@ const TourDetail = (props) => {
               {tags.map((tag) => (
                 <Chip
                   sx={{ cursor: "pointer" }}
-                  key={tag}
+                  key={tag.value}
                   variant="outlined"
-                  label={tag}
+                  label={tag.label}
                   component={Link}
-                  to="/"
+                  to={`/tours?type=tags&uid=${tag.value}`}
                 ></Chip>
               ))}
             </Box>
@@ -827,15 +827,23 @@ const TourDetail = (props) => {
           >
             Related tours
           </Typography>
-          <Box className={classes.stack}>
+          <Grid container item>
             {list
               .filter((item) => related.includes(item.id))
               .map((tour) => {
                 return (
-                  <TourItem key={tour.id} item={tour} markTour={markTour} />
+                  <Grid
+                    className={classes.stack}
+                    key={tour.id}
+                    item
+                    xs={12}
+                    md={4}
+                  >
+                    <TourItem item={tour} />
+                  </Grid>
                 );
               })}
-          </Box>
+          </Grid>
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -847,13 +855,23 @@ const TourDetail = (props) => {
           >
             You have watched tours recently
           </Typography>
-          <Box className={classes.stack}>
+          <Grid container item>
             {list
               .filter((item) => recently.includes(item.id))
               .map((tour) => {
-                return <TourItem key={tour.id} item={tour} />;
+                return (
+                  <Grid
+                    className={classes.stack}
+                    key={tour.id}
+                    item
+                    xs={12}
+                    md={4}
+                  >
+                    <TourItem item={tour} />
+                  </Grid>
+                );
               })}
-          </Box>
+          </Grid>
         </Box>
       </Grid>
     </Container>

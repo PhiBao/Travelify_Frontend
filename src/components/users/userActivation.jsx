@@ -4,10 +4,10 @@ import { Navigate, useSearchParams } from "react-router-dom";
 import { confirmUser } from "../../store/session";
 
 export const UserActivation = (props) => {
-  const [q] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    props.confirmUser(q.get("token"), q.get("email"));
+    props.confirmUser(searchParams.get("token"), searchParams.get("email"));
   }, []);
 
   return <Navigate to="/" replace />;

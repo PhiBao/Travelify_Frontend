@@ -47,7 +47,7 @@ const HotTags = ({ list = [] }) => {
                 sx={{ color: "white !important", fontWeight: "600" }}
                 variant="body1"
                 component={Link}
-                to="/"
+                to={`/tours?type=tags&uid=${tag.value}`}
               >
                 {tag.label}
               </Typography>

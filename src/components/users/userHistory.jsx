@@ -8,7 +8,7 @@ import { getSession } from "../../store/session";
 
 export const UserHistory = (props) => {
   const { currentUser, loading } = props;
-  const [q] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [info, setInfo] = useState("");
 
   const getPrepareData = async () => {
@@ -20,11 +20,11 @@ export const UserHistory = (props) => {
   useEffect(() => {
     getPrepareData();
     if (
-      q.get("payment_intent") &&
-      q.get("payment_intent_client_secret") &&
-      q.get("redirect_status")
+      searchParams.get("payment_intent") &&
+      searchParams.get("payment_intent_client_secret") &&
+      searchParams.get("redirect_status")
     ) {
-      switch (q.get("redirect_status")) {
+      switch (searchParams.get("redirect_status")) {
         case "succeeded":
           setInfo("Payment succeeded!");
           break;

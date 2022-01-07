@@ -6,7 +6,7 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, createSearchParams } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
@@ -22,7 +22,17 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContentText from "@mui/material/DialogContentText";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
 import { settings } from "../../helpers/navbar_helper";
+import { cities, DEFAULT_DATE } from "../../helpers/tour_helper";
+import { Select, DatePickerField } from "../common/form";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -33,11 +43,7 @@ const Search = styled("div")(({ theme }) => ({
   },
   marginRight: theme.spacing(2),
   marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
+  width: "auto",
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -56,19 +62,39 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
+    width: "10ch",
+    cursor: "pointer",
   },
 }));
+
+const schema = Yup.object().shape({
+  date: Yup.date()
+    .min(new Date(), "Departure date must be later than today.")
+    .required(),
+  departure: Yup.object().nullable(),
+});
 
 const NavBar = (props) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const isNavOpen = Boolean(anchorElNav);
   const isUserOpen = Boolean(anchorElUser);
+  const [openSearch, setOpenSearch] = useState(false);
   const { currentUser } = props;
+  const navigate = useNavigate();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      date: DEFAULT_DATE,
+      departure: {},
+    },
+    resolver: yupResolver(schema),
+  });
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -83,6 +109,30 @@ const NavBar = (props) => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleOpenSearch = () => {
+    setOpenSearch(true);
+  };
+
+  const handleCloseSearch = () => {
+    setOpenSearch(false);
+    reset();
+  };
+
+  const handleSubmitSearch = (data, e) => {
+    e.preventDefault();
+    const q = {
+      type: "search",
+      date: data.date,
+      departure: data.departure.value || "",
+    };
+    navigate({
+      pathname: "/tours",
+      search: `?${createSearchParams(q)}`,
+    });
+    setOpenSearch(false);
+    reset();
   };
 
   return (
@@ -136,14 +186,30 @@ const NavBar = (props) => {
                 <Typography textAlign="center">Home</Typography>
               </MenuItem>
               <MenuItem
-                key="tours"
+                key="newest"
                 onClick={handleCloseNavMenu}
                 component={Link}
-                to="/tours/new"
+                to="/tours"
               >
-                <Typography textAlign="center">Tours</Typography>
+                <Typography textAlign="center">Newest</Typography>
               </MenuItem>
-              {currentUser.id === 0 && (
+              <MenuItem
+                key="hot"
+                onClick={handleCloseNavMenu}
+                component={Link}
+                to="/tours"
+              >
+                <Typography textAlign="center">Hot</Typography>
+              </MenuItem>
+              <MenuItem
+                key="favorite"
+                onClick={handleCloseNavMenu}
+                component={Link}
+                to="/tours"
+              >
+                <Typography textAlign="center">Favorite</Typography>
+              </MenuItem>
+              {currentUser.id === 0 ? (
                 <Box>
                   <MenuItem
                     key="register"
@@ -162,6 +228,15 @@ const NavBar = (props) => {
                     <Typography textAlign="center">Login</Typography>
                   </MenuItem>
                 </Box>
+              ) : (
+                <MenuItem
+                  key="myMark"
+                  onClick={handleCloseNavMenu}
+                  component={Link}
+                  to="/tours?type=mark"
+                >
+                  <Typography textAlign="center">My Mark</Typography>
+                </MenuItem>
               )}
             </Menu>
           </Box>
@@ -178,13 +253,47 @@ const NavBar = (props) => {
             </Button>
             <Button
               component={Link}
-              to="/tours/new"
-              key="tours"
+              to="/tours"
+              key="newest"
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}
             >
-              Tours
+              Newest
             </Button>
+            <Button
+              component={Link}
+              to="/tours?type=hot"
+              key="hot"
+              onClick={handleCloseNavMenu}
+              sx={{ mr: -2, my: 2, color: "white", display: "block" }}
+            >
+              Hot
+            </Button>
+            <Button
+              component={Link}
+              to="/tours?type=favorite"
+              key="Favorite"
+              onClick={handleCloseNavMenu}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              Favorite
+            </Button>
+            {currentUser.id !== 0 && (
+              <Button
+                component={Link}
+                to="/tours?type=mark"
+                key="myMark"
+                onClick={handleCloseNavMenu}
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                My mark
+              </Button>
+            )}
           </Box>
           <Box
             sx={{
@@ -197,10 +306,45 @@ const NavBar = (props) => {
                 <SearchIcon />
               </SearchIconWrapper>
               <StyledInputBase
+                onClick={handleOpenSearch}
+                disabled
                 placeholder="Search…"
                 inputProps={{ "aria-label": "search" }}
               />
             </Search>
+            <Dialog open={openSearch} onClose={handleCloseSearch}>
+              <Box
+                id="searchForm"
+                component="form"
+                onSubmit={handleSubmit(handleSubmitSearch)}
+                autoComplete="off"
+              >
+                <DialogTitle>Search tour</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    Where do you want to go?
+                  </DialogContentText>
+                  <Select
+                    control={control}
+                    name="departure"
+                    label="Depart in"
+                    options={cities}
+                    placeholder="Select a departure"
+                    error={errors.departure}
+                  />
+                  <DatePickerField
+                    control={control}
+                    name="date"
+                    label="Depart at"
+                    error={errors.date}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseSearch}>Cancel</Button>
+                  <Button type="submit">Search</Button>
+                </DialogActions>
+              </Box>
+            </Dialog>
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             {currentUser.id === 0 ? (
@@ -230,7 +374,6 @@ const NavBar = (props) => {
                   size="large"
                   aria-label="show 17 new notifications"
                   color="inherit"
-                  sx={{ display: { xs: "none", sm: "inline" } }}
                 >
                   <Badge badgeContent={17} color="error">
                     <NotificationsIcon sx={{ color: "black" }} />
