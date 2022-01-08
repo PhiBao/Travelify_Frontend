@@ -60,6 +60,7 @@ import {
 import TourItem from "./tourItem";
 import { getRecentlyWatched } from "../../services/tourService";
 import { TextInputField, DatePickerField } from "../common/form";
+import useDocumentTitle from "../../utils/useDocumentTitle";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
 
@@ -67,8 +68,8 @@ const booking_schema = Yup.object().shape({
   departureDate: Yup.date()
     .min(new Date(), "Departure date must be later than today.")
     .required(),
-  adults: Yup.number().min(1).required(),
-  children: Yup.number().min(0).nullable(),
+  adults: Yup.number().typeError("Must specify a number").min(1).required(),
+  children: Yup.number().typeError("Must specify a number").min(0).nullable(),
 });
 
 const guest_schema = Yup.object().shape({
@@ -222,6 +223,7 @@ const TourDetail = (props) => {
     reviews,
     size,
   } = self;
+  useDocumentTitle(name);
 
   const vehicleIcons = vh.filter((icon) => vehicles.includes(icon.key));
   const validTour =

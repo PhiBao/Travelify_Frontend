@@ -6,8 +6,10 @@ import List from "./list";
 import HotTags from "./hotTags";
 import Loading from "../layout/loading";
 import { loadHome } from "../../store/home";
+import useDocumentTitle from "../../utils/useDocumentTitle";
 
 const Home = (props) => {
+  useDocumentTitle("Home page - Travelify");
   const { home, loadHome } = props;
 
   useEffect(async () => {

@@ -13,8 +13,11 @@ import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 import UserProfile from "./userProfile";
 import UserHistory from "./userHistory";
 import PasswordChange from "./passwordChange";
+import useDocumentTitle from "../../utils/useDocumentTitle";
 
 export const UserSettings = () => {
+  useDocumentTitle("User settings");
+
   return (
     <Container>
       <Grid

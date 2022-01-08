@@ -17,6 +17,7 @@ import { resetPassword } from "../../store/session";
 import { TextInputField } from "../common/form";
 import Loading from "../layout/loading";
 import auth from "../../services/authService";
+import useDocumentTitle from "../../utils/useDocumentTitle";
 
 const schema = Yup.object().shape({
   password: Yup.string()
@@ -42,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const ResetPassword = (props) => {
+  useDocumentTitle("Reset password");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const classes = useStyles();

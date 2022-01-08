@@ -23,6 +23,7 @@ import {
 } from "../common/form";
 import { cities, kinds } from "../../helpers/tour_helper";
 import Loading from "../layout/loading";
+import useDocumentTitle from "../../utils/useDocumentTitle";
 
 const schema = Yup.object().shape({
   name: Yup.string().max(255).required(),
@@ -104,6 +105,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const TourForm = (props) => {
+  useDocumentTitle("New Tour");
   const {
     register,
     control,

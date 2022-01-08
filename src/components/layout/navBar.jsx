@@ -145,7 +145,15 @@ const NavBar = (props) => {
             component="div"
             sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
           >
-            <Link to="/">Travelify</Link>
+            <Link to="/">
+              <img
+                width="160px"
+                height="59px"
+                style={{ marginBottom: "-10px" }}
+                src={`${process.env.PUBLIC_URL}/assets/images/logo.png`}
+                alt="featured images"
+              />
+            </Link>
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>

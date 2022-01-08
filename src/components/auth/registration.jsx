@@ -18,6 +18,7 @@ import { TextInputField, DatePickerField } from "../common/form";
 import { createSession } from "../../store/session";
 import Loading from "../layout/loading";
 import auth from "../../services/authService";
+import useDocumentTitle from "../../utils/useDocumentTitle";
 
 const schema = Yup.object().shape({
   firstName: Yup.string().max(20),
@@ -58,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Registration = (props) => {
+  useDocumentTitle("Register");
   const navigate = useNavigate();
   const location = useLocation();
   const {

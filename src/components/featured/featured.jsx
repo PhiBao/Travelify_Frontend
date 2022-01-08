@@ -21,6 +21,7 @@ const Featured = ({ list }) => {
     infinite: true,
     slidesToShow: 1,
     slidesToScroll: 1,
+    pauseOnHover: false,
   };
   return (
     <Slider className={classes.slider} {...settings}>

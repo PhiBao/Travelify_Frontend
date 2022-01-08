@@ -16,6 +16,7 @@ import { forgottenPassword } from "../../store/session";
 import { TextInputField } from "../common/form";
 import Loading from "../layout/loading";
 import auth from "../../services/authService";
+import useDocumentTitle from "../../utils/useDocumentTitle";
 
 const schema = Yup.object().shape({
   email: Yup.string().required().email(),
@@ -32,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const ForgottenPassword = (props) => {
+  useDocumentTitle("Forgotten password");
   const { control, handleSubmit } = useForm({
     defaultValues: {
       email: "",

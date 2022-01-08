@@ -23,6 +23,7 @@ import UserSettings from "./components/users/userSettings";
 import UserActivation from "./components/users/userActivation";
 import TourDetail from "./components/tours/tourDetail";
 import ToursList from "./components/tours/toursList";
+import PrivateRoute from "./components/common/privateRoute";
 import { getSession } from "./store/session";
 import { getCurrentUser } from "./store/session";
 import "react-toastify/dist/ReactToastify.css";
@@ -60,14 +61,15 @@ const App = (props) => {
           <Route path="/forgotten_password" element={<ForgottenPassword />} />
           <Route path="/reset_password" element={<ResetPassword />} />
           <Route path="/activate_account" element={<UserActivation />} />
+          <Route path="/tours" element={<ToursList />} />
+          <Route path="/tours/:id" element={<TourDetail />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/settings/*" element={<UserSettings />} />
           </Route>
+          <Route element={<PrivateRoute />}>
+            <Route path="/tours/new" element={<TourForm />} />
+          </Route>
           <Route path="*" element={<Navigate replace to="/" />} />
-          <Route path="/tours" element={<ToursList />} />
-          <Route path="/tours/hot" element={<ToursList />} />
-          <Route path="/tours/new" element={<TourForm />} />
-          <Route path="/tours/:id" element={<TourDetail />} />
         </Routes>
       </Container>
       <Footer />

@@ -16,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import Loading from "../layout/loading";
 import TourItem from "./tourItem";
 import { loadTours } from "../../store/tours";
+import useDocumentTitle from "../../utils/useDocumentTitle";
 
 const useStyles = makeStyles((theme) => ({
   stack: {
@@ -51,6 +52,7 @@ const sortPath = [
 ];
 
 const ToursList = (props) => {
+  useDocumentTitle("Tours list");
   const { list, meta, loadTours, loading } = props;
   const [searchParams] = useSearchParams();
   const { total } = meta;

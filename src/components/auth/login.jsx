@@ -19,6 +19,7 @@ import Box from "@material-ui/core/Box";
 import { TextInputField, FormCheckbox } from "../common/form";
 import Loading from "../layout/loading";
 import { receiveSession, loginSocial } from "../../store/session";
+import useDocumentTitle from "../../utils/useDocumentTitle";
 
 const schema = Yup.object().shape({
   email: Yup.string().required().email(),
@@ -74,6 +75,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Login = (props) => {
+  useDocumentTitle("Login");
   const navigate = useNavigate();
   const location = useLocation();
   const classes = useStyles();
