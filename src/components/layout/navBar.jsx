@@ -312,7 +312,12 @@ const NavBar = (props) => {
                 inputProps={{ "aria-label": "search" }}
               />
             </Search>
-            <Dialog open={openSearch} onClose={handleCloseSearch}>
+            <Dialog
+              fullWidth={true}
+              maxWidth="sm"
+              open={openSearch}
+              onClose={handleCloseSearch}
+            >
               <Box
                 id="searchForm"
                 component="form"
@@ -410,7 +415,7 @@ const NavBar = (props) => {
                   {settings.map((setting) => (
                     <MenuItem
                       key={setting.label}
-                      onClick={handleCloseNavMenu}
+                      onClick={handleCloseUserMenu}
                       component={Link}
                       to={setting.route}
                       sx={{ my: 0.5 }}

@@ -17,6 +17,7 @@ import Typography from "@mui/material/Typography";
 import { TextInputField, DatePickerField } from "../common/form";
 import { createSession } from "../../store/session";
 import Loading from "../layout/loading";
+import auth from "../../services/authService";
 
 const schema = Yup.object().shape({
   firstName: Yup.string().max(20),
@@ -101,16 +102,14 @@ export const Registration = (props) => {
     event.preventDefault();
   };
 
-  const { session, createSession } = props;
-  const { currentUser, loading } = session;
-
+  const { loading, createSession } = props;
   const onSubmit = async (user, e) => {
     e.preventDefault();
     await createSession({ user });
     navigate(location.state?.from.pathname || "/");
   };
 
-  if (currentUser.id !== 0) return <Navigate to="/" replace />;
+  if (auth.getCurrentUser()) return <Navigate to="/" replace />;
 
   return (
     <Box
@@ -245,7 +244,7 @@ export const Registration = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  session: state.entities.session,
+  loading: state.entities.session.loading,
 });
 
 const mapDispatchToProps = (dispatch) => ({

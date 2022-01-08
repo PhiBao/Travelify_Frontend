@@ -16,6 +16,7 @@ import { makeStyles } from "@material-ui/core";
 import { resetPassword } from "../../store/session";
 import { TextInputField } from "../common/form";
 import Loading from "../layout/loading";
+import auth from "../../services/authService";
 
 const schema = Yup.object().shape({
   password: Yup.string()
@@ -75,8 +76,7 @@ export const ResetPassword = (props) => {
     event.preventDefault();
   };
 
-  const { session, resetPassword } = props;
-  const { currentUser, loading } = session;
+  const { loading, resetPassword } = props;
 
   const onSubmit = async (data, e) => {
     e.preventDefault();
@@ -87,7 +87,7 @@ export const ResetPassword = (props) => {
     navigate("/login", { replace: true });
   };
 
-  if (currentUser.id !== 0) return <Navigate to="/" replace />;
+  if (auth.getCurrentUser()) return <Navigate to="/" replace />;
 
   return (
     <Box
@@ -170,7 +170,7 @@ export const ResetPassword = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  session: state.entities.session,
+  loading: state.entities.session.loading,
 });
 
 const mapDispatchToProps = (dispatch) => ({

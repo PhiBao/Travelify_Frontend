@@ -24,6 +24,10 @@ const slice = createSlice({
       admin: false,
       createdAt: "",
     },
+    bookingList: [],
+    meta: {
+      total: 0,
+    },
     loading: false,
   },
   reducers: {
@@ -53,9 +57,9 @@ const slice = createSlice({
     passwordForgotten: (session, action) => {
       const { email } = action.payload;
       session.currentUser.email = email;
-      if (session.currentUser.reset_email_sent === true)
+      if (session.currentUser.resetEmailSent === true)
         toast.success("Reset email successfully");
-      session.currentUser.reset_email_sent = true;
+      session.currentUser.resetEmailSent = true;
     },
     passwordReset: (session) => {
       session.currentUser.reset = true;
@@ -79,6 +83,16 @@ const slice = createSlice({
       auth.loginWithJwt(token);
       session.currentUser = user;
       toast.success("Welcome to Travelify!");
+    },
+    bookingsLoaded: (session, action) => {
+      const { list, meta } = action.payload;
+      session.bookingList = list;
+      session.meta.total = meta.total;
+    },
+    reviewCreated: (session, action) => {
+      const { body, hearts, id } = action.payload;
+      const index = session.bookingList.findIndex((item) => item.id === id);
+      session.bookingList[index].review = { body, hearts };
     },
   },
   extraReducers: (builder) => {
@@ -107,6 +121,8 @@ export const {
   userUpdated,
   userConfirmed,
   socialLoggedIn,
+  bookingsLoaded,
+  reviewCreated,
 } = slice.actions;
 
 export default slice.reducer;
@@ -213,6 +229,30 @@ export const loginSocial = (data, headers) => (dispatch) => {
       data,
       headers,
       onSuccess: socialLoggedIn.type,
+    })
+  );
+};
+
+export const loadBookings = (id, params) => (dispatch, getState) => {
+  if (id === 0) return;
+
+  return dispatch(
+    apiCallBegan({
+      url: users_url + `/${id}/bookings`,
+      params,
+      method: "GET",
+      onSuccess: bookingsLoaded.type,
+    })
+  );
+};
+
+export const createReview = (id, data) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: `bookings/${id}/review`,
+      method: "POST",
+      data,
+      onSuccess: reviewCreated.type,
     })
   );
 };

@@ -108,7 +108,7 @@ export const UserProfile = (props) => {
     fields.forEach((field) => {
       if (currentUser[field]) setValue(field, currentUser[field]);
     });
-  }, []);
+  }, [currentUser]);
 
   const handleImageChange = (e) => {
     e.preventDefault();

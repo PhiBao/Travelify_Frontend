@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { Navigate, Link } from "react-router-dom";
 import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
-import { Link as MuiLink } from "@mui/material";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
@@ -16,6 +15,7 @@ import { makeStyles } from "@material-ui/core";
 import { forgottenPassword } from "../../store/session";
 import { TextInputField } from "../common/form";
 import Loading from "../layout/loading";
+import auth from "../../services/authService";
 
 const schema = Yup.object().shape({
   email: Yup.string().required().email(),
@@ -42,15 +42,14 @@ export const ForgottenPassword = (props) => {
 
   const classes = useStyles();
 
-  const { session, forgottenPassword } = props;
-  const { currentUser, loading } = session;
+  const { currentUser, loading, forgottenPassword } = props;
 
   const onSubmit = async (data, e) => {
     e.preventDefault();
     await forgottenPassword(data);
   };
 
-  if (currentUser.id !== 0) return <Navigate to="/" replace />;
+  if (auth.getCurrentUser()) return <Navigate to="/" replace />;
 
   return (
     <Box
@@ -62,7 +61,7 @@ export const ForgottenPassword = (props) => {
       {loading && <Loading />}
 
       <Card className={classes.card}>
-        {currentUser.reset_email_sent === true ? (
+        {currentUser.resetEmailSent === true ? (
           <Box>
             <CardHeader
               avatar={<MarkEmailUnreadIcon style={{ fontSize: 200 }} />}
@@ -76,9 +75,8 @@ export const ForgottenPassword = (props) => {
               </Typography>
               <Typography sx={{ mt: 3 }} variant="body2" color="text.secondary">
                 Have you not received the email yet?{" "}
-                <MuiLink
-                  component="button"
-                  variant="body2"
+                <Button
+                  variant="text"
                   onClick={() => {
                     props.forgottenPassword({
                       email: currentUser.email,
@@ -87,20 +85,19 @@ export const ForgottenPassword = (props) => {
                   sx={{ mb: "2px" }}
                 >
                   Resend the email
-                </MuiLink>
+                </Button>
               </Typography>
             </CardContent>
             <CardActions>
-              <MuiLink
-                component="button"
-                variant="body2"
+              <Button
+                variant="text"
                 onClick={() => {
                   window.location.href = "/login";
                 }}
                 sx={{ ml: 1 }}
               >
                 Login
-              </MuiLink>
+              </Button>
             </CardActions>
           </Box>
         ) : (
@@ -153,7 +150,8 @@ export const ForgottenPassword = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  session: state.entities.session,
+  currentUser: state.entities.session.currentUser,
+  loading: state.entities.session.loading,
 });
 
 const mapDispatchToProps = (dispatch) => ({

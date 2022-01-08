@@ -10,7 +10,7 @@ export const UserActivation = (props) => {
     props.confirmUser(searchParams.get("token"), searchParams.get("email"));
   }, []);
 
-  return <Navigate to="/" replace />;
+  return <Navigate to="/settings/general" replace />;
 };
 
 const mapDispatchToProps = (dispatch) => ({
