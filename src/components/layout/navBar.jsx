@@ -13,9 +13,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import Container from "@mui/material/Container";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import LogoutIcon from "@mui/icons-material/Logout";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
@@ -30,7 +33,6 @@ import DialogContentText from "@mui/material/DialogContentText";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { settings } from "../../helpers/navbar_helper";
 import { cities, DEFAULT_DATE } from "../../helpers/tour_helper";
 import { Select, DatePickerField } from "../common/form";
 
@@ -75,12 +77,14 @@ const schema = Yup.object().shape({
 });
 
 const NavBar = (props) => {
+  const {
+    currentUser: { id, avatarUrl, admin },
+  } = props;
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const isNavOpen = Boolean(anchorElNav);
   const isUserOpen = Boolean(anchorElUser);
   const [openSearch, setOpenSearch] = useState(false);
-  const { currentUser } = props;
   const navigate = useNavigate();
 
   const {
@@ -217,7 +221,7 @@ const NavBar = (props) => {
               >
                 <Typography textAlign="center">Favorite</Typography>
               </MenuItem>
-              {currentUser.id === 0 ? (
+              {id === 0 ? (
                 <Box>
                   <MenuItem
                     key="register"
@@ -286,7 +290,7 @@ const NavBar = (props) => {
             >
               Favorite
             </Button>
-            {currentUser.id !== 0 && (
+            {id !== 0 && (
               <Button
                 component={Link}
                 to="/tours?type=mark"
@@ -360,7 +364,7 @@ const NavBar = (props) => {
             </Dialog>
           </Box>
           <Box sx={{ flexGrow: 0 }}>
-            {currentUser.id === 0 ? (
+            {id === 0 ? (
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
                 <Button
                   component={Link}
@@ -396,7 +400,7 @@ const NavBar = (props) => {
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       src={
-                        currentUser.avatarUrl ||
+                        avatarUrl ||
                         `${process.env.PUBLIC_URL}/assets/images/unknown.png`
                       }
                       alt="avatar"
@@ -420,18 +424,45 @@ const NavBar = (props) => {
                   open={isUserOpen || false}
                   onClose={handleCloseUserMenu}
                 >
-                  {settings.map((setting) => (
+                  {admin && (
                     <MenuItem
-                      key={setting.label}
+                      key="dashboard"
                       onClick={handleCloseUserMenu}
                       component={Link}
-                      to={setting.route}
+                      to="/admin"
                       sx={{ my: 0.5 }}
                     >
-                      <ListItemIcon>{setting.icon}</ListItemIcon>
-                      <ListItemText primary={setting.label} />
+                      <ListItemIcon>
+                        <AdminPanelSettingsIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Dashboard" />
                     </MenuItem>
-                  ))}
+                  )}
+
+                  <MenuItem
+                    key="settings"
+                    onClick={handleCloseUserMenu}
+                    component={Link}
+                    to="/settings"
+                    sx={{ my: 0.5 }}
+                  >
+                    <ListItemIcon>
+                      <ManageAccountsIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Settings" />
+                  </MenuItem>
+                  <MenuItem
+                    key="logout"
+                    onClick={handleCloseUserMenu}
+                    component={Link}
+                    to="/logout"
+                    sx={{ my: 0.5 }}
+                  >
+                    <ListItemIcon>
+                      <LogoutIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Logout" />
+                  </MenuItem>
                 </Menu>
               </Box>
             )}

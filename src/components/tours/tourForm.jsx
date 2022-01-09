@@ -221,13 +221,7 @@ export const TourForm = (props) => {
   const imagesField = register("images");
 
   return (
-    <Box
-      my={10}
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      minHeight="100vh"
-    >
+    <Box display="flex" mt={10} justifyContent="center" alignItems="center">
       {loading && <Loading />}
       <Card className={classes.card}>
         <Box sx={{ display: "flex", justifyContent: "center" }}>

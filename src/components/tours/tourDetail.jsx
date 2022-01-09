@@ -111,6 +111,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#e6ee9c",
     borderRadius: "5px",
     padding: theme.spacing(1),
+    position: "sticky",
+    top: "80px",
   },
 
   rating: {
