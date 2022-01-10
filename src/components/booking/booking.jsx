@@ -12,7 +12,7 @@ import {
   shortDateFormatter,
   noTimeFormatter,
   reviewStatus,
-} from "../../helpers/tour_helper";
+} from "../../helpers/tourHelper";
 import Rate from "./rate";
 import { createReview } from "../../store/session";
 

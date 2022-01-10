@@ -28,7 +28,7 @@ import Comment from "./comment";
 import StyledRating from "../common/rating";
 import ReportDialog from "../common/reportDialog";
 import CommentForm from "../common/commentForm";
-import { dateFormatter } from "../../helpers/tour_helper";
+import { dateFormatter } from "../../helpers/tourHelper";
 import {
   deleteReview,
   loadComments,

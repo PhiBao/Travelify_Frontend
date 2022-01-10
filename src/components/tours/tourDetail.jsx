@@ -49,14 +49,14 @@ import paginate from "../../utils/paginate";
 import Loading from "../layout/loading";
 import CheckoutForm from "../common/checkoutForm";
 import Review from "../review/review";
-import { vehicles as vh } from "../../helpers/tour_helper";
+import { vehicles as vh } from "../../helpers/tourHelper";
 import { getTour, requestBookingTour, loadReviews } from "../../store/tours";
 import {
   dateFormatter,
   state,
   timeFormatter,
   DEFAULT_DATE,
-} from "../../helpers/tour_helper";
+} from "../../helpers/tourHelper";
 import TourItem from "./tourItem";
 import { getRecentlyWatched } from "../../services/tourService";
 import { TextInputField, DatePickerField } from "../common/form";

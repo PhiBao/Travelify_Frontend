@@ -12,27 +12,13 @@ import LineStyleIcon from "@mui/icons-material/LineStyle";
 import TimelineIcon from "@mui/icons-material/Timeline";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TourIcon from "@mui/icons-material/Tour";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
 import StyleIcon from "@mui/icons-material/Style";
 import ReportIcon from "@mui/icons-material/Report";
-import { makeStyles } from "@material-ui/core";
-
-const useStyles = makeStyles((theme) => ({
-  wrapper: {
-    position: "sticky",
-    top: 0,
-    display: {
-      xs: "none",
-      sm: "flex",
-    },
-  },
-}));
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 const SideBar = () => {
-  const classes = useStyles();
-
   return (
-    <Box className={classes.wrapper} elevation={3}>
+    <Box>
       <Toolbar />
       <Divider />
       <List
@@ -87,15 +73,15 @@ const SideBar = () => {
         </ListItemButton>
         <ListItemButton>
           <ListItemIcon>
-            <StyleIcon />
+            <MonetizationOnIcon />
           </ListItemIcon>
-          <ListItemText primary="Tags" />
+          <ListItemText primary="Transactions" />
         </ListItemButton>
         <ListItemButton>
           <ListItemIcon>
-            <AnalyticsIcon />
+            <StyleIcon />
           </ListItemIcon>
-          <ListItemText primary="Statistics" />
+          <ListItemText primary="Tags" />
         </ListItemButton>
       </List>
       <Divider />

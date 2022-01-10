@@ -21,7 +21,7 @@ import {
   DateTimePickerField,
   Creatable,
 } from "../common/form";
-import { cities, kinds } from "../../helpers/tour_helper";
+import { cities, kinds } from "../../helpers/tourHelper";
 import Loading from "../layout/loading";
 import useDocumentTitle from "../../utils/useDocumentTitle";
 

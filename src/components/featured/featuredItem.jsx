@@ -22,8 +22,8 @@ import Tooltip from "@mui/material/Tooltip";
 import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
 import StyledRating from "../common/rating";
 import { Link, useNavigate } from "react-router-dom";
-import { vehicles as vh } from "../../helpers/tour_helper";
-import { timeSentence } from "../../helpers/tour_helper";
+import { vehicles as vh } from "../../helpers/tourHelper";
+import { timeSentence } from "../../helpers/tourHelper";
 import { markTour } from "../../store/home";
 
 const useStyles = makeStyles((theme) => ({

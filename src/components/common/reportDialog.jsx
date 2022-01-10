@@ -9,7 +9,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { reportOptions } from "../../helpers/tour_helper";
+import { reportOptions } from "../../helpers/tourHelper";
 
 const ReportDialog = (props) => {
   const { onClose, value: valueProp, open, type, targetId, ...other } = props;

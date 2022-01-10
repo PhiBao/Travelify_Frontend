@@ -37,7 +37,11 @@ const HotTags = ({ list = [] }) => {
       {list.slice(0, columns).map((tag) => (
         <ImageListItem key={tag.value}>
           <img
-            {...srcset(tag.illustrationUrl, 248)}
+            {...srcset(
+              tag.illustrationUrl ||
+                `${process.env.PUBLIC_URL}/assets/images/flowers.jpg`,
+              248
+            )}
             alt={tag.label}
             loading="lazy"
           />

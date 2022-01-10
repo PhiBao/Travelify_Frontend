@@ -22,9 +22,9 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Tooltip from "@mui/material/Tooltip";
 import { Link, useNavigate } from "react-router-dom";
 import StyledRating from "../common/rating";
-import { vehicles as vh } from "../../helpers/tour_helper";
+import { vehicles as vh } from "../../helpers/tourHelper";
 import CardMedia from "@mui/material/CardMedia";
-import { timeSentence } from "../../helpers/tour_helper";
+import { timeSentence } from "../../helpers/tourHelper";
 import { markTour } from "../../store/tours";
 
 const useStyles = makeStyles((theme) => ({

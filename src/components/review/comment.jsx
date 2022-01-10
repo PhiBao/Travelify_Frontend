@@ -23,7 +23,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
 import ReportDialog from "../common/reportDialog";
 import CommentForm from "../common/commentForm";
-import { fromNow } from "../../helpers/tour_helper";
+import { fromNow } from "../../helpers/tourHelper";
 
 const Comment = (props) => {
   const {

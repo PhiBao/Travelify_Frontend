@@ -35,11 +35,7 @@ const useStyles = makeStyles({
 });
 
 const App = (props) => {
-  const {
-    currentUser: { id, admin },
-    getSession,
-    getCurrentUser,
-  } = props;
+  const { id, getSession, getCurrentUser } = props;
   const classes = useStyles();
   const getPrepareData = async () => {
     if (id === 0) {
@@ -76,13 +72,13 @@ const App = (props) => {
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </Container>
-      {!admin && <Footer />}
+      <Footer />
     </Router>
   );
 };
 
 const mapStateToProps = (state) => ({
-  currentUser: state.entities.session.currentUser,
+  id: state.entities.session.currentUser.id,
 });
 
 const mapDispatchToProps = (dispatch) => ({
