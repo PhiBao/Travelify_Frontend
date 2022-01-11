@@ -24,7 +24,7 @@ import { Link, useNavigate } from "react-router-dom";
 import StyledRating from "../common/rating";
 import { vehicles as vh } from "../../helpers/tourHelper";
 import CardMedia from "@mui/material/CardMedia";
-import { timeSentence } from "../../helpers/tourHelper";
+import { timeSentence } from "../../helpers/timeHelper";
 import { markTour } from "../../store/tours";
 
 const useStyles = makeStyles((theme) => ({

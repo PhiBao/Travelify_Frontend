@@ -33,7 +33,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { cities, DEFAULT_DATE } from "../../helpers/tourHelper";
+import { cities } from "../../helpers/tourHelper";
+import { DEFAULT_DATE } from "../../helpers/timeHelper";
 import { Select, DatePickerField } from "../common/form";
 
 const Search = styled("div")(({ theme }) => ({

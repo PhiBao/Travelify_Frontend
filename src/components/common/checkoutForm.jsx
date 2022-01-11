@@ -5,10 +5,8 @@ import {
   useElements,
   PaymentElement,
 } from "@stripe/react-stripe-js";
-import Loader from "react-loader-spinner";
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { makeStyles } from "@material-ui/core";
-import Button from "@mui/material/Button";
+import LoadingButton from "@mui/lab/LoadingButton";
 import Alert from "@mui/material/Alert";
 
 const useStyles = makeStyles((theme) => ({
@@ -65,28 +63,15 @@ export const CheckoutForm = () => {
     >
       <PaymentElement id="payment-element" />
       <Box
-        component={Button}
+        component={LoadingButton}
         sx={{ mt: 3 }}
         type="submit"
         variant="contained"
-        disabled={isLoading}
+        loading={isLoading}
+        loadingPosition="start"
         fullWidth
       >
-        {isLoading ? (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-            }}
-            component="span"
-          >
-            <Loader type="Circles" color="#000" height={20} width={20} />
-            <Loader type="Circles" color="#000" height={20} width={20} />
-            <Loader type="Circles" color="#000" height={20} width={20} />
-          </Box>
-        ) : (
-          "Pay now"
-        )}
+        Pay now
       </Box>
       {message && (
         <Alert sx={{ mt: 1 }} severity="info" onClose={() => {}}>

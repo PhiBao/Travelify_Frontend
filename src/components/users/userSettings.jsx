@@ -51,7 +51,7 @@ export const UserSettings = () => {
                 </ListSubheader>
               }
             >
-              <ListItemButton component={Link} to="general">
+              <ListItemButton component={Link} to="">
                 <ListItemIcon>
                   <AccountBoxIcon />
                 </ListItemIcon>
@@ -79,7 +79,6 @@ export const UserSettings = () => {
           </Grid>
           <Grid item xs={12} sm={8}>
             <Routes>
-              <Route path="general" element={<UserProfile />} />
               <Route path="change_password" element={<PasswordChange />} />
               <Route path="history" element={<UserHistory />} />
               <Route path="/" element={<UserProfile />} />

@@ -23,7 +23,7 @@ import UserActivation from "./components/users/userActivation";
 import TourDetail from "./components/tours/tourDetail";
 import ToursList from "./components/tours/toursList";
 import PrivateRoute from "./components/common/privateRoute";
-import Dashboard from "./components/admin/dashboard";
+import Dashboard from "./components/admin/dashboard/dashboard";
 import { getSession } from "./store/session";
 import { getCurrentUser } from "./store/session";
 import "react-toastify/dist/ReactToastify.css";

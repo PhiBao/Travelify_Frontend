@@ -18,7 +18,7 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 const SideBar = () => {
   return (
-    <Box>
+    <Box sx={{ position: "sticky", top: 0 }}>
       <Toolbar />
       <Divider />
       <List
@@ -30,7 +30,7 @@ const SideBar = () => {
           </ListSubheader>
         }
       >
-        <ListItemButton>
+        <ListItemButton component={Link} to="">
           <ListItemIcon>
             <LineStyleIcon />
           </ListItemIcon>

@@ -119,15 +119,15 @@ export const UserHistory = (props) => {
             .map((booking) => (
               <Booking key={booking.id} booking={booking} />
             ))}
-          {Math.ceil(meta.total / 10) > 1 && (
+          {Math.ceil(meta.total / 5) > 1 && (
             <Pagination
               sx={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                mb: 1,
+                pt: 3,
               }}
-              count={Math.ceil(meta.total / 10)}
+              count={Math.ceil(meta.total / 5)}
               page={page}
               onChange={handlePageChange}
             />

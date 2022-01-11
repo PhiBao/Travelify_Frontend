@@ -51,12 +51,8 @@ import CheckoutForm from "../common/checkoutForm";
 import Review from "../review/review";
 import { vehicles as vh } from "../../helpers/tourHelper";
 import { getTour, requestBookingTour, loadReviews } from "../../store/tours";
-import {
-  dateFormatter,
-  state,
-  timeFormatter,
-  DEFAULT_DATE,
-} from "../../helpers/tourHelper";
+import { dateFormatter, DEFAULT_DATE } from "../../helpers/timeHelper";
+import { state, timeFormatter } from "../../helpers/tourHelper";
 import TourItem from "./tourItem";
 import { getRecentlyWatched } from "../../services/tourService";
 import { TextInputField, DatePickerField } from "../common/form";
@@ -169,7 +165,6 @@ const TourDetail = (props) => {
   const [openPayment, setOpenPayment] = useState(false);
   const [openCollapse, setOpenCollapse] = useState(false);
   const [dataRequest, setDataRequest] = useState({});
-  const [disabled, setDisabled] = useState(false);
   const [total, setTotal] = useState(0);
   const [date, setDate] = useState("");
   const [mark, setMark] = useState(false);
@@ -293,7 +288,6 @@ const TourDetail = (props) => {
     };
     setOpenForm(false);
     await requestBookingTour({ booking: submitData });
-    setDisabled(true);
   };
 
   const handleLoggedInRequest = async (e) => {
@@ -308,7 +302,6 @@ const TourDetail = (props) => {
       };
       setOpenModal(false);
       await requestBookingTour({ booking: submitData });
-      setDisabled(true);
     } else {
       setOpenModal(false);
       setOpenAlert(true);
@@ -667,7 +660,7 @@ const TourDetail = (props) => {
               >
                 <Button
                   style={{ backgroundColor: "#ffa726" }}
-                  disabled={validTour ? disabled : true}
+                  disabled={!validTour}
                   fullWidth
                   type="submit"
                   variant="contained"
