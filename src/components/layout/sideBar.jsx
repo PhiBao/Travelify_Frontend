@@ -36,7 +36,7 @@ const SideBar = () => {
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton component={Link} to="analytics">
           <ListItemIcon>
             <TimelineIcon />
           </ListItemIcon>

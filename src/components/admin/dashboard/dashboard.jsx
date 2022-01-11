@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import SideBar from "../../layout/sideBar";
 import TourForm from "../../tours/tourForm";
 import AdminHome from "./adminHome";
+import Analytics from "./analytics";
 
 const Dashboard = (props) => {
   const { loading } = props;
@@ -31,6 +32,7 @@ const Dashboard = (props) => {
         <Routes>
           <Route path="tours/new" element={<TourForm />} />
           <Route path="/" element={<AdminHome />} />
+          <Route path="analytics" element={<Analytics />} />
         </Routes>
       </Box>
     </Box>

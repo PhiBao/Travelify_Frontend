@@ -33,7 +33,7 @@ const slice = createSlice({
   },
 });
 
-export const { dashboardLoaded } = slice.actions;
+export const { dashboardLoaded, analyticsLoaded } = slice.actions;
 
 export default slice.reducer;
 
@@ -45,6 +45,16 @@ export const loadDashboard = () => (dispatch) => {
   return dispatch(
     apiCallBegan({
       url: url + "/dashboard",
+      method: "GET",
+      onSuccess: dashboardLoaded.type,
+    })
+  );
+};
+
+export const loadAnalytics = () => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + "/dashboard/analytics",
       method: "GET",
       onSuccess: dashboardLoaded.type,
     })

@@ -18,7 +18,7 @@ import TableRow from "@mui/material/TableRow";
 import { makeStyles } from "@material-ui/core";
 import { arrow, state } from "../../../helpers/dashboardHelper";
 import { loadDashboard } from "../../../store/admin";
-import SimpleLineChart from "../common/simpleLineChart";
+import SimpleLineChart from "../charts/simpleLineChart";
 import { dateFormatter } from "../../../helpers/timeHelper";
 
 const useStyles = makeStyles((theme) => ({
@@ -46,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
 const AdminHome = (props) => {
   const classes = useStyles();
   const { data, loadDashboard } = props;
-  const { featured = {} } = data;
 
   const {
     curRevenues,
@@ -60,7 +59,7 @@ const AdminHome = (props) => {
     users,
     newUsers = [],
     lastBookings = [],
-  } = featured;
+  } = data;
 
   const item = (label, sum, icon, arrow, percent) => (
     <Box className={classes.item}>
