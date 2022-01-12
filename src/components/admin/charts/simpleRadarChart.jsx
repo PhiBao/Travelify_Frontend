@@ -11,9 +11,9 @@ import {
 const SimpleRadarChart = ({ data, name, dataKey, color = "#8884d8" }) => {
   return (
     <RadarChart outerRadius={150} width={500} height={500} data={data}>
-      <PolarGrid />
+      <PolarGrid gridType="circle" />
       <PolarAngleAxis dataKey="name" />
-      <PolarRadiusAxis />
+      <PolarRadiusAxis angle={30} />
       <Radar
         name={name}
         dataKey={dataKey}

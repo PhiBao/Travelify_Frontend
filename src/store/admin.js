@@ -17,6 +17,10 @@ const slice = createSlice({
       const { data } = action.payload;
       admin.data = data;
     },
+    revenuesSearched: (admin, action) => {
+      const { data } = action.payload;
+      admin.data.other = data;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -33,7 +37,7 @@ const slice = createSlice({
   },
 });
 
-export const { dashboardLoaded, analyticsLoaded } = slice.actions;
+export const { dashboardLoaded, revenuesSearched } = slice.actions;
 
 export default slice.reducer;
 
@@ -57,6 +61,28 @@ export const loadAnalytics = () => (dispatch) => {
       url: url + "/dashboard/analytics",
       method: "GET",
       onSuccess: dashboardLoaded.type,
+    })
+  );
+};
+
+export const loadRevenues = () => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + "/dashboard/revenues",
+      method: "GET",
+      onSuccess: dashboardLoaded.type,
+    })
+  );
+};
+
+export const searchRevenues = (params) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + "/dashboard/search",
+      method: "GET",
+      params,
+      onSuccess: revenuesSearched.type,
+      skipLoading: true,
     })
   );
 };

@@ -42,7 +42,7 @@ const SideBar = () => {
           </ListItemIcon>
           <ListItemText primary="Analytics" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton component={Link} to="revenues">
           <ListItemIcon>
             <TrendingUpIcon />
           </ListItemIcon>

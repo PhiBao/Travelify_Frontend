@@ -6,9 +6,15 @@ import { loadAnalytics } from "../../../store/admin";
 import SimpleRadarChart from "../charts/simpleRadarChart";
 import SimpleBarChart from "../charts/simpleBarChart";
 
+const dummyData = [{ name: "Dummy", value1: 0, value2: 0 }];
+
 const Analytics = (props) => {
   const { data, loadAnalytics } = props;
-  const { trendTopics = [], trendTours = [], trendDeparture = [] } = data;
+  const {
+    trendTopics = dummyData,
+    trendTours = [],
+    trendDeparture = [],
+  } = data;
 
   useEffect(async () => {
     await loadAnalytics();

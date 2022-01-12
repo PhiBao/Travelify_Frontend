@@ -6,8 +6,11 @@ import SideBar from "../../layout/sideBar";
 import TourForm from "../../tours/tourForm";
 import AdminHome from "./adminHome";
 import Analytics from "./analytics";
+import Revenues from "./revenues";
+import useDocumentTitle from "../../../utils/useDocumentTitle";
 
 const Dashboard = (props) => {
+  useDocumentTitle("Admin - Dashboard");
   const { loading } = props;
 
   return (
@@ -31,8 +34,9 @@ const Dashboard = (props) => {
       <Box flex="1">
         <Routes>
           <Route path="tours/new" element={<TourForm />} />
-          <Route path="/" element={<AdminHome />} />
           <Route path="analytics" element={<Analytics />} />
+          <Route path="revenues" element={<Revenues />} />
+          <Route path="" element={<AdminHome />} />
         </Routes>
       </Box>
     </Box>

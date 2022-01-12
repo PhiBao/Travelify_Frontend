@@ -81,7 +81,7 @@ export const UserSettings = () => {
             <Routes>
               <Route path="change_password" element={<PasswordChange />} />
               <Route path="history" element={<UserHistory />} />
-              <Route path="/" element={<UserProfile />} />
+              <Route path="" element={<UserProfile />} />
             </Routes>
           </Grid>
         </Grid>

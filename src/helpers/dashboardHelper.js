@@ -1,6 +1,7 @@
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Chip from "@mui/material/Chip";
+import _ from "lodash";
 
 export const arrow = (cur, last) => {
   if (cur < last) {
@@ -37,3 +38,29 @@ export const state = (status) => {
       );
   }
 };
+
+export const percent = (cur, last) => {
+  if (last === 0 || last === "0.0") return "No data";
+  const res = ((cur > last ? cur / last : last / cur) - 1) * 100;
+  return Math.abs(res).toFixed(2);
+};
+
+export const months = [
+  { value: 1, label: "Jan" },
+  { value: 2, label: "Feb" },
+  { value: 3, label: "Mar" },
+  { value: 4, label: "Apr" },
+  { value: 5, label: "May" },
+  { value: 6, label: "Jun" },
+  { value: 7, label: "Jul" },
+  { value: 8, label: "Aug" },
+  { value: 9, label: "Sep" },
+  { value: 10, label: "Oct" },
+  { value: 11, label: "Nov" },
+  { value: 12, label: "Dec" },
+];
+
+export const years = _.range(2018, new Date().getFullYear() + 1).map((y) => ({
+  value: y,
+  label: y,
+}));

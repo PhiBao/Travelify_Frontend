@@ -16,7 +16,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { makeStyles } from "@material-ui/core";
-import { arrow, state } from "../../../helpers/dashboardHelper";
+import { arrow, state, percent } from "../../../helpers/dashboardHelper";
 import { loadDashboard } from "../../../store/admin";
 import SimpleLineChart from "../charts/simpleLineChart";
 import { dateFormatter } from "../../../helpers/timeHelper";
@@ -56,7 +56,7 @@ const AdminHome = (props) => {
     curComments,
     curLikes,
     lastLikes,
-    users,
+    users = [],
     newUsers = [],
     lastBookings = [],
   } = data;
@@ -114,28 +114,28 @@ const AdminHome = (props) => {
           curRevenues,
           <AttachMoneyIcon />,
           arrow(curRevenues, lastRevenues),
-          Math.abs(curRevenues / lastRevenues).toFixed(2)
+          percent(curRevenues, lastRevenues)
         )}
         {item(
           "Reviews",
           curReviews,
           <RateReviewIcon color="primary" />,
           arrow(curReviews, lastReviews),
-          Math.abs(curReviews / lastReviews).toFixed(2)
+          percent(curReviews, lastReviews)
         )}
         {item(
           "Comments",
           curComments,
           <ChatBubbleIcon />,
           arrow(curComments, lastComments),
-          Math.abs(curComments / lastComments).toFixed(2)
+          percent(curComments, lastComments)
         )}
         {item(
           "Likes",
           curLikes,
           <ThumbUpIcon color="primary" />,
           arrow(curLikes, lastLikes),
-          Math.abs(curLikes / lastLikes).toFixed(2)
+          percent(curLikes, lastLikes)
         )}
       </Box>
       <Box sx={{ width: "100%" }}>
