@@ -143,7 +143,7 @@ const AdminHome = (props) => {
           title="User Analytics"
           data={users}
           grid
-          dataKey="new"
+          name="New members"
         />
       </Box>
       <Box sx={{ display: "flex", width: "100%", m: 3 }}>

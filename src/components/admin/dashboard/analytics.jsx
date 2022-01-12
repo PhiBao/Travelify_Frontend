@@ -4,10 +4,11 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { loadAnalytics } from "../../../store/admin";
 import SimpleRadarChart from "../charts/simpleRadarChart";
+import SimpleBarChart from "../charts/simpleBarChart";
 
 const Analytics = (props) => {
   const { data, loadAnalytics } = props;
-  const { trendTopics = [], topicTours = [] } = data;
+  const { trendTopics = [], trendTours = [], trendDeparture = [] } = data;
 
   useEffect(async () => {
     await loadAnalytics();
@@ -34,7 +35,7 @@ const Analytics = (props) => {
           }}
         >
           <Typography variant="h4" component="div" mb={3}>
-            Trending Topics
+            Topic Analytics
           </Typography>
           <Box
             sx={{
@@ -43,10 +44,36 @@ const Analytics = (props) => {
               alignItems: "center",
             }}
           >
-            <SimpleRadarChart data={trendTopics} name="bookers" />
-            <SimpleRadarChart data={topicTours} name="tours" color="#82ca9d" />
+            <SimpleRadarChart
+              data={trendTopics}
+              dataKey="value1"
+              name="bookers"
+            />
+            <SimpleRadarChart
+              data={trendTopics}
+              dataKey="value2"
+              name="tours"
+              color="#82ca9d"
+            />
           </Box>
         </Box>
+      </Box>
+      <Box sx={{ width: "100%" }}>
+        <SimpleBarChart
+          data={trendTours}
+          name="bookers"
+          grid
+          title="Tour Analytics"
+        />
+      </Box>
+      <Box sx={{ width: "100%" }}>
+        <SimpleBarChart
+          data={trendDeparture}
+          name="bookers"
+          color="#b22a00"
+          grid
+          title="Departure Analytics"
+        />
       </Box>
     </Box>
   );

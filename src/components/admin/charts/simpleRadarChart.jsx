@@ -8,7 +8,7 @@ import {
   Legend,
 } from "recharts";
 
-const SimpleRadarChart = ({ data, name, color = "#8884d8" }) => {
+const SimpleRadarChart = ({ data, name, dataKey, color = "#8884d8" }) => {
   return (
     <RadarChart outerRadius={150} width={500} height={500} data={data}>
       <PolarGrid />
@@ -16,7 +16,7 @@ const SimpleRadarChart = ({ data, name, color = "#8884d8" }) => {
       <PolarRadiusAxis />
       <Radar
         name={name}
-        dataKey="value"
+        dataKey={dataKey}
         stroke={color}
         fill={color}
         fillOpacity={0.6}

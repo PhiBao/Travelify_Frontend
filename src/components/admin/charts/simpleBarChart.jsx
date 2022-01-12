@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   CartesianGrid,
   Tooltip,
@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const SimpleLineChart = ({ title, data, name, color = "#5550bd", grid }) => {
+const SimpleBarChart = ({ title, data, name, color = "#3f51b5", grid }) => {
   return (
     <Box
       sx={{
@@ -25,7 +25,7 @@ const SimpleLineChart = ({ title, data, name, color = "#5550bd", grid }) => {
         {title}
       </Typography>
       <ResponsiveContainer width="100%" aspect={4 / 1}>
-        <LineChart
+        <BarChart
           data={data}
           margin={{
             top: 5,
@@ -34,16 +34,16 @@ const SimpleLineChart = ({ title, data, name, color = "#5550bd", grid }) => {
             bottom: 5,
           }}
         >
-          <XAxis dataKey="name" stroke={color} />
+          <XAxis dataKey="name" stroke={color} tick={false} />
           <YAxis />
           <Tooltip />
-          <Line name={name} type="monotone" dataKey="value" stroke={color} />
-          <Tooltip />
           {grid && <CartesianGrid stroke="#e0dfdf" strokeDasharray="5 5" />}
-        </LineChart>
+          <Bar name={name} dataKey="value" fill={color} />
+          <Tooltip />
+        </BarChart>
       </ResponsiveContainer>
     </Box>
   );
 };
 
-export default SimpleLineChart;
+export default SimpleBarChart;
