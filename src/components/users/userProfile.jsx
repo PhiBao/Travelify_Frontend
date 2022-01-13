@@ -3,7 +3,6 @@ import * as Yup from "yup";
 import moment from "moment";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core";
 import SendIcon from "@mui/icons-material/Send";
 import Box from "@mui/material/Box";
@@ -16,7 +15,6 @@ import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { TextInputField, DatePickerField } from "../common/form";
-import { updateUser } from "../../store/session";
 
 const schema = Yup.object().shape({
   firstName: Yup.string().max(20).nullable(),
@@ -269,12 +267,4 @@ export const UserProfile = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  currentUser: state.entities.session.currentUser,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  updateUser: (data, id) => dispatch(updateUser(data, id)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);
+export default UserProfile;

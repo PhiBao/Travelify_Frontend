@@ -5,10 +5,12 @@ import Typography from "@mui/material/Typography";
 import { loadAnalytics } from "../../../store/admin";
 import SimpleRadarChart from "../charts/simpleRadarChart";
 import SimpleBarChart from "../charts/simpleBarChart";
+import useDocumentTitle from "../../../utils/useDocumentTitle";
 
 const dummyData = [{ name: "Dummy", value1: 0, value2: 0 }];
 
 const Analytics = (props) => {
+  useDocumentTitle("Admin - Analytics");
   const { data, loadAnalytics } = props;
   const {
     trendTopics = dummyData,

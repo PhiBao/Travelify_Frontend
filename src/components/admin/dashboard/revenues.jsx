@@ -10,6 +10,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import SimpleAreaChart from "../charts/simpleAreaChart";
 import { loadRevenues, searchRevenues } from "../../../store/admin";
 import { months, years } from "../../../helpers/dashboardHelper";
+import useDocumentTitle from "../../../utils/useDocumentTitle";
 
 const schema = Yup.object().shape({
   month: Yup.object({
@@ -23,6 +24,7 @@ const schema = Yup.object().shape({
 });
 
 const Revenues = (props) => {
+  useDocumentTitle("Admin - Revenues");
   const { data, loadRevenues, searchRevenues } = props;
   const { current = [], other = [] } = data;
 

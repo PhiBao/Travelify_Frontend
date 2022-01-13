@@ -8,7 +8,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import { connect } from "react-redux";
-import { makeStyles } from "@material-ui/core";
 import Login from "./components/auth/login";
 import NavBar from "./components/layout/navBar";
 import Logout from "./components/auth/logout";
@@ -23,36 +22,24 @@ import UserActivation from "./components/users/userActivation";
 import TourDetail from "./components/tours/tourDetail";
 import ToursList from "./components/tours/toursList";
 import PrivateRoute from "./components/common/privateRoute";
-import Dashboard from "./components/admin/dashboard/dashboard";
-import { getSession } from "./store/session";
+import Admin from "./components/admin/admin";
 import { getCurrentUser } from "./store/session";
+import auth from "./services/authService";
 import "react-toastify/dist/ReactToastify.css";
 
-const useStyles = makeStyles({
-  toast: {
-    marginTop: "36px",
-  },
-});
-
 const App = (props) => {
-  const { id, getSession, getCurrentUser } = props;
-  const classes = useStyles();
-  const getPrepareData = async () => {
-    if (id === 0) {
-      await getSession();
-      await getCurrentUser();
-    }
-  };
+  const { getCurrentUser } = props;
 
-  useEffect(() => {
-    getPrepareData();
+  useEffect(async () => {
+    const user = auth.getCurrentUser();
+    if (user) await getCurrentUser(user.id);
   }, []);
 
   return (
     <Router>
       <NavBar />
       <Container maxWidth={false} disableGutters={true}>
-        <ToastContainer theme="dark" className={classes.toast} />
+        <ToastContainer theme="dark" style={{ marginTop: "36px" }} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -67,7 +54,7 @@ const App = (props) => {
             <Route path="/settings/*" element={<UserSettings />} />
           </Route>
           <Route element={<PrivateRoute />}>
-            <Route path="/admin/*" element={<Dashboard />} />
+            <Route path="/admin/*" element={<Admin />} />
           </Route>
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
@@ -77,13 +64,8 @@ const App = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  id: state.entities.session.currentUser.id,
-});
-
 const mapDispatchToProps = (dispatch) => ({
-  getSession: () => dispatch(getSession()),
-  getCurrentUser: () => dispatch(getCurrentUser()),
+  getCurrentUser: (id) => dispatch(getCurrentUser(id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(null, mapDispatchToProps)(App);

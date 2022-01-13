@@ -38,9 +38,6 @@ const slice = createSlice({
       if (remember_me === true) auth.rememberMe(token);
       toast.success("Welcome to Travelify!");
     },
-    sessionDestroyed: () => {
-      auth.logout();
-    },
     sessionGotten: (session) => {
       const user = auth.getCurrentUser();
       if (user) {
@@ -112,7 +109,6 @@ const slice = createSlice({
 
 export const {
   sessionReceived,
-  sessionDestroyed,
   sessionGotten,
   sessionCreated,
   passwordForgotten,
@@ -142,10 +138,6 @@ export const receiveSession = (user) => (dispatch) => {
       onSuccess: sessionReceived.type,
     })
   );
-};
-
-export const destroySession = () => (dispatch) => {
-  return dispatch(sessionDestroyed());
 };
 
 export const getSession = () => (dispatch) => {
@@ -185,17 +177,14 @@ export const resetPassword = (user, token) => (dispatch) => {
   );
 };
 
-export const getCurrentUser = () => (dispatch, getState) => {
-  const { id } = getState().entities.session.currentUser;
-  if (id) {
-    return dispatch(
-      apiCallBegan({
-        url: users_url + `/${id}`,
-        method: "GET",
-        onSuccess: currentUserGotten.type,
-      })
-    );
-  } else return;
+export const getCurrentUser = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: users_url + `/${id}`,
+      method: "GET",
+      onSuccess: currentUserGotten.type,
+    })
+  );
 };
 
 export const updateUser = (data, id) => (dispatch) => {

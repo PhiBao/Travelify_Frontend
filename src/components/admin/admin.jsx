@@ -1,16 +1,16 @@
 import Box from "@mui/material/Box";
-import Loading from "../../layout/loading";
+import Loading from "../layout/loading";
 import { connect } from "react-redux";
 import { Routes, Route } from "react-router-dom";
-import SideBar from "../../layout/sideBar";
-import TourForm from "../../tours/tourForm";
-import AdminHome from "./adminHome";
-import Analytics from "./analytics";
-import Revenues from "./revenues";
-import useDocumentTitle from "../../../utils/useDocumentTitle";
+import SideBar from "../layout/sideBar";
+import TourForm from "../tours/tourForm";
+import AdminHome from "./dashboard/adminHome";
+import Analytics from "./dashboard/analytics";
+import Revenues from "./dashboard/revenues";
+import Users from "./menu/users";
+import User from "./menu/user";
 
-const Dashboard = (props) => {
-  useDocumentTitle("Admin - Dashboard");
+const Admin = (props) => {
   const { loading } = props;
 
   return (
@@ -36,6 +36,8 @@ const Dashboard = (props) => {
           <Route path="tours/new" element={<TourForm />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="revenues" element={<Revenues />} />
+          <Route path="users" element={<Users />} />
+          <Route path="users/:id" element={<User />} />
           <Route path="" element={<AdminHome />} />
         </Routes>
       </Box>
@@ -47,4 +49,4 @@ const mapStateToProps = (state) => ({
   loading: state.entities.admin.loading,
 });
 
-export default connect(mapStateToProps, null)(Dashboard);
+export default connect(mapStateToProps, null)(Admin);

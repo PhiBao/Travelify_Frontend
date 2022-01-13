@@ -11,6 +11,7 @@
     "@mui/icons-material": "^5.2.4",
     "@mui/lab": "^5.0.0-alpha.60",
     "@mui/material": "^5.2.4",
+    "@mui/x-data-grid": "^5.2.2",
     "@reduxjs/toolkit": "^1.6.2",
     "@stripe/react-stripe-js": "^1.7.0",
     "@stripe/stripe-js": "^1.22.0",

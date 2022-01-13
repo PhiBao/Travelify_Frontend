@@ -9,7 +9,8 @@ export const shortDateFormatter = (date) => {
   return moment(date).format("lll");
 };
 
-export const noTimeFormatter = (date) => {
+export const noTimeFormatter = (date = "") => {
+  if (!date) return "";
   return moment(date).format("ll");
 };
 

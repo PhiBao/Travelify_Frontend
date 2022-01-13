@@ -20,6 +20,7 @@ import { arrow, state, percent } from "../../../helpers/dashboardHelper";
 import { loadDashboard } from "../../../store/admin";
 import SimpleLineChart from "../charts/simpleLineChart";
 import { dateFormatter } from "../../../helpers/timeHelper";
+import useDocumentTitle from "../../../utils/useDocumentTitle";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -44,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AdminHome = (props) => {
+  useDocumentTitle("Admin - Home");
   const classes = useStyles();
   const { data, loadDashboard } = props;
 

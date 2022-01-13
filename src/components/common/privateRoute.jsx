@@ -1,19 +1,16 @@
 import * as React from "react";
 import { Navigate, useLocation, Outlet } from "react-router-dom";
-import { connect } from "react-redux";
+import auth from "../../services/authService";
 
-const PrivateRoute = ({ admin }) => {
+const PrivateRoute = () => {
   const location = useLocation();
+  const user = auth.getCurrentUser();
 
-  return admin ? (
+  return user.admin ? (
     <Outlet />
   ) : (
     <Navigate to="/login" state={{ from: location }} />
   );
 };
 
-const mapStateToProps = (state) => ({
-  admin: state.entities.session.currentUser.admin,
-});
-
-export default connect(mapStateToProps, null)(PrivateRoute);
+export default PrivateRoute;

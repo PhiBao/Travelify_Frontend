@@ -59,7 +59,7 @@ const SideBar = () => {
           </ListSubheader>
         }
       >
-        <ListItemButton>
+        <ListItemButton component={Link} to="users">
           <ListItemIcon>
             <PersonOutlineIcon />
           </ListItemIcon>

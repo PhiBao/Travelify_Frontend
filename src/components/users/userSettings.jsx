@@ -6,6 +6,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { Routes, Route, Link } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
+import { connect } from "react-redux";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import HistoryIcon from "@mui/icons-material/History";
@@ -14,9 +15,11 @@ import UserProfile from "./userProfile";
 import UserHistory from "./userHistory";
 import PasswordChange from "./passwordChange";
 import useDocumentTitle from "../../utils/useDocumentTitle";
+import { updateUser } from "../../store/session";
 
-export const UserSettings = () => {
+export const UserSettings = (props) => {
   useDocumentTitle("User settings");
+  const { currentUser, updateUser } = props;
 
   return (
     <Container>
@@ -81,7 +84,15 @@ export const UserSettings = () => {
             <Routes>
               <Route path="change_password" element={<PasswordChange />} />
               <Route path="history" element={<UserHistory />} />
-              <Route path="" element={<UserProfile />} />
+              <Route
+                path=""
+                element={
+                  <UserProfile
+                    currentUser={currentUser}
+                    updateUser={updateUser}
+                  />
+                }
+              />
             </Routes>
           </Grid>
         </Grid>
@@ -90,4 +101,12 @@ export const UserSettings = () => {
   );
 };
 
-export default UserSettings;
+const mapStateToProps = (state) => ({
+  currentUser: state.entities.session.currentUser,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  updateUser: (data, id) => dispatch(updateUser(data, id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserSettings);

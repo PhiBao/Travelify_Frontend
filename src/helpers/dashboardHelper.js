@@ -64,3 +64,15 @@ export const years = _.range(2018, new Date().getFullYear() + 1).map((y) => ({
   value: y,
   label: y,
 }));
+
+export const activate = (activated) => {
+  if (activated === true) {
+    return (
+      <Chip sx={{ backgroundColor: "#e5faf2", color: "#3bb077" }} label="Yes" />
+    );
+  }
+
+  return (
+    <Chip sx={{ backgroundColor: "#fff0f1", color: "#d95087" }} label="No" />
+  );
+};
