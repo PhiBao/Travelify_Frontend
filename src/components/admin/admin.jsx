@@ -9,6 +9,7 @@ import Analytics from "./dashboard/analytics";
 import Revenues from "./dashboard/revenues";
 import Users from "./menu/users";
 import User from "./menu/user";
+import NewUser from "./menu/newUser";
 
 const Admin = (props) => {
   const { loading } = props;
@@ -37,6 +38,7 @@ const Admin = (props) => {
           <Route path="analytics" element={<Analytics />} />
           <Route path="revenues" element={<Revenues />} />
           <Route path="users" element={<Users />} />
+          <Route path="users/new" element={<NewUser />} />
           <Route path="users/:id" element={<User />} />
           <Route path="" element={<AdminHome />} />
         </Routes>

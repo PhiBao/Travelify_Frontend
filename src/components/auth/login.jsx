@@ -164,7 +164,7 @@ export const Login = (props) => {
           autoComplete="off"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className={classes.loginHeader}>
+          <Box component="div" className={classes.loginHeader}>
             <CardTravelIcon
               style={{
                 color: "#ff6219",
@@ -175,7 +175,7 @@ export const Login = (props) => {
             <Typography variant="h3" component="span">
               Welcome to Travelify
             </Typography>
-          </div>
+          </Box>
           <Typography variant="h5" component="h5">
             Sign into your account
           </Typography>
@@ -207,10 +207,11 @@ export const Login = (props) => {
             component={Button}
             type="submit"
             variant="contained"
-            style={{
+            sx={{
               backgroundColor: "#26c6da",
               color: "#212121",
               fontWeight: 700,
+              p: "5px",
             }}
             fullWidth
           >
@@ -236,13 +237,14 @@ export const Login = (props) => {
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
             render={(renderProps) => (
-              <button
+              <Box
+                component="button"
                 className={classes.googleLogin}
                 onClick={renderProps.onClick}
               >
                 <GoogleIcon className={classes.icons} />
                 Login with Google
-              </button>
+              </Box>
             )}
             cookiePolicy={"single_host_origin"}
           />

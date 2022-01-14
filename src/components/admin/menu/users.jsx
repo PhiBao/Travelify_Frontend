@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import Avatar from "@mui/material/Avatar";
@@ -7,23 +7,38 @@ import { connect } from "react-redux";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
-import { loadUsers } from "../../../store/admin";
+import { loadUsers, deleteUser } from "../../../store/admin";
 import useDocumentTitle from "../../../utils/useDocumentTitle";
 import { dateFormatter, noTimeFormatter } from "../../../helpers/timeHelper";
 import { activate } from "../../../helpers/dashboardHelper";
+import ConfirmDialog from "../common/confirmDialog";
 
 const Users = (props) => {
   useDocumentTitle("Admin - Users");
-  const { data, loadUsers } = props;
+  const { data, loadUsers, deleteUser } = props;
   const { list = [] } = data;
+
+  const [open, setOpen] = useState(false);
+  const [deletedId, setDeletedId] = useState(0);
 
   useEffect(async () => {
     await loadUsers();
   });
 
   const handleDelete = (id) => {
-    console.log(id);
+    setDeletedId(id);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOk = async () => {
+    await deleteUser(deletedId);
+    setOpen(false);
   };
 
   const columns = [
@@ -137,6 +152,35 @@ const Users = (props) => {
     >
       <Box
         sx={{
+          width: "100%",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            mb: 2,
+            p: 3,
+            bgcolor: "background.paper",
+            borderRadius: "15px",
+            boxShadow: "0px 0px 15px -10px rgba(0, 0, 0, 0.75)",
+          }}
+        >
+          <Typography variant="h4" component="h4">
+            Users List
+          </Typography>
+          <Button
+            sx={{ color: "#eee !important" }}
+            component={Link}
+            to="new"
+            variant="contained"
+          >
+            New user
+          </Button>
+        </Box>
+      </Box>
+      <Box
+        sx={{
           bgcolor: "background.paper",
           width: "100%",
           height: 850,
@@ -150,6 +194,11 @@ const Users = (props) => {
           checkboxSelection
         />
       </Box>
+      <ConfirmDialog
+        open={open}
+        handleClose={handleClose}
+        handleOk={handleOk}
+      />
     </Box>
   );
 };
@@ -160,6 +209,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   loadUsers: () => dispatch(loadUsers()),
+  deleteUser: (id) => dispatch(deleteUser(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Users);

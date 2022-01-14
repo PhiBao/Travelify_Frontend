@@ -12,7 +12,6 @@ const slice = createSlice({
   name: "admin",
   initialState: {
     data: {},
-    type: "",
     loading: false,
   },
   reducers: {
@@ -37,6 +36,17 @@ const slice = createSlice({
       admin.data.list[index] = { ...user, username };
       toast.success("Update user info successfully");
     },
+    userCreated: (admin, action) => {
+      const { user } = action.payload;
+      admin.data.list.unshift(user);
+      toast.success("Create user successfully");
+    },
+    userDeleted: (admin, action) => {
+      const { id } = action.payload;
+      const index = admin.data.list.findIndex((user) => user.id === id);
+      admin.data.list.splice(index, 1);
+      toast.success("Delete user successfully");
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -53,8 +63,14 @@ const slice = createSlice({
   },
 });
 
-export const { dashboardLoaded, revenuesSearched, usersLoaded, userUpdated } =
-  slice.actions;
+export const {
+  dashboardLoaded,
+  revenuesSearched,
+  usersLoaded,
+  userUpdated,
+  userCreated,
+  userDeleted,
+} = slice.actions;
 
 export default slice.reducer;
 
@@ -111,7 +127,7 @@ export const loadUsers = () => (dispatch, getState) => {
 
   return dispatch(
     apiCallBegan({
-      url: users_url,
+      url: url + users_url,
       method: "GET",
       onSuccess: usersLoaded.type,
       skipLoading: true,
@@ -127,6 +143,29 @@ export const updateUser = (data, id) => (dispatch) => {
       data,
       onSuccess: userUpdated.type,
       headers: { "Content-Type": "multipart/form-data" },
+      skipLoading: true,
+    })
+  );
+};
+
+export const createUser = (data) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + users_url,
+      method: "POST",
+      data,
+      onSuccess: userCreated.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const deleteUser = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + users_url + `/${id}`,
+      method: "DELETE",
+      onSuccess: userDeleted.type,
       skipLoading: true,
     })
   );
