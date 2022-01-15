@@ -10,7 +10,7 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { connect } from "react-redux";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import _ from "lodash";
 import Typography from "@mui/material/Typography";
 import Loading from "../layout/loading";

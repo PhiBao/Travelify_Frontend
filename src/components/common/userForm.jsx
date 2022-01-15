@@ -40,7 +40,7 @@ const schema = Yup.object().shape({
   ),
 });
 
-export const Registration = (props) => {
+export const UserForm = (props) => {
   const {
     control,
     handleSubmit,
@@ -170,4 +170,4 @@ export const Registration = (props) => {
   );
 };
 
-export default Registration;
+export default UserForm;

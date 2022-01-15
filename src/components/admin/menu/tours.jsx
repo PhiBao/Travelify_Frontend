@@ -8,23 +8,25 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
 import { Link } from "react-router-dom";
-import { loadUsers, deleteUser } from "../../../store/admin";
+import { loadTours, deleteTour } from "../../../store/admin";
 import useDocumentTitle from "../../../utils/useDocumentTitle";
-import { dateFormatter, noTimeFormatter } from "../../../helpers/timeHelper";
-import { activate } from "../../../helpers/dashboardHelper";
+import { vehicles as vh } from "../../../helpers/tourHelper";
+import { shortDateFormatter } from "../../../helpers/timeHelper";
+import { tourKind } from "../../../helpers/dashboardHelper";
 import ConfirmDialog from "../common/confirmDialog";
 
-const Users = (props) => {
-  useDocumentTitle("Admin - Users");
-  const { data, loadUsers, deleteUser } = props;
+const Tours = (props) => {
+  useDocumentTitle("Admin - Tours");
+  const { data, loadTours, deleteTour } = props;
   const { list = [] } = data;
-
   const [open, setOpen] = useState(false);
   const [deletedId, setDeletedId] = useState(0);
 
   useEffect(async () => {
-    await loadUsers();
+    await loadTours();
   });
 
   const handleDelete = (id) => {
@@ -37,7 +39,7 @@ const Users = (props) => {
   };
 
   const handleOk = async () => {
-    await deleteUser(deletedId);
+    await deleteTour(deletedId);
     setOpen(false);
   };
 
@@ -47,11 +49,10 @@ const Users = (props) => {
       headerName: "ID",
       width: 90,
     },
-    { field: "email", headerName: "Email", width: 200 },
     {
-      field: "user",
-      headerName: "User",
-      width: 200,
+      field: "tour",
+      headerName: "Tour",
+      width: 250,
       renderCell: (params) => {
         return (
           <Box
@@ -63,8 +64,8 @@ const Users = (props) => {
             <Avatar
               alt={params.row.username}
               src={
-                params.row.avatarUrl ||
-                `${process.env.PUBLIC_URL}/assets/images/unknown.png`
+                params.row.images?.[0] ||
+                `${process.env.PUBLIC_URL}/assets/images/flowers.jpg`
               }
             />
             <Typography
@@ -72,44 +73,52 @@ const Users = (props) => {
               variant="subtitle2"
               component="div"
             >
-              {params.row.username}
+              {params.row.name}
             </Typography>
           </Box>
         );
       },
     },
+    { field: "description", headerName: "Description", width: 250 },
     {
-      field: "phoneNumber",
-      headerName: "Phone number",
+      field: "departure",
+      headerName: "Departure",
       width: 150,
     },
     {
-      field: "birthday",
-      headerName: "Date of birth",
-      width: 150,
-      valueFormatter: (params) => {
-        return noTimeFormatter(params.value);
+      field: "kind",
+      headerName: "Kind",
+      width: 100,
+      renderCell: (params) => {
+        return tourKind(params.value);
       },
     },
     {
-      field: "address",
-      headerName: "Address",
-      width: 150,
+      field: "price",
+      headerName: "Price",
+      width: 100,
     },
     {
       field: "createdAt",
-      headerName: "Joined date",
+      headerName: "Create at",
       width: 200,
       valueFormatter: (params) => {
-        return dateFormatter(params.value);
+        return shortDateFormatter(params.value);
       },
     },
     {
-      field: "activated",
-      headerName: "Activated",
-      width: 90,
+      field: "vehicles",
+      headerName: "Vehicles",
+      width: 150,
       renderCell: (params) => {
-        return activate(params.value);
+        const vehicleIcons = vh.filter((icon) =>
+          params.value?.includes(icon.key)
+        );
+        return (
+          <Stack direction="row" gap={1}>
+            {vehicleIcons.map((vehicle) => vehicle.icon)}
+          </Stack>
+        );
       },
     },
     {
@@ -135,6 +144,42 @@ const Users = (props) => {
             </IconButton>
           </Box>
         );
+      },
+    },
+    {
+      field: "limit",
+      headerName: "Limit",
+      width: 100,
+    },
+    {
+      field: "time",
+      headerName: "Time",
+      width: 100,
+    },
+    {
+      field: "beginDate",
+      headerName: "Begin date",
+      width: 200,
+      valueFormatter: (params) => {
+        return shortDateFormatter(params.value);
+      },
+    },
+    {
+      field: "returnDate",
+      headerName: "Return date",
+      width: 200,
+      valueFormatter: (params) => {
+        return shortDateFormatter(params.value);
+      },
+    },
+    {
+      field: "tags",
+      headerName: "Tags",
+      width: 300,
+      renderCell: (params) => {
+        return params.value.map((tag) => (
+          <Chip key={tag.value} variant="outlined" label={tag.label} />
+        ));
       },
     },
   ];
@@ -167,7 +212,7 @@ const Users = (props) => {
           }}
         >
           <Typography variant="h4" component="h4">
-            Users List
+            Tours List
           </Typography>
           <Button
             sx={{ color: "#eee !important" }}
@@ -175,7 +220,7 @@ const Users = (props) => {
             to="new"
             variant="contained"
           >
-            New user
+            New tours
           </Button>
         </Box>
       </Box>
@@ -208,8 +253,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loadUsers: () => dispatch(loadUsers()),
-  deleteUser: (id) => dispatch(deleteUser(id)),
+  loadTours: () => dispatch(loadTours()),
+  deleteTour: (id) => dispatch(deleteTour(id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Users);
+export default connect(mapStateToProps, mapDispatchToProps)(Tours);

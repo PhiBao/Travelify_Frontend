@@ -10,6 +10,7 @@ import Revenues from "./dashboard/revenues";
 import Users from "./menu/users";
 import User from "./menu/user";
 import NewUser from "./menu/newUser";
+import Tours from "./menu/tours";
 
 const Admin = (props) => {
   const { loading } = props;
@@ -34,12 +35,13 @@ const Admin = (props) => {
       </Box>
       <Box flex="1">
         <Routes>
-          <Route path="tours/new" element={<TourForm />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="revenues" element={<Revenues />} />
           <Route path="users" element={<Users />} />
           <Route path="users/new" element={<NewUser />} />
           <Route path="users/:id" element={<User />} />
+          <Route path="tours" element={<Tours />} />
+          <Route path="tours/new" element={<TourForm />} />
           <Route path="" element={<AdminHome />} />
         </Routes>
       </Box>

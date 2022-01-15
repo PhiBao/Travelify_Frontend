@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({

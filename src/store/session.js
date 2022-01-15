@@ -32,17 +32,11 @@ const slice = createSlice({
   },
   reducers: {
     sessionReceived: (session, action) => {
-      const { token, user, remember_me } = action.payload;
+      const { token, user, rememberMe } = action.payload;
       auth.loginWithJwt(token);
       session.currentUser = user;
-      if (remember_me === true) auth.rememberMe(token);
+      if (rememberMe === true) auth.rememberMe(token);
       toast.success("Welcome to Travelify!");
-    },
-    sessionGotten: (session) => {
-      const user = auth.getCurrentUser();
-      if (user) {
-        session.currentUser.id = user.id;
-      }
     },
     sessionCreated: (session, action) => {
       const { user, token } = action.payload;
@@ -109,7 +103,6 @@ const slice = createSlice({
 
 export const {
   sessionReceived,
-  sessionGotten,
   sessionCreated,
   passwordForgotten,
   passwordReset,
@@ -138,10 +131,6 @@ export const receiveSession = (user) => (dispatch) => {
       onSuccess: sessionReceived.type,
     })
   );
-};
-
-export const getSession = () => (dispatch) => {
-  return dispatch(sessionGotten());
 };
 
 export const createSession = (user) => (dispatch) => {

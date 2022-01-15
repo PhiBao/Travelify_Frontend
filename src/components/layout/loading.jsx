@@ -1,6 +1,6 @@
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({
   root: {

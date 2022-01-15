@@ -3,7 +3,9 @@ import ReactSelect from "react-select";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { DateTimePicker, DatePicker } from "@mui/lab";
-import { TextField, Checkbox, FormControlLabel } from "@material-ui/core";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import TextField from "@mui/material/TextField";
 import CreatableSelect from "react-select/creatable";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
@@ -46,12 +48,17 @@ export const TextInputField = ({
 
 export const FormCheckbox = ({ control, name, label, ...rest }) => {
   return (
-    <Controller
-      name={name}
-      control={control}
-      render={() => (
-        <FormControlLabel control={<Checkbox {...rest} />} label={label} />
-      )}
+    <FormControlLabel
+      control={
+        <Controller
+          name={name}
+          control={control}
+          render={({ field: { onChange } }) => (
+            <Checkbox onChange={(e) => onChange(e.target.checked)} {...rest} />
+          )}
+        />
+      }
+      label={label}
     />
   );
 };

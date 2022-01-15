@@ -12,7 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import { resetPassword } from "../../store/session";
 import { TextInputField } from "../common/form";
 import Loading from "../layout/loading";

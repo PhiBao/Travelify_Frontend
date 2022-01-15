@@ -6,6 +6,7 @@ export const dateFormatter = (date) => {
 };
 
 export const shortDateFormatter = (date) => {
+  if (!date) return "";
   return moment(date).format("lll");
 };
 

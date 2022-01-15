@@ -41,7 +41,7 @@ import Stack from "@mui/material/Stack";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Tooltip from "@mui/material/Tooltip";
 import Modal from "@mui/material/Modal";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import axios from "axios";
@@ -558,7 +558,7 @@ const TourDetail = (props) => {
                   label={tag.label}
                   component={Link}
                   to={`/tours?type=tags&uid=${tag.value}`}
-                ></Chip>
+                />
               ))}
             </Box>
             <Box

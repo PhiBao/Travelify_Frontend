@@ -9,7 +9,7 @@ import { red, blue } from "@mui/material/colors";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import Box from "@mui/material/Box";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";

@@ -5,7 +5,7 @@ import {
   useElements,
   PaymentElement,
 } from "@stripe/react-stripe-js";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Alert from "@mui/material/Alert";
 

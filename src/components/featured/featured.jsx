@@ -1,6 +1,6 @@
 import FeaturedItem from "./featuredItem";
 import Slider from "react-slick";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({
   slider: {

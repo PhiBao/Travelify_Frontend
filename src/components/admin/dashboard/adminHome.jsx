@@ -15,7 +15,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import { arrow, state, percent } from "../../../helpers/dashboardHelper";
 import { loadDashboard } from "../../../store/admin";
 import SimpleLineChart from "../charts/simpleLineChart";

@@ -65,7 +65,7 @@ const SideBar = () => {
           </ListItemIcon>
           <ListItemText primary="Users" />
         </ListItemButton>
-        <ListItemButton component={Link} to="tours/new">
+        <ListItemButton component={Link} to="tours">
           <ListItemIcon>
             <TourIcon />
           </ListItemIcon>

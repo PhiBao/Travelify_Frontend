@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import moment from "moment";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import SendIcon from "@mui/icons-material/Send";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";

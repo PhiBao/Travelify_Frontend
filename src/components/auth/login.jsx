@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { Navigate, Link, useNavigate, useLocation } from "react-router-dom";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import CardMedia from "@mui/material/CardMedia";
 import Divider from "@mui/material/Divider";
 import Chip from "@mui/material/Chip";
@@ -15,11 +15,12 @@ import Button from "@mui/material/Button";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "@mui/icons-material/Google";
 import CardTravelIcon from "@mui/icons-material/CardTravel";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { TextInputField, FormCheckbox } from "../common/form";
 import Loading from "../layout/loading";
 import { receiveSession, loginSocial } from "../../store/session";
 import useDocumentTitle from "../../utils/useDocumentTitle";
+import auth from "../../services/authService";
 
 const schema = Yup.object().shape({
   email: Yup.string().required().email(),
@@ -40,8 +41,8 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 10,
   },
   boxOption: {
-    margin: "10px 0",
     display: "flex",
+    margin: "10px 0",
     justifyContent: "space-around",
     alignItems: "center",
   },
@@ -83,13 +84,13 @@ export const Login = (props) => {
     defaultValues: {
       email: "",
       password: "",
+      rememberMe: false,
     },
     mode: "onBlur",
     resolver: yupResolver(schema),
   });
 
-  const { session, receiveSession, loginSocial } = props;
-  const { currentUser, loading } = session;
+  const { loading, receiveSession, loginSocial } = props;
 
   const onSubmit = async (user, e) => {
     e.preventDefault();
@@ -98,7 +99,7 @@ export const Login = (props) => {
     navigate(location.state?.from.pathname || "/");
   };
 
-  if (currentUser.id !== 0) return <Navigate to="/" place />;
+  if (auth.getCurrentUser()) return <Navigate to="/" replace />;
 
   const responseFacebook = async (response) => {
     const data = {
@@ -190,17 +191,20 @@ export const Login = (props) => {
           />
 
           <Box className={classes.boxOption}>
-            <FormCheckbox
-              label="Remember me"
-              control={control}
-              name="rememberMe"
-            />
-            <Link
-              style={{ fontWeight: 500, fontStyle: "italic" }}
+            <Box>
+              <FormCheckbox
+                control={control}
+                name="rememberMe"
+                label="Remember Me"
+              />
+            </Box>
+            <Box
+              component={Link}
               to="/forgotten_password"
+              sx={{ fontWeight: 500, fontStyle: "italic" }}
             >
               Forgot password?
-            </Link>
+            </Box>
           </Box>
 
           <Box
@@ -231,7 +235,6 @@ export const Login = (props) => {
             callback={responseFacebook}
             icon={<FacebookIcon className={classes.icons} />}
           />
-
           <GoogleLogin
             clientId={process.env.REACT_APP_GOOGLE_APP_ID}
             onSuccess={responseGoogle}
@@ -255,7 +258,7 @@ export const Login = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  session: state.entities.session,
+  loading: state.entities.session.loading,
 });
 
 const mapDispatchToProps = (dispatch) => ({

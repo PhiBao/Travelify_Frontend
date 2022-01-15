@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { toast } from "react-toastify";
+import _ from "lodash";
 import {
   apiCallBegan,
   apiCallSuccess,
@@ -47,6 +48,22 @@ const slice = createSlice({
       admin.data.list.splice(index, 1);
       toast.success("Delete user successfully");
     },
+    toursLoaded: (admin, action) => {
+      const { tours } = action.payload;
+      admin.data = tours;
+    },
+    tourCreated: (tours, action) => {
+      const { tour } = action.payload;
+      const { tags } = tour;
+      tours.tags = _.unionBy(tours.tags, tags, "value");
+      toast.success("The tour has been created successfully!");
+    },
+    tourDeleted: (admin, action) => {
+      const { id } = action.payload;
+      const index = admin.data.list.findIndex((tour) => tour.id === id);
+      admin.data.list.splice(index, 1);
+      toast.success("Delete tour successfully");
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -70,6 +87,9 @@ export const {
   userUpdated,
   userCreated,
   userDeleted,
+  toursLoaded,
+  tourCreated,
+  tourDeleted,
 } = slice.actions;
 
 export default slice.reducer;
@@ -78,6 +98,7 @@ export default slice.reducer;
 
 const url = "/admin";
 const users_url = "/users";
+const tours_url = "/tours";
 
 export const loadDashboard = () => (dispatch) => {
   return dispatch(
@@ -122,17 +143,16 @@ export const searchRevenues = (params) => (dispatch) => {
 };
 
 export const loadUsers = () => (dispatch, getState) => {
-  const type = getState().entities.admin.data.type;
+  const { type = "" } = getState().entities.admin.data;
   if (type === "users") return;
-
-  return dispatch(
-    apiCallBegan({
-      url: url + users_url,
-      method: "GET",
-      onSuccess: usersLoaded.type,
-      skipLoading: true,
-    })
-  );
+  else
+    return dispatch(
+      apiCallBegan({
+        url: url + users_url,
+        method: "GET",
+        onSuccess: usersLoaded.type,
+      })
+    );
 };
 
 export const updateUser = (data, id) => (dispatch) => {
@@ -166,6 +186,42 @@ export const deleteUser = (id) => (dispatch) => {
       url: url + users_url + `/${id}`,
       method: "DELETE",
       onSuccess: userDeleted.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const loadTours = () => (dispatch, getState) => {
+  const { type = "" } = getState().entities.admin.data;
+  if (type === "tours") return;
+  else
+    return dispatch(
+      apiCallBegan({
+        url: url + tours_url,
+        method: "GET",
+        onSuccess: toursLoaded.type,
+      })
+    );
+};
+
+export const createTour = (data) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url,
+      method: "POST",
+      data,
+      onSuccess: tourCreated.type,
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+  );
+};
+
+export const deleteTour = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + tours_url + `/${id}`,
+      method: "DELETE",
+      onSuccess: tourDeleted.type,
       skipLoading: true,
     })
   );

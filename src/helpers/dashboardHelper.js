@@ -70,9 +70,25 @@ export const activate = (activated) => {
     return (
       <Chip sx={{ backgroundColor: "#e5faf2", color: "#3bb077" }} label="Yes" />
     );
-  }
+  } else
+    return (
+      <Chip sx={{ backgroundColor: "#fff0f1", color: "#d95087" }} label="No" />
+    );
+};
 
-  return (
-    <Chip sx={{ backgroundColor: "#fff0f1", color: "#d95087" }} label="No" />
-  );
+export const tourKind = (kind) => {
+  if (kind === "fixed") {
+    return (
+      <Chip
+        sx={{ backgroundColor: "#ffe0b2", color: "#f57c00" }}
+        label="Fixed"
+      />
+    );
+  } else
+    return (
+      <Chip
+        sx={{ backgroundColor: "#b3e5fc", color: "#0288d1" }}
+        label="Single"
+      />
+    );
 };

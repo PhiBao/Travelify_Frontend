@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import * as Yup from "yup";
 import moment from "moment";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,9 +12,9 @@ import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import { createTour, loadHelpers } from "../../store/tours";
+import { createTour } from "../../store/admin";
 import {
   TextInputField,
   Select,
@@ -134,14 +134,10 @@ export const TourForm = (props) => {
   });
 
   const classes = useStyles();
-  const { loading, vehicles, tags, createTour, loadHelpers } = props;
+  const { loading, vehicles, tags, createTour } = props;
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [kind, setKind] = useState("");
-
-  useEffect(async () => {
-    await loadHelpers();
-  }, []);
 
   const handleKindChange = (e) => {
     switch (e.value) {
@@ -386,7 +382,6 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loadHelpers: () => dispatch(loadHelpers),
   createTour: (data) => dispatch(createTour(data)),
 });
 

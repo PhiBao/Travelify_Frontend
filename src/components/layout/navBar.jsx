@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -36,6 +36,8 @@ import { useForm } from "react-hook-form";
 import { cities } from "../../helpers/tourHelper";
 import { DEFAULT_DATE } from "../../helpers/timeHelper";
 import { Select, DatePickerField } from "../common/form";
+import { getCurrentUser } from "../../store/session";
+import auth from "../../services/authService";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -80,6 +82,7 @@ const schema = Yup.object().shape({
 const NavBar = (props) => {
   const {
     currentUser: { id, avatarUrl, admin },
+    getCurrentUser,
   } = props;
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -87,6 +90,13 @@ const NavBar = (props) => {
   const isUserOpen = Boolean(anchorElUser);
   const [openSearch, setOpenSearch] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(async () => {
+    if (id === 0) {
+      const user = auth.getCurrentUser();
+      if (user) await getCurrentUser(user.id);
+    }
+  }, [id]);
 
   const {
     control,
@@ -478,4 +488,8 @@ const mapStateToProps = (state) => ({
   currentUser: state.entities.session.currentUser,
 });
 
-export default connect(mapStateToProps, null)(NavBar);
+const mapDispatchToProps = (dispatch) => ({
+  getCurrentUser: (id) => dispatch(getCurrentUser(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
