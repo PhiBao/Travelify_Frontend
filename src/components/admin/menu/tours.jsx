@@ -112,7 +112,7 @@ const Tours = (props) => {
       width: 150,
       renderCell: (params) => {
         const vehicleIcons = vh.filter((icon) =>
-          params.value?.includes(icon.key)
+          params.value?.map((x) => x.label).includes(icon.key)
         );
         return (
           <Stack direction="row" gap={1}>
@@ -220,7 +220,7 @@ const Tours = (props) => {
             to="new"
             variant="contained"
           >
-            New tours
+            New tour
           </Button>
         </Box>
       </Box>

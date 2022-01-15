@@ -457,11 +457,9 @@ const TourDetail = (props) => {
                 lineHeight: 2,
                 fontSize: "18px",
               }}
-              component={Typography}
-              variant="body1"
-            >
-              {description}
-            </Box>
+              component="div"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
             <Box component={Paper}>
               <Typography ml={2} variant="h6" component="div">
                 Departure Schedule

@@ -3,7 +3,7 @@ import Loading from "../layout/loading";
 import { connect } from "react-redux";
 import { Routes, Route } from "react-router-dom";
 import SideBar from "../layout/sideBar";
-import TourForm from "../tours/tourForm";
+import TourForm from "./menu/tourForm";
 import AdminHome from "./dashboard/adminHome";
 import Analytics from "./dashboard/analytics";
 import Revenues from "./dashboard/revenues";
@@ -41,7 +41,7 @@ const Admin = (props) => {
           <Route path="users/new" element={<NewUser />} />
           <Route path="users/:id" element={<User />} />
           <Route path="tours" element={<Tours />} />
-          <Route path="tours/new" element={<TourForm />} />
+          <Route path="tours/:id" element={<TourForm />} />
           <Route path="" element={<AdminHome />} />
         </Routes>
       </Box>

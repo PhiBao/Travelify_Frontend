@@ -10,6 +10,7 @@ import CreatableSelect from "react-select/creatable";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import Chip from "@mui/material/Chip";
+import { Editor } from "@tinymce/tinymce-react";
 
 export const TextInputField = ({
   control,
@@ -77,8 +78,9 @@ export const Select = ({
       <Controller
         name={name}
         control={control}
-        render={({ field: { onChange } }) => (
+        render={({ field: { onChange, value } }) => (
           <ReactSelect
+            value={value}
             menuPortalTarget={document.body}
             styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
             onChange={(e) => {
@@ -186,6 +188,42 @@ export const DateTimePickerField = ({
         />
       </LocalizationProvider>
       {error && <Alert severity="error">{error.message}</Alert>}
+    </Box>
+  );
+};
+
+export const RichText = ({ control, name, label }) => {
+  return (
+    <Box component="div" mt={2}>
+      <Chip label={label} sx={{ borderRadius: 0, fontWeight: 500 }} />
+      <Controller
+        name={name}
+        control={control}
+        render={({ field: { onChange, ...field } }) => (
+          <Editor
+            apiKey={process.env.REACT_APP_TINYMCE_KEY}
+            {...field}
+            onEditorChange={onChange}
+            init={{
+              height: 500,
+              plugins: [
+                "advlist autolink lists link image charmap print preview anchor",
+                "searchreplace visualblocks code fullscreen",
+                "insertdatetime media table paste code help wordcount",
+              ],
+              toolbar:
+                "undo redo | formatselect | " +
+                "bold italic backcolor | alignleft aligncenter " +
+                "alignright alignjustify | bullist numlist outdent indent | " +
+                "removeformat | help",
+              images_upload_url: "postAcceptor.php",
+              automatic_uploads: false,
+              content_style:
+                "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+            }}
+          />
+        )}
+      />
     </Box>
   );
 };

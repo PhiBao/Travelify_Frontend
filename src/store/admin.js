@@ -52,10 +52,11 @@ const slice = createSlice({
       const { tours } = action.payload;
       admin.data = tours;
     },
-    tourCreated: (tours, action) => {
+    tourCreated: (admin, action) => {
       const { tour } = action.payload;
       const { tags } = tour;
-      tours.tags = _.unionBy(tours.tags, tags, "value");
+      admin.data.tags = _.unionBy(admin.data.tags, tags, "value");
+      admin.data.list.unshift(tour);
       toast.success("The tour has been created successfully!");
     },
     tourDeleted: (admin, action) => {
@@ -63,6 +64,14 @@ const slice = createSlice({
       const index = admin.data.list.findIndex((tour) => tour.id === id);
       admin.data.list.splice(index, 1);
       toast.success("Delete tour successfully");
+    },
+    tourUpdated: (admin, action) => {
+      const { tour } = action.payload;
+      const index = admin.data.list.findIndex(
+        (item) => (item.id ^ tour.id) === 0
+      );
+      admin.data.list[index] = tour;
+      toast.success("Update tour info successfully");
     },
   },
   extraReducers: (builder) => {
@@ -90,6 +99,7 @@ export const {
   toursLoaded,
   tourCreated,
   tourDeleted,
+  tourUpdated,
 } = slice.actions;
 
 export default slice.reducer;
@@ -207,7 +217,7 @@ export const loadTours = () => (dispatch, getState) => {
 export const createTour = (data) => (dispatch) => {
   return dispatch(
     apiCallBegan({
-      url,
+      url: url + tours_url,
       method: "POST",
       data,
       onSuccess: tourCreated.type,
@@ -227,6 +237,19 @@ export const deleteTour = (id) => (dispatch) => {
   );
 };
 
+export const updateTour = (data, id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + tours_url + `/${id}`,
+      method: "PUT",
+      data,
+      onSuccess: tourUpdated.type,
+      headers: { "Content-Type": "multipart/form-data" },
+      skipLoading: true,
+    })
+  );
+};
+
 // Selector
 
 export const getUser = (userId) =>
@@ -234,6 +257,16 @@ export const getUser = (userId) =>
     (state) => state.entities.admin.data.list,
     (list) => {
       const index = list.findIndex((item) => (item.id ^ userId) === 0);
+      return list[index];
+    }
+  );
+
+export const getTour = (tourId) =>
+  createSelector(
+    (state) => state.entities.admin.data.list,
+    (list) => {
+      if (tourId === "new") return;
+      const index = list.findIndex((item) => (item.id ^ tourId) === 0);
       return list[index];
     }
   );

@@ -37,6 +37,15 @@ export const state = (kind, details) => {
   }
 };
 
+export const departureFormatter = (departure) => {
+  const index = cities.findIndex((c) => c.value === departure);
+  return cities[index];
+};
+export const kindFormatter = (kind) => {
+  const index = kinds.findIndex((c) => c.value === kind);
+  return kinds[index];
+};
+
 export const reportOptions = [
   "Negative words",
   "Offensive content",
