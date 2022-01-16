@@ -11,6 +11,7 @@ import Users from "./menu/users";
 import User from "./menu/user";
 import NewUser from "./menu/newUser";
 import Tours from "./menu/tours";
+import Transactions from "./menu/transactions";
 
 const Admin = (props) => {
   const { loading } = props;
@@ -42,6 +43,7 @@ const Admin = (props) => {
           <Route path="users/:id" element={<User />} />
           <Route path="tours" element={<Tours />} />
           <Route path="tours/:id" element={<TourForm />} />
+          <Route path="transactions" element={<Transactions />} />
           <Route path="" element={<AdminHome />} />
         </Routes>
       </Box>

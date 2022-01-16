@@ -71,7 +71,7 @@ const SideBar = () => {
           </ListItemIcon>
           <ListItemText primary="Tours" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton component={Link} to="transactions">
           <ListItemIcon>
             <MonetizationOnIcon />
           </ListItemIcon>

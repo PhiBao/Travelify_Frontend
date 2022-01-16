@@ -33,8 +33,7 @@ const slice = createSlice({
       const index = admin.data.list.findIndex(
         (item) => (item.id ^ user.id) === 0
       );
-      const username = admin.data.list[index].username;
-      admin.data.list[index] = { ...user, username };
+      admin.data.list[index] = user;
       toast.success("Update user info successfully");
     },
     userCreated: (admin, action) => {
@@ -75,6 +74,18 @@ const slice = createSlice({
       admin.data.list[index] = tour;
       toast.success("Update tour info successfully");
     },
+    bookingsLoaded: (admin, action) => {
+      const { data } = action.payload;
+      admin.data = data;
+    },
+    bookingDeleted: (admin, action) => {
+      const { id } = action.payload;
+      const index = admin.data.list.findIndex(
+        (transaction) => transaction.id === id
+      );
+      admin.data.list.splice(index, 1);
+      toast.success("Delete transaction successfully");
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -102,6 +113,8 @@ export const {
   tourCreated,
   tourDeleted,
   tourUpdated,
+  bookingsLoaded,
+  bookingDeleted,
 } = slice.actions;
 
 export default slice.reducer;
@@ -111,8 +124,11 @@ export default slice.reducer;
 const url = "/admin";
 const users_url = "/users";
 const tours_url = "/tours";
+const bookings_url = "/bookings";
 
-export const loadDashboard = () => (dispatch) => {
+export const loadDashboard = () => (dispatch, getState) => {
+  const { type = "" } = getState().entities.admin.data;
+  if (type === "home") return;
   return dispatch(
     apiCallBegan({
       url: url + "/dashboard",
@@ -170,7 +186,7 @@ export const loadUsers = () => (dispatch, getState) => {
 export const updateUser = (data, id) => (dispatch) => {
   return dispatch(
     apiCallBegan({
-      url: users_url + `/${id}`,
+      url: url + users_url + `/${id}`,
       method: "PUT",
       data,
       onSuccess: userUpdated.type,
@@ -247,6 +263,30 @@ export const updateTour = (data, id) => (dispatch) => {
       data,
       onSuccess: tourUpdated.type,
       headers: { "Content-Type": "multipart/form-data" },
+      skipLoading: true,
+    })
+  );
+};
+
+export const loadBookings = () => (dispatch, getState) => {
+  const { type = "" } = getState().entities.admin.data;
+  if (type === "bookings") return;
+  else
+    return dispatch(
+      apiCallBegan({
+        url: url + bookings_url,
+        method: "GET",
+        onSuccess: bookingsLoaded.type,
+      })
+    );
+};
+
+export const deleteBooking = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + bookings_url + `/${id}`,
+      method: "DELETE",
+      onSuccess: bookingDeleted.type,
       skipLoading: true,
     })
   );

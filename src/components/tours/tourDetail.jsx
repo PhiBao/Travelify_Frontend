@@ -428,7 +428,7 @@ const TourDetail = (props) => {
                     Kind:
                   </Box>
                   {kind === "fixed" ? (
-                    <Tooltip title="Pre-determined schedule" placement="top">
+                    <Tooltip title="Pre-determined schedule" placement="bottom">
                       <Chip
                         icon={<SyncDisabledIcon />}
                         label="Fixed tour"
@@ -438,7 +438,7 @@ const TourDetail = (props) => {
                   ) : (
                     <Tooltip
                       title="Guest can pick specify departure date"
-                      placement="top"
+                      placement="bottom"
                     >
                       <Chip
                         icon={<EventAvailableIcon />}

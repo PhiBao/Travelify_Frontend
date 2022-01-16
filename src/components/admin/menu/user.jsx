@@ -10,9 +10,8 @@ import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getUser } from "../../../store/admin";
 import UserProfile from "../../users/userProfile";
-import { updateUser } from "../../../store/admin";
+import { updateUser, getUser } from "../../../store/admin";
 import { noTimeFormatter } from "../../../helpers/timeHelper";
 
 const User = (props) => {

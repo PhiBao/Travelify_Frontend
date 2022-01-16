@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -59,7 +60,7 @@ const AdminHome = (props) => {
     curLikes,
     lastLikes,
     users = [],
-    newUsers = [],
+    list = [],
     lastBookings = [],
   } = data;
 
@@ -165,7 +166,7 @@ const AdminHome = (props) => {
           <Typography mb={2} component="h3" variant="h4">
             New Join Members
           </Typography>
-          {newUsers.map((user) => (
+          {list.map((user) => (
             <Box
               key={user.id}
               sx={{
@@ -206,10 +207,12 @@ const AdminHome = (props) => {
               </Box>
               <Box sx={{ flex: 1, display: "flex", alignItems: "center" }}>
                 <Button
-                  color="secondary"
+                  color="error"
                   variant="contained"
                   size="small"
                   startIcon={<VisibilityIcon />}
+                  component={Link}
+                  to={`users/${user.id}`}
                 >
                   Display
                 </Button>
