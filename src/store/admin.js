@@ -67,6 +67,8 @@ const slice = createSlice({
     },
     tourUpdated: (admin, action) => {
       const { tour } = action.payload;
+      const { tags } = tour;
+      admin.data.tags = _.unionBy(admin.data.tags, tags, "value");
       const index = admin.data.list.findIndex(
         (item) => (item.id ^ tour.id) === 0
       );

@@ -16,6 +16,7 @@ import Button from "@mui/material/Button";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import { makeStyles } from "@mui/styles";
+import _ from "lodash";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import { createTour, updateTour, getTour } from "../../../store/admin";
 import {
@@ -229,11 +230,11 @@ export const TourForm = (props) => {
     }
   };
 
-  const onSubmit = async (tour, e) => {
+  const onSubmit = async (data, e) => {
     e.preventDefault();
-    if (tour.kind.value === "fixed") {
-      const time = moment(tour.returnDate).diff(
-        moment(tour.beginDate),
+    if (data.kind.value === "fixed") {
+      const time = moment(data.returnDate).diff(
+        moment(data.beginDate),
         "hours"
       );
       if (time < 6) {
@@ -247,32 +248,50 @@ export const TourForm = (props) => {
     }
 
     const formData = new FormData();
-    formData.append("name", tour.name);
-    formData.append("description", tour.description);
-    formData.append("kind", tour.kind.value);
-    formData.append("departure", tour.departure.value);
-    if (tour.kind.value === "fixed") {
-      formData.append("limit", tour.limit);
-      formData.append("begin_date", tour.beginDate);
-      formData.append("return_date", tour.returnDate);
+    formData.append("name", data.name);
+    formData.append("description", data.description);
+    formData.append("kind", data.kind.value);
+    formData.append("departure", data.departure.value);
+    if (data.kind.value === "fixed") {
+      formData.append("limit", data.limit);
+      formData.append("begin_date", data.beginDate);
+      formData.append("return_date", data.returnDate);
     }
-    if (tour.kind.value === "single") formData.append("time", tour.time);
-    formData.append("price", tour.price);
+    if (data.kind.value === "single") formData.append("time", data.time);
+    formData.append("price", data.price);
     if (id === "new" || imagesChange === true) {
-      for (let i = 0; i < tour.images.length; i++) {
-        formData.append("images[]", tour.images[i]);
+      for (let i = 0; i < data.images.length; i++) {
+        formData.append("images[]", data.images[i]);
       }
     }
-    const tVA = tour.vehicles.map((item) => ({ vehicle_id: item.value }));
-    formData.append("vehicles", JSON.stringify(tVA));
-    const tTA = tour.tags.map((item) => {
-      if (item.__isNew__) return { tag_attributes: { name: item.value } };
-      else return { tag_id: item.value };
-    });
-    formData.append("tags", JSON.stringify(tTA));
 
-    if (id === "new") await createTour(formData);
-    else await updateTour(formData, id);
+    if (id === "new") {
+      const tVA = data.vehicles.map((item) => ({ vehicle_id: item.value }));
+      formData.append("vehicles", JSON.stringify(tVA));
+      const tTA = data.tags.map((item) => {
+        if (item.__isNew__) return { tag_attributes: { name: item.value } };
+        else return { tag_id: item.value };
+      });
+      formData.append("tags", JSON.stringify(tTA));
+      await createTour(formData);
+    } else {
+      let tVA = _.unionBy(data.vehicles, tour.vehicles, "value");
+      tVA = tVA.map((item) => {
+        if (!data.vehicles.includes(item))
+          return { vehicle_id: item.value, _destroy: 1 };
+        else return { vehicle_id: item.value };
+      });
+      formData.append("vehicles", JSON.stringify(tVA));
+      let tTA = _.unionBy(data.tags, tour.tags, "value");
+      tTA = tTA.map((item) => {
+        if (item.__isNew__) return { tag_attributes: { name: item.value } };
+        if (!data.tags.includes(item))
+          return { tag_id: item.value, _destroy: 1 };
+        else return { tag_id: item.value };
+      });
+      formData.append("tags", JSON.stringify(tTA));
+      await updateTour(formData, id);
+    }
     navigate("../tours");
   };
 
