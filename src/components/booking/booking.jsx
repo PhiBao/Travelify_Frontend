@@ -58,7 +58,7 @@ const Booking = ({ booking }) => {
     >
       <CardMedia
         component="img"
-        sx={{ width: 135 }}
+        sx={{ width: 150 }}
         image={tourImage}
         alt="Live from space album cover"
       />

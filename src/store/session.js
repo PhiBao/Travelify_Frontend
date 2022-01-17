@@ -211,9 +211,7 @@ export const loginSocial = (data, headers) => (dispatch) => {
   );
 };
 
-export const loadBookings = (id, params) => (dispatch, getState) => {
-  if (id === 0) return;
-
+export const loadBookings = (id, params) => (dispatch) => {
   return dispatch(
     apiCallBegan({
       url: users_url + `/${id}/bookings`,

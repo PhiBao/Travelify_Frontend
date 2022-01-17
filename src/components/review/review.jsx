@@ -180,11 +180,10 @@ const Review = (props) => {
               lineHeight: 1.5,
               fontSize: "18px",
             }}
-            component={Typography}
-            variant="body1"
-          >
-            {body}
-          </Box>
+            component="div"
+            dangerouslySetInnerHTML={{ __html: body }}
+          />
+
           <Box
             component={Typography}
             sx={{ mr: 2, pb: 2, borderBottom: 1, color: "#757575" }}

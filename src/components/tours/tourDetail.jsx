@@ -315,19 +315,14 @@ const TourDetail = (props) => {
   };
 
   const handleNumChange = (e) => {
-    if (e.target.name === "adults")
-      setTotal(
-        Math.round(
-          (total + (e.target.value - getValues("adults")) * price) * 100.0
-        ) / 100.0
-      );
-    else
-      setTotal(
-        Math.round(
-          (total + (e.target.value - getValues("children")) * (price / 2)) *
-            100.0
-        ) / 100.0
-      );
+    e.preventDefault();
+    setTotal(
+      Math.round(
+        (getValues("adults") / 1.0 + getValues("children") / 2.0) *
+          price *
+          100.0
+      ) / 100.0
+    );
   };
 
   const handlePageChange = async (e, value) => {
@@ -774,6 +769,7 @@ const TourDetail = (props) => {
                     name="email"
                     label="Email"
                   />
+                  <TextInputField control={control2} name="note" label="Note" />
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleCloseForm}>Cancel</Button>

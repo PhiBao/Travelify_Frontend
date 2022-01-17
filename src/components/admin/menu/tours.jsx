@@ -53,6 +53,7 @@ const Tours = (props) => {
       field: "tour",
       headerName: "Tour",
       width: 250,
+      sortable: false,
       renderCell: (params) => {
         return (
           <Box
@@ -110,6 +111,7 @@ const Tours = (props) => {
       field: "vehicles",
       headerName: "Vehicles",
       width: 150,
+      sortable: false,
       renderCell: (params) => {
         const vehicleIcons = vh.filter((icon) =>
           params.value?.map((x) => x.label).includes(icon.key)
@@ -125,6 +127,7 @@ const Tours = (props) => {
       field: "action",
       headerName: "Action",
       width: 150,
+      sortable: false,
       renderCell: (params) => {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -147,13 +150,13 @@ const Tours = (props) => {
       },
     },
     {
-      field: "limit",
-      headerName: "Limit",
+      field: "time",
+      headerName: "Time",
       width: 100,
     },
     {
-      field: "time",
-      headerName: "Time",
+      field: "limit",
+      headerName: "Limit",
       width: 100,
     },
     {
@@ -176,6 +179,7 @@ const Tours = (props) => {
       field: "tags",
       headerName: "Tags",
       width: 300,
+      sortable: false,
       renderCell: (params) => {
         return params.value.map((tag) => (
           <Chip key={tag.value} variant="outlined" label={tag.label} />

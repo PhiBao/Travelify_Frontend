@@ -38,7 +38,7 @@ const slice = createSlice({
     },
     userCreated: (admin, action) => {
       const { user } = action.payload;
-      admin.data.list.unshift(user);
+      admin.data.list?.unshift(user);
       toast.success("Create user successfully");
     },
     userDeleted: (admin, action) => {
@@ -55,7 +55,7 @@ const slice = createSlice({
       const { tour } = action.payload;
       const { tags } = tour;
       admin.data.tags = _.unionBy(admin.data.tags, tags, "value");
-      admin.data.list.unshift(tour);
+      admin.data.list?.unshift(tour);
       toast.success("The tour has been created successfully!");
     },
     tourDeleted: (admin, action) => {
@@ -86,6 +86,23 @@ const slice = createSlice({
       admin.data.list.splice(index, 1);
       toast.success("Delete transaction successfully");
     },
+    bookingUpdated: (admin, action) => {
+      const { booking } = action.payload;
+      const index = admin.data.list.findIndex(
+        (item) => (item.id ^ booking.id) === 0
+      );
+      admin.data.list[index] = booking;
+      toast.success("Update transaction info successfully");
+    },
+    helpersLoaded: (admin, action) => {
+      const { data } = action.payload;
+      admin.data = { ...admin.data, tours: data };
+    },
+    bookingCreated: (admin, action) => {
+      const { booking } = action.payload;
+      admin.data.list?.unshift(booking);
+      toast.success("The transaction has been created successfully!");
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -115,6 +132,9 @@ export const {
   tourUpdated,
   bookingsLoaded,
   bookingDeleted,
+  bookingUpdated,
+  helpersLoaded,
+  bookingCreated,
 } = slice.actions;
 
 export default slice.reducer;
@@ -292,12 +312,50 @@ export const deleteBooking = (id) => (dispatch) => {
   );
 };
 
+export const createBooking = (data) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + bookings_url,
+      method: "POST",
+      data,
+      onSuccess: bookingCreated.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const updateBooking = (data, id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + bookings_url + `/${id}`,
+      method: "PUT",
+      data,
+      onSuccess: bookingUpdated.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const loadHelpers = () => (dispatch, getState) => {
+  const { tours } = getState().entities.admin.data;
+  if (tours) return;
+  return dispatch(
+    apiCallBegan({
+      url: url + bookings_url + "/helpers",
+      method: "GET",
+      onSuccess: helpersLoaded.type,
+      skipLoading: true,
+    })
+  );
+};
+
 // Selector
 
 export const getUser = (userId) =>
   createSelector(
     (state) => state.entities.admin.data.list,
     (list) => {
+      if (!list) return "";
       const index = list.findIndex((item) => (item.id ^ userId) === 0);
       return list[index];
     }
@@ -307,8 +365,18 @@ export const getTour = (tourId) =>
   createSelector(
     (state) => state.entities.admin.data.list,
     (list) => {
-      if (tourId === "new") return;
+      if (!list || tourId === "new") return "";
       const index = list.findIndex((item) => (item.id ^ tourId) === 0);
+      return list[index];
+    }
+  );
+
+export const getBooking = (bookingId) =>
+  createSelector(
+    (state) => state.entities.admin.data.list,
+    (list) => {
+      if (!list) return "";
+      const index = list.findIndex((item) => (item.id ^ bookingId) === 0);
       return list[index];
     }
   );

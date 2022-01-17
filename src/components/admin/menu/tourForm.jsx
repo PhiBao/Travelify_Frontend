@@ -4,7 +4,7 @@ import moment from "moment";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Card from "@mui/material/Card";
@@ -292,10 +292,13 @@ export const TourForm = (props) => {
       formData.append("tags", JSON.stringify(tTA));
       await updateTour(formData, id);
     }
-    navigate("../tours");
+    if (id === "new") navigate("../tours");
   };
 
   const imagesField = register("images");
+
+  if ((id !== "new" && !tour) || (id === "new" && !vehicles))
+    return <Navigate to="../tours" replace />;
 
   return (
     <Box

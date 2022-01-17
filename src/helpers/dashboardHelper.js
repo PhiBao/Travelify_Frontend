@@ -77,20 +77,24 @@ export const activate = (activated) => {
 };
 
 export const tourKind = (kind) => {
-  if (kind === "fixed") {
-    return (
-      <Chip
-        sx={{ backgroundColor: "#ffe0b2", color: "#f57c00" }}
-        label="Fixed"
-      />
-    );
-  } else
-    return (
-      <Chip
-        sx={{ backgroundColor: "#b3e5fc", color: "#0288d1" }}
-        label="Single"
-      />
-    );
+  switch (kind) {
+    case "fixed":
+      return (
+        <Chip
+          sx={{ backgroundColor: "#ffe0b2", color: "#f57c00" }}
+          label="Fixed"
+        />
+      );
+    case "single":
+      return (
+        <Chip
+          sx={{ backgroundColor: "#b3e5fc", color: "#0288d1" }}
+          label="Single"
+        />
+      );
+    default:
+      return;
+  }
 };
 
 export const toDataURL = (url) =>
@@ -117,3 +121,29 @@ export function dataURLtoFile(dataUrl, filename) {
   }
   return new File([u8arr], filename, { type: mime });
 }
+
+export const transactionStatus = [
+  { value: "paid", label: "Paid" },
+  { value: "confirming", label: "Confirming" },
+  { value: "canceled", label: "Canceled" },
+];
+
+export const dataFormatter = (data, total) => {
+  const travellerAttributes = _.pick(data, [
+    "name",
+    "phoneNumber",
+    "email",
+    "note",
+  ]);
+  const rest = _.pick(data, ["adults", "children", "departureDate"]);
+
+  return {
+    booking: {
+      ...rest,
+      tourId: data.tour.value,
+      total,
+      status: data.status.value,
+      travellerAttributes,
+    },
+  };
+};

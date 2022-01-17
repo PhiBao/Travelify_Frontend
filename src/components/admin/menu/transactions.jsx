@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { loadBookings, deleteBooking } from "../../../store/admin";
 import useDocumentTitle from "../../../utils/useDocumentTitle";
 import { shortDateFormatter } from "../../../helpers/timeHelper";
+import { state } from "../../../helpers/dashboardHelper";
 import ConfirmDialog from "../common/confirmDialog";
 
 const Bookings = (props) => {
@@ -28,10 +29,6 @@ const Bookings = (props) => {
   const handleDelete = (id) => {
     setDeletedId(id);
     setOpen(true);
-  };
-
-  const handleEdit = (id) => {
-    console.log(id);
   };
 
   const handleClose = () => {
@@ -52,34 +49,108 @@ const Bookings = (props) => {
     {
       field: "customer",
       headerName: "Customer",
-      width: 235,
+      width: 250,
+      sortable: false,
       renderCell: (params) => {
         return (
-          <Box
-            sx={{
-              display: "flex",
-              alginItems: "center",
-            }}
-          >
-            <Avatar
-              alt={params.row.customer?.username}
-              src={
-                params.row.customer?.avatarUrl ||
-                `${process.env.PUBLIC_URL}/assets/images/unknown.png`
-              }
-            />
-            <Typography
-              sx={{ pl: 1, pt: 1 }}
-              variant="subtitle2"
-              component="div"
+          <Box>
+            <Box
+              sx={{
+                display: "flex",
+                alginItems: "center",
+                position: "relative",
+              }}
             >
-              {params.row.customer?.username}
-            </Typography>
+              <Avatar
+                alt={params.row.customer?.username}
+                src={
+                  params.row.customer?.avatarUrl ||
+                  `${process.env.PUBLIC_URL}/assets/images/unknown.png`
+                }
+              />
+              <Typography
+                sx={{ pl: 1, pt: 1 }}
+                variant="subtitle2"
+                component="div"
+              >
+                {params.row.customer?.username}
+              </Typography>
+            </Box>
           </Box>
         );
       },
     },
-    { field: "tourName", headerName: "Tour", width: 250 },
+    {
+      field: "tourName",
+      headerName: "Tour",
+      width: 200,
+      renderCell: (params) => {
+        return params.row.tour?.name;
+      },
+    },
+    {
+      field: "customer.phoneNumber",
+      headerName: "Phone number",
+      width: 180,
+      renderCell: (params) => {
+        return params.row.customer?.phoneNumber;
+      },
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 180,
+      renderCell: (params) => {
+        return params.row.customer?.email;
+      },
+    },
+    {
+      field: "total",
+      headerName: "Total",
+      width: 100,
+    },
+    {
+      field: "createdAt",
+      headerName: "Booked at",
+      width: 200,
+      valueFormatter: (params) => {
+        return shortDateFormatter(params.value);
+      },
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 100,
+      renderCell: (params) => {
+        return state(params.value);
+      },
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      width: 150,
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <IconButton
+              aria-label="update"
+              component={Link}
+              to={`${params.row.id}`}
+            >
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              onClick={() => handleDelete(params.row.id)}
+              aria-label="delete"
+              color="error"
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        );
+      },
+    },
     {
       field: "departureDate",
       headerName: "Departure date",
@@ -97,44 +168,6 @@ const Bookings = (props) => {
       field: "children",
       headerName: "Children",
       width: 100,
-    },
-    {
-      field: "total",
-      headerName: "Total",
-      width: 100,
-    },
-    {
-      field: "createdAt",
-      headerName: "Booked at",
-      width: 200,
-      valueFormatter: (params) => {
-        return shortDateFormatter(params.value);
-      },
-    },
-    {
-      field: "action",
-      headerName: "Action",
-      width: 150,
-      renderCell: (params) => {
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton
-              aria-label="update"
-              color="success"
-              onClick={() => handleEdit(params.row.id)}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              onClick={() => handleDelete(params.row.id)}
-              aria-label="delete"
-              color="error"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-        );
-      },
     },
   ];
 

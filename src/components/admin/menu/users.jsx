@@ -52,6 +52,7 @@ const Users = (props) => {
       field: "user",
       headerName: "User",
       width: 200,
+      sortable: false,
       renderCell: (params) => {
         return (
           <Box
@@ -116,6 +117,7 @@ const Users = (props) => {
       field: "action",
       headerName: "Action",
       width: 150,
+      sortable: false,
       renderCell: (params) => {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>

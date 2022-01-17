@@ -4,7 +4,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import TextareaAutosize from "@mui/material/TextareaAutosize";
 import StyledRating from "../common/rating";
 import Typography from "@mui/material/Typography";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -13,17 +12,18 @@ import Button from "@mui/material/Button";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { RichText } from "../common/form";
 import _ from "lodash";
 
 const schema = Yup.object().shape({
   hearts: Yup.number().required(),
-  body: Yup.string().max(2000).required(),
+  body: Yup.mixed().required(),
 });
 
 const Rate = ({ open, handleClose, review, onSubmit }) => {
   const { hearts = 0, body = "" } = review;
 
-  const { register, handleSubmit, setValue } = useForm({
+  const { register, control, handleSubmit, setValue } = useForm({
     defaultValues: {
       body: body,
       hearts: hearts,
@@ -72,12 +72,10 @@ const Rate = ({ open, handleClose, review, onSubmit }) => {
             />
           </Typography>
           <Box sx={{ width: "100%", mr: 3, mt: 2 }}>
-            <TextareaAutosize
-              {...register("body")}
-              aria-label="body"
-              minRows={4}
-              placeholder="Type your review here, maximum 2000 characters."
-              style={{ width: "100%" }}
+            <RichText
+              name="body"
+              control={control}
+              label="Body"
               readOnly={!_.isEmpty(review)}
             />
           </Box>

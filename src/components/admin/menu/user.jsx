@@ -8,7 +8,7 @@ import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { connect } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import UserProfile from "../../users/userProfile";
 import { updateUser, getUser } from "../../../store/admin";
@@ -18,6 +18,8 @@ const User = (props) => {
   const { id } = useParams();
   const { updateUser } = props;
   const user = useSelector(getUser(id));
+
+  if (!user) return <Navigate to="../users" replace />;
 
   return (
     <Box
