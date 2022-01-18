@@ -53,7 +53,6 @@ export const ResetPassword = (props) => {
       password: "",
       passwordConfirmation: "",
     },
-    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 

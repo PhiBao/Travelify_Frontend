@@ -34,7 +34,6 @@ export const PasswordChange = (props) => {
       newPassword: "",
       passwordConfirmation: "",
     },
-    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 

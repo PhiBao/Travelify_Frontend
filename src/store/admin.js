@@ -408,6 +408,7 @@ export const createTag = (data) => (dispatch) => {
       method: "POST",
       data,
       onSuccess: tagCreated.type,
+      headers: { "Content-Type": "multipart/form-data" },
       skipLoading: true,
     })
   );
@@ -420,6 +421,7 @@ export const updateTag = (data, id) => (dispatch) => {
       method: "PUT",
       data,
       onSuccess: tagUpdated.type,
+      headers: { "Content-Type": "multipart/form-data" },
       skipLoading: true,
     })
   );
@@ -453,6 +455,16 @@ export const getBooking = (bookingId) =>
     (list) => {
       if (!list) return "";
       const index = list.findIndex((item) => (item.id ^ bookingId) === 0);
+      return list[index];
+    }
+  );
+
+export const getTag = (tagId) =>
+  createSelector(
+    (state) => state.entities.admin.data.list,
+    (list) => {
+      if (!list) return "";
+      const index = list.findIndex((item) => (item.id ^ tagId) === 0);
       return list[index];
     }
   );

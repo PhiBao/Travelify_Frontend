@@ -156,7 +156,6 @@ export const TourForm = (props) => {
       images: [],
       tags: [],
     },
-    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 
@@ -276,6 +275,7 @@ export const TourForm = (props) => {
       });
       formData.append("tags", JSON.stringify(tTA));
       await createTour(formData);
+      navigate("../tours");
     } else {
       let tVA = _.unionBy(data.vehicles, tour.vehicles, "value");
       tVA = tVA.map((item) => {
@@ -294,7 +294,6 @@ export const TourForm = (props) => {
       formData.append("tags", JSON.stringify(tTA));
       await updateTour(formData, id);
     }
-    if (id === "new") navigate("../tours");
   };
 
   const imagesField = register("images");

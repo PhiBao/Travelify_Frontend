@@ -86,7 +86,6 @@ export const Login = (props) => {
       password: "",
       rememberMe: false,
     },
-    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 

@@ -51,7 +51,6 @@ export const TransactionForm = (props) => {
       children: 0,
       status: transactionStatus[0],
     },
-    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 

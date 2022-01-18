@@ -56,7 +56,6 @@ export const UserForm = (props) => {
       address: "",
       email: "",
     },
-    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 

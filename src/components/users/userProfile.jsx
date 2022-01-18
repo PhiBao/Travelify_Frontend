@@ -84,7 +84,6 @@ export const UserProfile = (props) => {
       activated: "",
       avatar: [],
     },
-    mode: "onBlur",
     resolver: yupResolver(schema),
   });
 
