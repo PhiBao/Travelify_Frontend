@@ -80,7 +80,7 @@ const AdminHome = (props) => {
           alignItems: "center",
         }}
       >
-        <Typography variant="h3" component="span">
+        <Typography variant="h3" component="span" noWrap>
           {sum} {icon}
         </Typography>
         <Box className={classes.data} component="span">

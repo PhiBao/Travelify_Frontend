@@ -77,7 +77,7 @@ const SideBar = () => {
           </ListItemIcon>
           <ListItemText primary="Transactions" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton component={Link} to="tags">
           <ListItemIcon>
             <StyleIcon />
           </ListItemIcon>

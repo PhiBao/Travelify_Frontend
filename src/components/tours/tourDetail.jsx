@@ -546,11 +546,11 @@ const TourDetail = (props) => {
               {tags.map((tag) => (
                 <Chip
                   sx={{ cursor: "pointer" }}
-                  key={tag.value}
+                  key={tag.id}
                   variant="outlined"
-                  label={tag.label}
+                  label={tag.name}
                   component={Link}
-                  to={`/tours?type=tags&uid=${tag.value}`}
+                  to={`/tours?type=tags&uid=${tag.id}`}
                 />
               ))}
             </Box>

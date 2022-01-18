@@ -137,13 +137,13 @@ const FeaturedItem = ({ tour }) => {
             <ButtonGroup disableElevation variant="contained">
               {tags.map((tag) => (
                 <Button
-                  key={tag.value}
+                  key={tag.id}
                   variant="outlined"
-                  onClick={() => navigate(`/tours?type=tags&uid=${tag.value}`)}
+                  onClick={() => navigate(`/tours?type=tags&uid=${tag.id}`)}
                   sx={{ fontSize: { xs: "10px", sm: "12px" } }}
                   startIcon={<CheckCircleOutlineIcon />}
                 >
-                  {tag.label}
+                  {tag.name}
                 </Button>
               ))}
             </ButtonGroup>

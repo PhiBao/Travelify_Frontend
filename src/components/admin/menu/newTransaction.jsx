@@ -217,7 +217,7 @@ export const NewTransaction = (props) => {
               justifyContent: "center",
               alignItems: "center",
               borderRadius: "15px",
-              p: 3,
+              height: "100%",
             }}
           >
             <Box

@@ -14,6 +14,7 @@ import Tours from "./menu/tours";
 import Transactions from "./menu/transactions";
 import TransactionForm from "./menu/transactionForm";
 import NewTransaction from "./menu/newTransaction";
+import Tags from "./menu/tags";
 
 const Admin = (props) => {
   const { loading } = props;
@@ -48,6 +49,7 @@ const Admin = (props) => {
           <Route path="transactions" element={<Transactions />} />
           <Route path="transactions/new" element={<NewTransaction />} />
           <Route path="transactions/:id" element={<TransactionForm />} />
+          <Route path="tags" element={<Tags />} />
           <Route path="" element={<AdminHome />} />
         </Routes>
       </Box>

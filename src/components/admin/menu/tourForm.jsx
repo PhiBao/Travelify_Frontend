@@ -34,6 +34,7 @@ import {
   kindFormatter,
   departureFormatter,
 } from "../../../helpers/tourHelper";
+import useDocumentTitle from "../../../utils/useDocumentTitle";
 
 const schema = Yup.object().shape({
   name: Yup.string().max(255).required(),
@@ -128,6 +129,7 @@ export const TourForm = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const { id } = useParams();
+  useDocumentTitle(`${id === "new" ? "Admin: New tour" : "Admin: Edit tour"}`);
   const tour = useSelector(getTour(id));
 
   const {

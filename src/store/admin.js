@@ -103,6 +103,29 @@ const slice = createSlice({
       admin.data.list?.unshift(booking);
       toast.success("The transaction has been created successfully!");
     },
+    tagsLoaded: (admin, action) => {
+      const { data } = action.payload;
+      admin.data = data;
+    },
+    tagDeleted: (admin, action) => {
+      const { id } = action.payload;
+      const index = admin.data.list.findIndex((tag) => tag.id === id);
+      admin.data.list.splice(index, 1);
+      toast.success("Delete tag successfully");
+    },
+    tagUpdated: (admin, action) => {
+      const { tag } = action.payload;
+      const index = admin.data.list.findIndex(
+        (item) => (item.id ^ tag.id) === 0
+      );
+      admin.data.list[index] = tag;
+      toast.success("Update tag info successfully");
+    },
+    tagCreated: (admin, action) => {
+      const { tag } = action.payload;
+      admin.data.list?.unshift(tag);
+      toast.success("The tag has been created successfully!");
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -135,6 +158,10 @@ export const {
   bookingUpdated,
   helpersLoaded,
   bookingCreated,
+  tagsLoaded,
+  tagDeleted,
+  tagUpdated,
+  tagCreated,
 } = slice.actions;
 
 export default slice.reducer;
@@ -145,6 +172,7 @@ const url = "/admin";
 const users_url = "/users";
 const tours_url = "/tours";
 const bookings_url = "/bookings";
+const tags_url = "/tags";
 
 export const loadDashboard = () => (dispatch, getState) => {
   const { type = "" } = getState().entities.admin.data;
@@ -344,6 +372,54 @@ export const loadHelpers = () => (dispatch, getState) => {
       url: url + bookings_url + "/helpers",
       method: "GET",
       onSuccess: helpersLoaded.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const loadTags = () => (dispatch, getState) => {
+  const { type = "" } = getState().entities.admin.data;
+  if (type === "tags") return;
+  else
+    return dispatch(
+      apiCallBegan({
+        url: url + tags_url,
+        method: "GET",
+        onSuccess: tagsLoaded.type,
+      })
+    );
+};
+
+export const deleteTag = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + tags_url + `/${id}`,
+      method: "DELETE",
+      onSuccess: tagDeleted.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const createTag = (data) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + tags_url,
+      method: "POST",
+      data,
+      onSuccess: tagCreated.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const updateTag = (data, id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: url + tags_url + `/${id}`,
+      method: "PUT",
+      data,
+      onSuccess: tagUpdated.type,
       skipLoading: true,
     })
   );

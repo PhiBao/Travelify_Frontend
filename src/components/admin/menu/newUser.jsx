@@ -5,8 +5,10 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import { createUser } from "../../../store/admin";
 import UserForm from "../../common/userForm";
+import useDocumentTitle from "../../../utils/useDocumentTitle";
 
 export const NewUser = (props) => {
+  useDocumentTitle("Admin: New user");
   const navigate = useNavigate();
   const { createUser } = props;
 

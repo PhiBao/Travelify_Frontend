@@ -19,6 +19,7 @@ import { updateBooking, getBooking } from "../../../store/admin";
 import { TextInputField, Select, DateTimePickerField } from "../../common/form";
 import { DEFAULT_DATE } from "../../../helpers/timeHelper";
 import { transactionStatus, tourKind } from "../../../helpers/dashboardHelper";
+import useDocumentTitle from "../../../utils/useDocumentTitle";
 
 const schema = Yup.object().shape({
   status: Yup.object({
@@ -31,6 +32,7 @@ const schema = Yup.object().shape({
 });
 
 export const TransactionForm = (props) => {
+  useDocumentTitle("Admin: Edit transaction");
   const { id } = useParams();
   const transaction = useSelector(getBooking(id));
 

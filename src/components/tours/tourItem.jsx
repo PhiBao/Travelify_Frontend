@@ -134,13 +134,13 @@ const TourItem = ({ item }) => {
           <ButtonGroup disableElevation variant="contained">
             {tags.map((tag) => (
               <Button
-                onClick={() => navigate(`/tours?type=tags&uid=${tag.value}`)}
-                key={tag.value}
+                onClick={() => navigate(`/tours?type=tags&uid=${tag.id}`)}
+                key={tag.id}
                 variant="outlined"
                 sx={{ fontSize: { xs: "10px", sm: "12px" } }}
                 startIcon={<CheckCircleOutlineIcon />}
               >
-                {tag.label}
+                {tag.name}
               </Button>
             ))}
           </ButtonGroup>

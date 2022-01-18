@@ -13,8 +13,10 @@ import { useSelector } from "react-redux";
 import UserProfile from "../../users/userProfile";
 import { updateUser, getUser } from "../../../store/admin";
 import { noTimeFormatter } from "../../../helpers/timeHelper";
+import useDocumentTitle from "../../../utils/useDocumentTitle";
 
 const User = (props) => {
+  useDocumentTitle("Admin: Edit user");
   const { id } = useParams();
   const { updateUser } = props;
   const user = useSelector(getUser(id));

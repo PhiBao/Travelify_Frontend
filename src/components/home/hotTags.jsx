@@ -35,14 +35,14 @@ const HotTags = ({ list = [] }) => {
         </Typography>
       </ImageListItem>
       {list.slice(0, columns).map((tag) => (
-        <ImageListItem key={tag.value}>
+        <ImageListItem key={tag.id}>
           <img
             {...srcset(
               tag.illustrationUrl ||
                 `${process.env.PUBLIC_URL}/assets/images/flowers.jpg`,
               248
             )}
-            alt={tag.label}
+            alt={tag.name}
             loading="lazy"
           />
           <ImageListItemBar
@@ -51,9 +51,9 @@ const HotTags = ({ list = [] }) => {
                 sx={{ color: "white !important", fontWeight: "600" }}
                 variant="body1"
                 component={Link}
-                to={`/tours?type=tags&uid=${tag.value}`}
+                to={`/tours?type=tags&uid=${tag.id}`}
               >
-                {tag.label}
+                {tag.name}
               </Typography>
             }
             subtitle={`${tag.toursCount} tours`}
