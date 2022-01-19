@@ -33,6 +33,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import Cable from "actioncable";
 import { cities } from "../../helpers/tourHelper";
 import { DEFAULT_DATE } from "../../helpers/timeHelper";
 import { Select, DatePickerField } from "../common/form";
@@ -83,6 +84,7 @@ const NavBar = (props) => {
   const {
     currentUser: { id, avatarUrl, admin },
     getCurrentUser,
+    notifications: { list, total, unread },
   } = props;
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -90,11 +92,22 @@ const NavBar = (props) => {
   const isUserOpen = Boolean(anchorElUser);
   const [openSearch, setOpenSearch] = useState(false);
   const navigate = useNavigate();
+  const [notifications, setNotifications] = useState(list);
+  const [size, setSize] = useState(total);
 
   useEffect(async () => {
     if (id === 0) {
       const user = auth.getCurrentUser();
       if (user) await getCurrentUser(user.id);
+    } else {
+      const cable = Cable.createConsumer(`ws://localhost:3900/cable?id=${id}`);
+      cable.subscriptions.create("NotificationsChannel", {
+        received: (data) => {
+          setNotifications([...notifications, data.notification]);
+          setSize(size + 1);
+          console.log(data);
+        },
+      });
     }
   }, [id]);
 
@@ -400,10 +413,10 @@ const NavBar = (props) => {
               <Box>
                 <IconButton
                   size="large"
-                  aria-label="show 17 new notifications"
+                  aria-label={`show ${unread} unread notifications`}
                   color="inherit"
                 >
-                  <Badge badgeContent={17} color="error">
+                  <Badge badgeContent={unread} color="error">
                     <NotificationsIcon sx={{ color: "black" }} />
                   </Badge>
                 </IconButton>
@@ -486,6 +499,7 @@ const NavBar = (props) => {
 
 const mapStateToProps = (state) => ({
   currentUser: state.entities.session.currentUser,
+  notifications: state.entities.session.notifications,
 });
 
 const mapDispatchToProps = (dispatch) => ({

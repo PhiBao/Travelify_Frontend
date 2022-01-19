@@ -31,7 +31,11 @@ const style = {
 };
 
 export const UserHistory = (props) => {
-  const { id, bookingList, loadBookings, meta } = props;
+  const {
+    id,
+    bookings: { list, total },
+    loadBookings,
+  } = props;
   const [searchParams] = useSearchParams();
   const [info, setInfo] = useState("");
   const [value, setValue] = useState("confirming");
@@ -52,7 +56,7 @@ export const UserHistory = (props) => {
   };
 
   useEffect(async () => {
-    await loadBookings(id, { status: value });
+    if (id !== 0) await loadBookings(id, { status: value });
   }, [id, value]);
 
   useEffect(() => {
@@ -114,12 +118,12 @@ export const UserHistory = (props) => {
           </TabList>
         </Box>
         <TabPanel value={value}>
-          {bookingList
+          {list
             .filter((item) => item.status === value)
             .map((booking) => (
               <Booking key={booking.id} booking={booking} />
             ))}
-          {Math.ceil(meta.total / 5) > 1 && (
+          {Math.ceil(total / 5) > 1 && (
             <Pagination
               sx={{
                 display: "flex",
@@ -127,7 +131,7 @@ export const UserHistory = (props) => {
                 alignItems: "center",
                 pt: 3,
               }}
-              count={Math.ceil(meta.total / 5)}
+              count={Math.ceil(total / 5)}
               page={page}
               onChange={handlePageChange}
             />
@@ -171,8 +175,7 @@ export const UserHistory = (props) => {
 
 const mapStateToProps = (state) => ({
   id: state.entities.session.currentUser.id,
-  bookingList: state.entities.session.bookingList,
-  meta: state.entities.session.meta,
+  bookings: state.entities.session.bookings,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -68,7 +68,6 @@ export const CheckoutForm = () => {
         type="submit"
         variant="contained"
         loading={isLoading}
-        loadingPosition="start"
         fullWidth
       >
         Pay now

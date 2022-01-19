@@ -13,6 +13,7 @@ import HistoryIcon from "@mui/icons-material/History";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 import UserProfile from "./userProfile";
 import UserHistory from "./userHistory";
+import Notifications from "./notifications";
 import PasswordChange from "./passwordChange";
 import useDocumentTitle from "../../utils/useDocumentTitle";
 import { updateUser } from "../../store/session";
@@ -82,6 +83,7 @@ export const UserSettings = (props) => {
           </Grid>
           <Grid item xs={12} sm={8}>
             <Routes>
+              <Route path="notifications" element={<Notifications />} />
               <Route path="change_password" element={<PasswordChange />} />
               <Route path="history" element={<UserHistory />} />
               <Route

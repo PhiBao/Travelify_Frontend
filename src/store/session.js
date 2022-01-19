@@ -24,17 +24,25 @@ const slice = createSlice({
       admin: false,
       createdAt: "",
     },
-    bookingList: [],
-    meta: {
+    bookings: {
+      List: [],
+      total: 0,
+    },
+    notifications: {
+      list: [],
+      unread: 0,
       total: 0,
     },
     loading: false,
   },
   reducers: {
     sessionReceived: (session, action) => {
-      const { token, user, rememberMe } = action.payload;
+      const { token, user, rememberMe, list, unread, all } = action.payload;
       auth.loginWithJwt(token);
       session.currentUser = user;
+      session.notifications.list = list;
+      session.notifications.unread = unread;
+      session.notifications.total = all;
       if (rememberMe === true) auth.rememberMe(token);
       toast.success("Welcome to Travelify!");
     },
@@ -57,8 +65,11 @@ const slice = createSlice({
       toast.success("Reset password successfully");
     },
     currentUserGotten: (session, action) => {
-      const { user } = action.payload;
+      const { user, list, unread, all } = action.payload;
       session.currentUser = user;
+      session.notifications.list = list;
+      session.notifications.unread = unread;
+      session.notifications.total = all;
     },
     userUpdated: (session, action) => {
       const { user } = action.payload;
@@ -70,20 +81,23 @@ const slice = createSlice({
       toast.success("Congratulation! your account has been activated");
     },
     socialLoggedIn: (session, action) => {
-      const { token, user } = action.payload;
+      const { token, user, list, unread, all } = action.payload;
       auth.loginWithJwt(token);
       session.currentUser = user;
+      session.notifications.list = list;
+      session.notifications.unread = unread;
+      session.notifications.total = all;
       toast.success("Welcome to Travelify!");
     },
     bookingsLoaded: (session, action) => {
       const { list, meta } = action.payload;
-      session.bookingList = list;
-      session.meta.total = meta.total;
+      session.bookings.list = list;
+      session.bookings.total = meta.total;
     },
     reviewCreated: (session, action) => {
       const { body, hearts, id } = action.payload;
-      const index = session.bookingList.findIndex((item) => item.id === id);
-      session.bookingList[index].review = { body, hearts };
+      const index = session.bookings.list.findIndex((item) => item.id === id);
+      session.bookings.list[index].review = { body, hearts };
     },
   },
   extraReducers: (builder) => {
