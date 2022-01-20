@@ -101,11 +101,20 @@ const slice = createSlice({
     },
     notificationUpdated: (session, action) => {
       const { notification } = action.payload;
-      session.notifications.list.unshift(notification);
-      if (session.notifications.list.length > 10)
-        session.notifications.list.pop();
-      session.notifications.unread++;
-      session.notifications.total++;
+      const index = session.notifications.list.findIndex(
+        (item) => item.id === notification.id
+      );
+      if (index > -1) {
+        if (session.notifications.list[index].status === "watched")
+          session.notifications.unread++;
+        session.notifications.list[index] = notification;
+      } else {
+        session.notifications.list.unshift(notification);
+        if (session.notifications.list.length > 10)
+          session.notifications.list.pop();
+        session.notifications.unread++;
+        session.notifications.total++;
+      }
     },
     notificationsLoaded: (session, action) => {
       const { list } = action.payload;
@@ -118,6 +127,12 @@ const slice = createSlice({
       );
       session.notifications.list[index].status = "watched";
       session.notifications.unread--;
+    },
+    notificationsReadAll: (session) => {
+      session.notifications.list.map(
+        (notification) => (notification.status = "watched")
+      );
+      session.notifications.unread = 0;
     },
   },
   extraReducers: (builder) => {
@@ -149,6 +164,7 @@ export const {
   notificationUpdated,
   notificationsLoaded,
   notificationRead,
+  notificationsReadAll,
 } = slice.actions;
 
 export default slice.reducer;
@@ -295,6 +311,17 @@ export const readNotification = (id) => (dispatch) => {
       url: `notifications/${id}`,
       method: "PUT",
       onSuccess: notificationRead.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const readAllNotifications = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: users_url + `/${id}/read_all`,
+      method: "PUT",
+      onSuccess: notificationsReadAll.type,
       skipLoading: true,
     })
   );

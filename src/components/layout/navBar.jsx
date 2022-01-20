@@ -503,7 +503,15 @@ const NavBar = (props) => {
                         </Typography>
                         <Typography variant="body1">
                           <b>{notification.user?.username}</b>
-                          {` ${notification.action} your ${notification.notifiableType}`}
+                          {` ${
+                            notification.others === 0
+                              ? ""
+                              : `and ${notification.others} other${
+                                  notification.others > 1 ? "s" : ""
+                                }`
+                          } ${notification.action} your ${
+                            notification.notifiableType
+                          }`}
                         </Typography>
                       </Box>
                     </MenuItem>
