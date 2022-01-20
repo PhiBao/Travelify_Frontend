@@ -33,11 +33,17 @@ import DialogContentText from "@mui/material/DialogContentText";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import humps from "humps";
 import Cable from "actioncable";
 import { cities } from "../../helpers/tourHelper";
-import { DEFAULT_DATE } from "../../helpers/timeHelper";
+import { DEFAULT_DATE, fromNow } from "../../helpers/timeHelper";
 import { Select, DatePickerField } from "../common/form";
-import { getCurrentUser } from "../../store/session";
+import {
+  getCurrentUser,
+  addNotification,
+  readNotification,
+  loadNotifications,
+} from "../../store/session";
 import auth from "../../services/authService";
 
 const Search = styled("div")(({ theme }) => ({
@@ -83,17 +89,20 @@ const schema = Yup.object().shape({
 const NavBar = (props) => {
   const {
     currentUser: { id, avatarUrl, admin },
+    notifications: { list = [], total, unread },
     getCurrentUser,
-    notifications: { list, total, unread },
+    addNotification,
+    loadNotifications,
+    readNotification,
   } = props;
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [anchorElNot, setAnchorElNot] = useState(null);
   const isNavOpen = Boolean(anchorElNav);
   const isUserOpen = Boolean(anchorElUser);
+  const isNotOpen = Boolean(anchorElNot);
   const [openSearch, setOpenSearch] = useState(false);
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState(list);
-  const [size, setSize] = useState(total);
 
   useEffect(async () => {
     if (id === 0) {
@@ -102,10 +111,8 @@ const NavBar = (props) => {
     } else {
       const cable = Cable.createConsumer(`ws://localhost:3900/cable?id=${id}`);
       cable.subscriptions.create("NotificationsChannel", {
-        received: (data) => {
-          setNotifications([...notifications, data.notification]);
-          setSize(size + 1);
-          console.log(data);
+        received: async (data) => {
+          await addNotification(humps.camelizeKeys(data));
         },
       });
     }
@@ -127,12 +134,13 @@ const NavBar = (props) => {
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseUserMenu = () => {
@@ -148,6 +156,15 @@ const NavBar = (props) => {
     reset();
   };
 
+  const handleOpenNot = (e) => {
+    if (list.length === 0) return;
+    setAnchorElNot(e.currentTarget);
+  };
+
+  const handleCloseNot = () => {
+    setAnchorElNot(null);
+  };
+
   const handleSubmitSearch = (data, e) => {
     e.preventDefault();
     const q = {
@@ -161,6 +178,17 @@ const NavBar = (props) => {
     });
     setOpenSearch(false);
     reset();
+  };
+
+  const handleClickMore = async () => {
+    const page = list.length / 10 + 1;
+    await loadNotifications(id, { page });
+  };
+
+  const handleRead = async (status, id, tourId) => {
+    if (status === "unread") await readNotification(id);
+    setAnchorElNot(null);
+    navigate(`/tours/${tourId}`);
   };
 
   return (
@@ -413,13 +441,84 @@ const NavBar = (props) => {
               <Box>
                 <IconButton
                   size="large"
-                  aria-label={`show ${unread} unread notifications`}
+                  aria-label={`show all ${total} notifications`}
                   color="inherit"
+                  onClick={handleOpenNot}
                 >
                   <Badge badgeContent={unread} color="error">
                     <NotificationsIcon sx={{ color: "black" }} />
                   </Badge>
                 </IconButton>
+                <Menu
+                  sx={{ mt: "45px", maxHeight: 800 }}
+                  id="menu-appbar"
+                  anchorEl={anchorElNot}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={isNotOpen || false}
+                  onClose={handleCloseNot}
+                >
+                  {list.map((notification) => (
+                    <MenuItem
+                      key={`notification-${notification.id}`}
+                      onClick={() =>
+                        handleRead(
+                          notification.status,
+                          notification.id,
+                          notification.tourId
+                        )
+                      }
+                      sx={{
+                        my: 0.5,
+                        bgcolor: `${
+                          notification.status === "unread"
+                            ? "#f5f5f5"
+                            : "backgroud.paper"
+                        }`,
+                      }}
+                    >
+                      <ListItemIcon>
+                        <Avatar
+                          src={
+                            notification.user?.avatarUrl ||
+                            `${process.env.PUBLIC_URL}/assets/images/unknown.png`
+                          }
+                          alt="avatar"
+                          style={{ width: 24, height: 24 }}
+                        />
+                      </ListItemIcon>
+                      <Box sx={{ display: "flex", flexDirection: "column" }}>
+                        <Typography
+                          variant="subtitle2"
+                          sx={{ color: "#757575", fontStyle: "italic" }}
+                        >
+                          {fromNow(notification.createdAt)}
+                        </Typography>
+                        <Typography variant="body1">
+                          <b>{notification.user?.username}</b>
+                          {` ${notification.action} your ${notification.notifiableType}`}
+                        </Typography>
+                      </Box>
+                    </MenuItem>
+                  ))}
+                  {total > list.length && (
+                    <Box
+                      component={Button}
+                      onClick={handleClickMore}
+                      sx={{ ml: 1, color: "#424242" }}
+                      variant="text"
+                    >
+                      Show more...
+                    </Box>
+                  )}
+                </Menu>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
@@ -504,6 +603,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getCurrentUser: (id) => dispatch(getCurrentUser(id)),
+  addNotification: (data) => dispatch(addNotification(data)),
+  loadNotifications: (id, params) => dispatch(loadNotifications(id, params)),
+  readNotification: (id) => dispatch(readNotification(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavBar);

@@ -33,7 +33,7 @@ const style = {
 export const UserHistory = (props) => {
   const {
     id,
-    bookings: { list, total },
+    bookings: { list = [], total },
     loadBookings,
   } = props;
   const [searchParams] = useSearchParams();

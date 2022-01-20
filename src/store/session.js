@@ -99,6 +99,26 @@ const slice = createSlice({
       const index = session.bookings.list.findIndex((item) => item.id === id);
       session.bookings.list[index].review = { body, hearts };
     },
+    notificationUpdated: (session, action) => {
+      const { notification } = action.payload;
+      session.notifications.list.unshift(notification);
+      if (session.notifications.list.length > 10)
+        session.notifications.list.pop();
+      session.notifications.unread++;
+      session.notifications.total++;
+    },
+    notificationsLoaded: (session, action) => {
+      const { list } = action.payload;
+      session.notifications.list = session.notifications.list.concat(list);
+    },
+    notificationRead: (session, action) => {
+      const { id } = action.payload;
+      const index = session.notifications.list.findIndex(
+        (notification) => (notification.id ^ id) === 0
+      );
+      session.notifications.list[index].status = "watched";
+      session.notifications.unread--;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -126,6 +146,9 @@ export const {
   socialLoggedIn,
   bookingsLoaded,
   reviewCreated,
+  notificationUpdated,
+  notificationsLoaded,
+  notificationRead,
 } = slice.actions;
 
 export default slice.reducer;
@@ -243,6 +266,36 @@ export const createReview = (id, data) => (dispatch) => {
       method: "POST",
       data,
       onSuccess: reviewCreated.type,
+    })
+  );
+};
+
+export const addNotification = (data) => (dispatch) => {
+  return dispatch({
+    type: notificationUpdated.type,
+    payload: data,
+  });
+};
+
+export const loadNotifications = (id, params) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: users_url + `/${id}/notifications`,
+      method: "GET",
+      params,
+      onSuccess: notificationsLoaded.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const readNotification = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: `notifications/${id}`,
+      method: "PUT",
+      onSuccess: notificationRead.type,
+      skipLoading: true,
     })
   );
 };

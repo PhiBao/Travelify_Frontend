@@ -101,6 +101,8 @@ export const Login = (props) => {
   if (auth.getCurrentUser()) return <Navigate to="/" replace />;
 
   const responseFacebook = async (response) => {
+    if (response.status === "unknown") return;
+
     const data = {
       provider: response.graphDomain,
       uid: response.id,
@@ -122,6 +124,8 @@ export const Login = (props) => {
   };
 
   const responseGoogle = async (response) => {
+    if (response.error === "popup_closed_by_user") return;
+
     const data = {
       provider: "Google",
       uid: response.Ba,
@@ -133,6 +137,7 @@ export const Login = (props) => {
         avatar: response.profileObj.imageUrl,
       },
     };
+    if (data === "undefined") return;
     const headers = {
       Authorization: `Bearer ${response.accessToken}`,
       access_token: `${response.accessToken}`,

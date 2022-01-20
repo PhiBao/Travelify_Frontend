@@ -67,7 +67,7 @@ const CommentForm = (props) => {
             {...register("body")}
             aria-label="comment"
             minRows={3}
-            placeholder="Type your comment here, maximum 1000 characters."
+            placeholder={`Type your ${label.toLowerCase()} here, maximum 1000 characters.`}
             style={{ width: "100%" }}
           />
         </Box>
