@@ -25,7 +25,7 @@ const Users = (props) => {
 
   useEffect(async () => {
     await loadUsers();
-  });
+  }, []);
 
   const handleDelete = (id) => {
     setDeletedId(id);

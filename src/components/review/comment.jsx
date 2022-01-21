@@ -20,7 +20,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import axios from "axios";
 import ReportDialog from "../common/reportDialog";
 import CommentForm from "../common/commentForm";
 import { fromNow } from "../../helpers/timeHelper";
@@ -33,6 +32,8 @@ const Comment = (props) => {
     loadReplies,
     commentsList,
     createReply,
+    likeComment,
+    toggleComment,
   } = props;
   const {
     user: { username, avatarUrl },
@@ -41,7 +42,7 @@ const Comment = (props) => {
     createAt,
     liked,
     likes,
-    state,
+    state = "appear",
     size,
     replies = [],
     replyTo,
@@ -50,9 +51,6 @@ const Comment = (props) => {
   const disabled = currentUser.id === 0;
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const [like, setLike] = useState(liked);
-  const [numLikes, setNumLikes] = useState(likes);
-  const [hidden, setHidden] = useState(state === "hide");
   const [confirm, setConfirm] = useState(false);
   const [report, setReport] = useState(false);
   const [value, setValue] = useState("Negative words");
@@ -69,9 +67,7 @@ const Comment = (props) => {
   };
 
   const handleLike = async () => {
-    await axios.get(`comments/${id}/like`);
-    like ? setNumLikes(numLikes - 1) : setNumLikes(numLikes + 1);
-    setLike(!like);
+    await likeComment(id);
   };
 
   const handleAction = async (type) => {
@@ -85,9 +81,8 @@ const Comment = (props) => {
         setAnchorEl(null);
         break;
       default:
-        await axios.get(`comments/${id}/${type}`);
+        await toggleComment(id);
         setAnchorEl(null);
-        setHidden(!hidden);
     }
   };
 
@@ -150,7 +145,7 @@ const Comment = (props) => {
           >
             {fromNow(createAt)}
           </Box>
-          {hidden && (
+          {state === "hide" && (
             <Alert sx={{ mr: 2 }} variant="filled" severity="info">
               This comment is hidden!
             </Alert>
@@ -195,8 +190,8 @@ const Comment = (props) => {
               disabled={disabled}
               onClick={handleLike}
             >
-              <Badge badgeContent={numLikes} color="primary">
-                {like ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}
+              <Badge badgeContent={likes} color="primary">
+                {liked ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}
               </Badge>
             </IconButton>
             <IconButton
@@ -221,10 +216,8 @@ const Comment = (props) => {
             >
               {currentUser.admin ? (
                 <Box>
-                  <MenuItem
-                    onClick={() => handleAction(hidden ? "appear" : "hide")}
-                  >
-                    {hidden ? "appear" : "hide"}
+                  <MenuItem onClick={() => handleAction("toggle")}>
+                    {state === "hide" ? "appear" : "hide"}
                   </MenuItem>
                   <MenuItem onClick={() => handleAction("delete")}>
                     delete

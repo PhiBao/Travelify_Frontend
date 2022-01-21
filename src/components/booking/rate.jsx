@@ -72,12 +72,20 @@ const Rate = ({ open, handleClose, review, onSubmit }) => {
             />
           </Typography>
           <Box sx={{ width: "100%", mr: 3, mt: 2 }}>
-            <RichText
-              name="body"
-              control={control}
-              label="Body"
-              readOnly={!_.isEmpty(review)}
-            />
+            {_.isEmpty(review) ? (
+              <RichText name="body" control={control} label="Body" />
+            ) : (
+              <Box
+                sx={{
+                  bgcolor: "background.paper",
+                  p: 2,
+                  lineHeight: 2,
+                  fontSize: "18px",
+                }}
+                component="div"
+                dangerouslySetInnerHTML={{ __html: review.body }}
+              />
+            )}
           </Box>
         </DialogContent>
         <DialogActions>

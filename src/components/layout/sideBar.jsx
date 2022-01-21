@@ -94,7 +94,7 @@ const SideBar = () => {
           </ListSubheader>
         }
       >
-        <ListItemButton>
+        <ListItemButton component={Link} to="reports">
           <ListItemIcon>
             <ReportIcon />
           </ListItemIcon>

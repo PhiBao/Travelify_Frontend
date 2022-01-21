@@ -24,7 +24,7 @@ const Bookings = (props) => {
 
   useEffect(async () => {
     await loadBookings();
-  });
+  }, []);
 
   const handleDelete = (id) => {
     setDeletedId(id);

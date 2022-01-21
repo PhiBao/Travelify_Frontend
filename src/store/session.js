@@ -115,6 +115,20 @@ const slice = createSlice({
         session.notifications.unread++;
         session.notifications.total++;
       }
+      toast.info(
+        `${notification.user?.username} ${
+          notification.others === 0
+            ? ""
+            : `and ${notification.others} other${
+                notification.others > 1 ? "s" : ""
+              }`
+        } ${notification.action} ${
+          notification.action === "reported" ? "a" : "your"
+        } ${notification.notifiableType}`,
+        {
+          position: "bottom-left",
+        }
+      );
     },
     notificationsLoaded: (session, action) => {
       const { list } = action.payload;

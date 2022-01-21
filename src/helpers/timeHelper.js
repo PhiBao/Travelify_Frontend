@@ -26,7 +26,7 @@ export const reviewStatus = (departureDate, status, review) => {
 
   const diff = moment().diff(moment(departureDate), "days");
 
-  if (diff < 7 && status === "paid") return "Can rate";
+  if (diff < 30 && status === "paid") return "Can rate";
 
   return "Can't rate";
 };

@@ -51,5 +51,6 @@ export const reportOptions = [
   "Offensive content",
   "Contempt for others",
   "Contempt for religion, politics",
+  "Spam",
   "Something else",
 ];

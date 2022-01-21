@@ -9,6 +9,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
+import PreviewIcon from "@mui/icons-material/Preview";
 import Stack from "@mui/material/Stack";
 import { Link } from "react-router-dom";
 import { loadTours, deleteTour } from "../../../store/admin";
@@ -17,6 +18,7 @@ import { vehicles as vh } from "../../../helpers/tourHelper";
 import { shortDateFormatter } from "../../../helpers/timeHelper";
 import { tourKind } from "../../../helpers/dashboardHelper";
 import ConfirmDialog from "../common/confirmDialog";
+import ContentModal from "../common/contentModal";
 
 const Tours = (props) => {
   useDocumentTitle("Admin - Tours");
@@ -24,10 +26,12 @@ const Tours = (props) => {
   const { list = [] } = data;
   const [open, setOpen] = useState(false);
   const [deletedId, setDeletedId] = useState(0);
+  const [view, setView] = useState(false);
+  const [body, setBody] = useState("");
 
   useEffect(async () => {
     await loadTours();
-  });
+  }, []);
 
   const handleDelete = (id) => {
     setDeletedId(id);
@@ -36,6 +40,16 @@ const Tours = (props) => {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleOpenView = (data) => {
+    setBody(data);
+    setView(true);
+  };
+
+  const handleCloseView = (e) => {
+    e.preventDefault();
+    setView(false);
   };
 
   const handleOk = async () => {
@@ -80,16 +94,31 @@ const Tours = (props) => {
         );
       },
     },
-    { field: "description", headerName: "Description", width: 250 },
+    {
+      field: "description",
+      headerName: "Description",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <IconButton
+            onClick={() => handleOpenView(params.value)}
+            aria-label="view"
+            color="info"
+          >
+            <PreviewIcon />
+          </IconButton>
+        );
+      },
+    },
     {
       field: "departure",
       headerName: "Departure",
-      width: 150,
+      width: 200,
     },
     {
       field: "kind",
       headerName: "Kind",
-      width: 100,
+      width: 125,
       renderCell: (params) => {
         return tourKind(params.value);
       },
@@ -97,7 +126,7 @@ const Tours = (props) => {
     {
       field: "price",
       headerName: "Price",
-      width: 100,
+      width: 125,
     },
     {
       field: "createdAt",
@@ -248,6 +277,7 @@ const Tours = (props) => {
         handleClose={handleClose}
         handleOk={handleOk}
       />
+      <ContentModal open={view} handleClose={handleCloseView} body={body} />
     </Box>
   );
 };

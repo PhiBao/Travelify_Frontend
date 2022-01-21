@@ -23,7 +23,7 @@ const Tags = (props) => {
 
   useEffect(async () => {
     await loadTags();
-  });
+  }, []);
 
   const handleDelete = (id) => {
     setDeletedId(id);

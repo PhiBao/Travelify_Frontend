@@ -1,5 +1,7 @@
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ReviewsIcon from "@mui/icons-material/Reviews";
+import ModeCommentIcon from "@mui/icons-material/ModeComment";
 import Chip from "@mui/material/Chip";
 import _ from "lodash";
 
@@ -146,4 +148,27 @@ export const dataFormatter = (data, total) => {
       travellerAttributes,
     },
   };
+};
+
+export const typeReport = (type) => {
+  switch (type) {
+    case "Review":
+      return (
+        <Chip
+          sx={{ backgroundColor: "#ffee58", color: "#000" }}
+          icon={<ReviewsIcon />}
+          label="Review"
+        />
+      );
+    case "Comment":
+      return (
+        <Chip
+          sx={{ backgroundColor: "#b3e5fc", color: "#000" }}
+          icon={<ModeCommentIcon />}
+          label="Comment"
+        />
+      );
+    default:
+      return "";
+  }
 };

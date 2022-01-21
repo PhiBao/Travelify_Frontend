@@ -16,6 +16,7 @@ import TransactionForm from "./menu/transactionForm";
 import NewTransaction from "./menu/newTransaction";
 import Tags from "./menu/tags";
 import TagForm from "./menu/tagForm";
+import Reports from "./notifications/reports";
 
 const Admin = (props) => {
   const { loading } = props;
@@ -52,6 +53,7 @@ const Admin = (props) => {
           <Route path="transactions/:id" element={<TransactionForm />} />
           <Route path="tags" element={<Tags />} />
           <Route path="tags/:id" element={<TagForm />} />
+          <Route path="reports" element={<Reports />} />
           <Route path="" element={<AdminHome />} />
         </Routes>
       </Box>

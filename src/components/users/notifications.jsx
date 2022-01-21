@@ -94,7 +94,7 @@ const Notifications = (props) => {
               variant="subtitle2"
               sx={{ color: "#757575", fontStyle: "italic" }}
             >
-              {fromNow(notification.createdAt)}
+              {fromNow(notification.updatedAt)}
             </Typography>
             <Typography variant="body1">
               <b>{notification.user?.username}</b>
@@ -104,7 +104,9 @@ const Notifications = (props) => {
                   : `and ${notification.others} other${
                       notification.others > 1 ? "s" : ""
                     }`
-              } ${notification.action} your ${notification.notifiableType}`}
+              } ${notification.action} ${
+                notification.action === "reported" ? "a" : "your"
+              } ${notification.notifiableType}`}
             </Typography>
           </Box>
         </Box>

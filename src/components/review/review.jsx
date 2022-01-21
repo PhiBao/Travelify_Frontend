@@ -22,7 +22,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import axios from "axios";
 import { connect } from "react-redux";
 import Comment from "./comment";
 import StyledRating from "../common/rating";
@@ -36,6 +35,10 @@ import {
   deleteComment,
   createComment,
   createReply,
+  toggleReview,
+  likeReview,
+  likeComment,
+  toggleComment,
 } from "../../store/tours";
 
 const Review = (props) => {
@@ -49,6 +52,10 @@ const Review = (props) => {
     deleteComment,
     createComment,
     createReply,
+    toggleReview,
+    likeReview,
+    likeComment,
+    toggleComment,
   } = props;
   const {
     user: { username, avatarUrl },
@@ -58,7 +65,7 @@ const Review = (props) => {
     createAt,
     liked,
     likes,
-    state,
+    state = "appear",
     size,
     comments = [],
   } = review;
@@ -66,9 +73,6 @@ const Review = (props) => {
   const disabled = currentUser.id === 0;
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const [like, setLike] = useState(liked);
-  const [numLikes, setNumLikes] = useState(likes);
-  const [hidden, setHidden] = useState(state === "hide");
   const [confirm, setConfirm] = useState(false);
   const [report, setReport] = useState(false);
   const [value, setValue] = useState("Negative words");
@@ -85,9 +89,7 @@ const Review = (props) => {
   };
 
   const handleLike = async () => {
-    await axios.get(`reviews/${id}/like`);
-    like ? setNumLikes(numLikes - 1) : setNumLikes(numLikes + 1);
-    setLike(!like);
+    await likeReview(id);
   };
 
   const handleAction = async (type) => {
@@ -101,9 +103,8 @@ const Review = (props) => {
         setAnchorEl(null);
         break;
       default:
-        await axios.get(`reviews/${id}/${type}`);
+        await toggleReview(id);
         setAnchorEl(null);
-        setHidden(!hidden);
     }
   };
 
@@ -168,7 +169,7 @@ const Review = (props) => {
               emptyIcon={<FavoriteBorderIcon fontSize="inherit" max={10} />}
             />
           </Typography>
-          {hidden && (
+          {state === "hide" && (
             <Alert sx={{ mr: 2 }} variant="filled" severity="info">
               This review is hidden!
             </Alert>
@@ -200,7 +201,7 @@ const Review = (props) => {
               component="span"
               sx={{ fontWeight: 700, fontSize: 16, color: "#111" }}
             >
-              {numLikes}
+              {likes}
             </Box>{" "}
             Likes
           </Box>
@@ -220,7 +221,7 @@ const Review = (props) => {
               disabled={disabled}
               onClick={handleLike}
             >
-              {like ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}
+              {liked ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}
             </IconButton>
             <IconButton
               disabled={disabled}
@@ -244,10 +245,8 @@ const Review = (props) => {
             >
               {currentUser.admin ? (
                 <Box>
-                  <MenuItem
-                    onClick={() => handleAction(hidden ? "appear" : "hide")}
-                  >
-                    {hidden ? "appear" : "hide"}
+                  <MenuItem onClick={() => handleAction("toggle")}>
+                    {state === "hide" ? "appear" : "hide"}
                   </MenuItem>
                   <MenuItem onClick={() => handleAction("delete")}>
                     delete
@@ -309,6 +308,8 @@ const Review = (props) => {
               loadReplies={loadReplies}
               deleteComment={deleteComment}
               createReply={createReply}
+              likeComment={likeComment}
+              toggleComment={toggleComment}
             />
           ))}
         {size > comments.length && (
@@ -347,6 +348,10 @@ const mapDispatchToProps = (dispatch) => ({
   deleteComment: (id) => dispatch(deleteComment(id)),
   createComment: (id, data) => dispatch(createComment(id, data)),
   createReply: (id, data) => dispatch(createReply(id, data)),
+  toggleReview: (id) => dispatch(toggleReview(id)),
+  likeReview: (id) => dispatch(likeReview(id)),
+  toggleComment: (id) => dispatch(toggleComment(id)),
+  likeComment: (id) => dispatch(likeComment(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Review);

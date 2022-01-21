@@ -126,6 +126,30 @@ const slice = createSlice({
       admin.data.list?.unshift(tag);
       toast.success("The tag has been created successfully!");
     },
+    reportsLoaded: (admin, action) => {
+      const { reports } = action.payload;
+      admin.data = reports;
+    },
+    reportableDeleted: (admin, action) => {
+      const { id } = action.payload;
+      const index = admin.data.list.findIndex(
+        (report) => report.notifiableId === id
+      );
+      admin.data.list.splice(index, 1);
+      toast.success("Delete object successfully");
+    },
+    reportableToggled: (admin, action) => {
+      const { id, state } = action.payload;
+      const index = admin.data.list.findIndex(
+        (report) => report.notifiableId === id
+      );
+      admin.data.list[index].state = state;
+    },
+    reportSkipped: (admin, action) => {
+      const { id } = action.payload;
+      const index = admin.data.list.findIndex((report) => report.id === id);
+      admin.data.list.splice(index, 1);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -162,6 +186,10 @@ export const {
   tagDeleted,
   tagUpdated,
   tagCreated,
+  reportsLoaded,
+  reportableDeleted,
+  reportableToggled,
+  reportSkipped,
 } = slice.actions;
 
 export default slice.reducer;
@@ -173,6 +201,7 @@ const users_url = "/users";
 const tours_url = "/tours";
 const bookings_url = "/bookings";
 const tags_url = "/tags";
+const notifications_url = "/notifications";
 
 export const loadDashboard = () => (dispatch, getState) => {
   const { type = "" } = getState().entities.admin.data;
@@ -422,6 +451,53 @@ export const updateTag = (data, id) => (dispatch) => {
       data,
       onSuccess: tagUpdated.type,
       headers: { "Content-Type": "multipart/form-data" },
+      skipLoading: true,
+    })
+  );
+};
+
+export const loadReports = () => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: notifications_url,
+      method: "GET",
+      onSuccess: reportsLoaded.type,
+    })
+  );
+};
+
+export const deleteReportable = (type, id) => (dispatch) => {
+  const dynUrl = type === "Review" ? "/reviews" : "/comments";
+
+  return dispatch(
+    apiCallBegan({
+      url: dynUrl + `/${id}`,
+      method: "DELETE",
+      onSuccess: reportableDeleted.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const toggleReportable = (type, id) => (dispatch) => {
+  const dynUrl = type === "Review" ? "/reviews" : "/comments";
+
+  return dispatch(
+    apiCallBegan({
+      url: dynUrl + `/${id}/toggle`,
+      method: "PUT",
+      onSuccess: reportableToggled.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const skipReport = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: notifications_url + `/${id}`,
+      method: "DELETE",
+      onSuccess: reportSkipped.type,
       skipLoading: true,
     })
   );

@@ -162,7 +162,7 @@ export const UserHistory = (props) => {
           >
             You can only review when paid successfully.
             <br />
-            Evaluation period is 7 days from the date of departure
+            Evaluation period is 30 days from the date of departure
             <br />
             If you want to cancel the tour, please contact us via{" "}
             <i>022999999</i>

@@ -94,6 +94,21 @@ const slice = createSlice({
       tours.current.self.reviews.splice(index, 1);
       tours.current.self.size -= 1;
     },
+    reviewToggled: (tours, action) => {
+      const { id, state } = action.payload;
+      const index = tours.current.self.reviews.findIndex(
+        (review) => review.id === id
+      );
+      tours.current.self.reviews[index].state = state;
+    },
+    reviewLiked: (tours, action) => {
+      const { id, liked } = action.payload;
+      const index = tours.current.self.reviews.findIndex(
+        (review) => review.id === id
+      );
+      tours.current.self.reviews[index].liked = liked;
+      tours.current.self.reviews[index].likes += liked === true ? 1 : -1;
+    },
     reviewsLoaded: (tours, action) => {
       const { reviews } = action.payload;
       tours.current.self.reviews = tours.current.self.reviews.concat(reviews);
@@ -157,6 +172,22 @@ const slice = createSlice({
       tours.current.commentsList[index].replies.unshift(reply.id);
       tours.current.commentsList.unshift(reply);
     },
+    commentToggled: (tours, action) => {
+      const { id, state } = action.payload;
+
+      const index = tours.current.commentsList.findIndex(
+        (comment) => comment.id === id
+      );
+      tours.current.commentsList[index].state = state;
+    },
+    commentLiked: (tours, action) => {
+      const { id, liked } = action.payload;
+      const index = tours.current.commentsList.findIndex(
+        (comment) => comment.id === id
+      );
+      tours.current.commentsList[index].liked = liked;
+      tours.current.commentsList[index].likes += liked === true ? 1 : -1;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -179,6 +210,7 @@ export const {
   tourPaid,
   tourMarked,
   reviewDeleted,
+  reviewToggled,
   reviewsLoaded,
   commentsLoaded,
   commentDeleted,
@@ -186,6 +218,9 @@ export const {
   commentCreated,
   replyCreated,
   toursLoaded,
+  reviewLiked,
+  commentToggled,
+  commentLiked,
 } = slice.actions;
 
 export default slice.reducer;
@@ -233,9 +268,31 @@ export const markTour = (id) => (dispatch) => {
 export const deleteReview = (id) => (dispatch) => {
   return dispatch(
     apiCallBegan({
-      url: `${reviews_url}/${id}`,
+      url: reviews_url + `/${id}`,
       method: "DELETE",
       onSuccess: reviewDeleted.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const toggleReview = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: reviews_url + `/${id}/toggle`,
+      method: "PUT",
+      onSuccess: reviewToggled.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const likeReview = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: reviews_url + `/${id}/like`,
+      method: "PUT",
+      onSuccess: reviewLiked.type,
       skipLoading: true,
     })
   );
@@ -260,6 +317,28 @@ export const loadComments = (id, params) => (dispatch) => {
       method: "GET",
       params,
       onSuccess: commentsLoaded.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const toggleComment = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: comments_url + `/${id}/toggle`,
+      method: "PUT",
+      onSuccess: commentToggled.type,
+      skipLoading: true,
+    })
+  );
+};
+
+export const likeComment = (id) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: comments_url + `/${id}/like`,
+      method: "PUT",
+      onSuccess: commentLiked.type,
       skipLoading: true,
     })
   );
