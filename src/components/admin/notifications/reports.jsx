@@ -29,7 +29,7 @@ const Reports = (props) => {
   const [open, setOpen] = useState(false);
   const [target, setTarget] = useState({ id: 0, type: "" });
   const [view, setView] = useState(false);
-  const [body, setBody] = useState("");
+  const [content, setContent] = useState({ body: "", title: "" });
 
   useEffect(async () => {
     await loadReports();
@@ -44,8 +44,8 @@ const Reports = (props) => {
     setOpen(false);
   };
 
-  const handleOpenView = (data) => {
-    setBody(data);
+  const handleOpenView = (body, title) => {
+    setContent({ body, title });
     setView(true);
   };
 
@@ -76,7 +76,7 @@ const Reports = (props) => {
     {
       field: "notifiableType",
       headerName: "Type",
-      width: 250,
+      width: 150,
       renderCell: (params) => {
         return typeReport(params.value);
       },
@@ -85,10 +85,11 @@ const Reports = (props) => {
       field: "body",
       headerName: "Body",
       width: 100,
+      sortable: false,
       renderCell: (params) => {
         return (
           <IconButton
-            onClick={() => handleOpenView(params.value)}
+            onClick={() => handleOpenView(params.value, "Body")}
             aria-label="view"
             color="info"
           >
@@ -108,6 +109,22 @@ const Reports = (props) => {
       width: 200,
       valueFormatter: (params) => {
         return shortDateFormatter(params.value);
+      },
+    },
+    {
+      field: "reason",
+      headerName: "Reason",
+      width: 100,
+      renderCell: (params) => {
+        return (
+          <IconButton
+            onClick={() => handleOpenView(params.value, "Reason")}
+            aria-label="view"
+            color="info"
+          >
+            <PreviewIcon />
+          </IconButton>
+        );
       },
     },
     {
@@ -190,22 +207,31 @@ const Reports = (props) => {
           bgcolor: "background.paper",
           width: "100%",
           height: 860,
+          display: "flex",
+          justifyContent: "center",
         }}
       >
-        <DataGrid
-          rows={list}
-          columns={columns}
-          pageSize={14}
-          rowsPerPageOptions={[14]}
-          checkboxSelection
-        />
+        <Box width={1000} height="100%">
+          <DataGrid
+            rows={list}
+            columns={columns}
+            pageSize={14}
+            rowsPerPageOptions={[14]}
+            checkboxSelection
+          />
+        </Box>
       </Box>
       <ConfirmDialog
         open={open}
         handleClose={handleClose}
         handleOk={handleOk}
       />
-      <ContentModal open={view} handleClose={handleCloseView} body={body} />
+      <ContentModal
+        title={content.title}
+        open={view}
+        handleClose={handleCloseView}
+        body={content.body}
+      />
     </Box>
   );
 };

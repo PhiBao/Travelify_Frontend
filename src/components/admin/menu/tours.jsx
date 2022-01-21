@@ -98,6 +98,7 @@ const Tours = (props) => {
       field: "description",
       headerName: "Description",
       width: 150,
+      sortable: false,
       renderCell: (params) => {
         return (
           <IconButton
@@ -277,7 +278,12 @@ const Tours = (props) => {
         handleClose={handleClose}
         handleOk={handleOk}
       />
-      <ContentModal open={view} handleClose={handleCloseView} body={body} />
+      <ContentModal
+        open={view}
+        handleClose={handleCloseView}
+        body={body}
+        title="Description"
+      />
     </Box>
   );
 };

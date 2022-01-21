@@ -16,7 +16,7 @@ const style = {
 };
 
 const ContentModal = (props) => {
-  const { open, handleClose, body } = props;
+  const { open, handleClose, body, title } = props;
 
   return (
     <Modal
@@ -27,7 +27,7 @@ const ContentModal = (props) => {
     >
       <Box sx={style}>
         <Typography id="modal-helper-title" variant="h6" component="h2">
-          Body
+          {title}
         </Typography>
         <Box
           id="modal-helper-description"
