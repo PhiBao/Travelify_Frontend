@@ -357,7 +357,7 @@ export const TourForm = (props) => {
                     Images will be displayed here
                   </Typography>
                 ) : (
-                  <ImageList sx={{ maxWidth: 800, maxHeight: 450 }} cols={3}>
+                  <ImageList sx={{ maxWidth: 800 }} cols={3}>
                     {images.map((item, index) => (
                       <ImageListItem key={item}>
                         <img

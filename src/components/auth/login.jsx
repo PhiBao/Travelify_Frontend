@@ -131,10 +131,10 @@ export const Login = (props) => {
       uid: response.Ba,
       id_token: response.tokenId,
       info: {
-        email: response.profileObj.email,
-        firstName: response.profileObj.givenName,
-        lastName: response.profileObj.familyName,
-        avatar: response.profileObj.imageUrl,
+        email: response.profileObj?.email,
+        firstName: response.profileObj?.givenName,
+        lastName: response.profileObj?.familyName,
+        avatar: response.profileObj?.imageUrl,
       },
     };
     if (data === "undefined") return;

@@ -22,7 +22,7 @@ import Tooltip from "@mui/material/Tooltip";
 import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
 import StyledRating from "../common/rating";
 import { Link, useNavigate } from "react-router-dom";
-import { vehicles as vh } from "../../helpers/tourHelper";
+import { vehicles as vh, departureFormatter } from "../../helpers/tourHelper";
 import { timeSentence } from "../../helpers/timeHelper";
 import { markTour } from "../../store/home";
 
@@ -130,7 +130,7 @@ const FeaturedItem = ({ tour }) => {
               component="span"
               sx={{ paddingLeft: "5px", fontWeight: "bold" }}
             >
-              {departure}
+              {departureFormatter(departure)?.label}
             </Box>
           </Typography>
           <Stack direction="column" gap={1} sx={{ mt: 1 }}>

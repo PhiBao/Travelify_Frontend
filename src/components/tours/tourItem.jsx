@@ -22,7 +22,7 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Tooltip from "@mui/material/Tooltip";
 import { Link, useNavigate } from "react-router-dom";
 import StyledRating from "../common/rating";
-import { vehicles as vh } from "../../helpers/tourHelper";
+import { vehicles as vh, departureFormatter } from "../../helpers/tourHelper";
 import CardMedia from "@mui/material/CardMedia";
 import { timeSentence } from "../../helpers/timeHelper";
 import { markTour } from "../../store/tours";
@@ -78,7 +78,12 @@ const TourItem = ({ item }) => {
         sx={{
           "& .css-et1ao3-MuiTypography-root": {
             fontWeight: 500,
-            fontSize: "1rem",
+            fontSize: "14px",
+          },
+          "& .MuiCardHeader-title": {
+            lineHeight: "1.5em",
+            height: "3em",
+            overflow: "hidden",
           },
         }}
         avatar={
@@ -127,7 +132,7 @@ const TourItem = ({ item }) => {
         >
           <LocationOnIcon sx={{ pr: 1 }} />
           <Box component="span" sx={{ paddingLeft: "5px", fontWeight: "bold" }}>
-            {departure}
+            {departureFormatter(departure)?.label}
           </Box>
         </Typography>
         <Stack direction="column" gap={1} sx={{ mt: 1 }}>

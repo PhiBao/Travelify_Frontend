@@ -192,7 +192,7 @@ export const DateTimePickerField = ({
   );
 };
 
-export const RichText = ({ control, name, label, readOnly = false }) => {
+export const RichText = ({ control, name, label }) => {
   return (
     <Box component="div" mt={2}>
       <Chip label={label} sx={{ borderRadius: 0, fontWeight: 500 }} />
@@ -201,7 +201,6 @@ export const RichText = ({ control, name, label, readOnly = false }) => {
         control={control}
         render={({ field: { onChange, ...field } }) => (
           <Editor
-            disabled={readOnly}
             apiKey={process.env.REACT_APP_TINYMCE_KEY}
             {...field}
             onEditorChange={onChange}
@@ -221,7 +220,6 @@ export const RichText = ({ control, name, label, readOnly = false }) => {
               automatic_uploads: false,
               content_style:
                 "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-              readonly: `${readOnly}`,
             }}
           />
         )}

@@ -268,7 +268,6 @@ export const updateUser = (data, id) => (dispatch) => {
       data,
       onSuccess: userUpdated.type,
       headers: { "Content-Type": "multipart/form-data" },
-      skipLoading: true,
     })
   );
 };
@@ -340,7 +339,6 @@ export const updateTour = (data, id) => (dispatch) => {
       data,
       onSuccess: tourUpdated.type,
       headers: { "Content-Type": "multipart/form-data" },
-      skipLoading: true,
     })
   );
 };
@@ -451,7 +449,6 @@ export const updateTag = (data, id) => (dispatch) => {
       data,
       onSuccess: tagUpdated.type,
       headers: { "Content-Type": "multipart/form-data" },
-      skipLoading: true,
     })
   );
 };

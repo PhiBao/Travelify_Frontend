@@ -180,6 +180,10 @@ const Review = (props) => {
               mr: 2,
               lineHeight: 1.5,
               fontSize: "18px",
+              "& img": {
+                maxWidth: "100%",
+                height: "auto !important",
+              },
             }}
             component="div"
             dangerouslySetInnerHTML={{ __html: body }}

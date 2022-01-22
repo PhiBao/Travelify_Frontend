@@ -52,7 +52,11 @@ import Review from "../review/review";
 import { vehicles as vh } from "../../helpers/tourHelper";
 import { getTour, requestBookingTour, loadReviews } from "../../store/tours";
 import { dateFormatter, DEFAULT_DATE } from "../../helpers/timeHelper";
-import { state, timeFormatter } from "../../helpers/tourHelper";
+import {
+  state,
+  timeFormatter,
+  departureFormatter,
+} from "../../helpers/tourHelper";
 import TourItem from "./tourItem";
 import { getRecentlyWatched } from "../../services/tourService";
 import { TextInputField, DatePickerField } from "../common/form";
@@ -392,7 +396,7 @@ const TourDetail = (props) => {
                     component="span"
                     sx={{ paddingLeft: "5px", fontWeight: "bold" }}
                   >
-                    {departure}
+                    {departureFormatter(departure)?.label}
                   </Box>
                 </Box>
                 <Box
@@ -451,6 +455,10 @@ const TourDetail = (props) => {
                 p: 2,
                 lineHeight: 2,
                 fontSize: "18px",
+                "& img": {
+                  maxWidth: "100%",
+                  height: "auto !important",
+                },
               }}
               component="div"
               dangerouslySetInnerHTML={{ __html: description }}

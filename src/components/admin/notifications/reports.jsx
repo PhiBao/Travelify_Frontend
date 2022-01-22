@@ -128,6 +128,23 @@ const Reports = (props) => {
       },
     },
     {
+      field: "skip",
+      headerName: "Skip",
+      width: 100,
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <IconButton
+            aria-label="next"
+            onClick={() => handleSkip(params.row.id)}
+            color="warning"
+          >
+            <NextPlanIcon />
+          </IconButton>
+        );
+      },
+    },
+    {
       field: "action",
       headerName: "Action",
       width: 150,
@@ -211,7 +228,7 @@ const Reports = (props) => {
           justifyContent: "center",
         }}
       >
-        <Box width={1000} height="100%">
+        <Box width={1050} height="100%">
           <DataGrid
             rows={list}
             columns={columns}

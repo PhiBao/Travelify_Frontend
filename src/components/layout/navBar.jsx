@@ -109,7 +109,9 @@ const NavBar = (props) => {
       const user = auth.getCurrentUser();
       if (user) await getCurrentUser(user.id);
     } else {
-      const cable = Cable.createConsumer(`ws://localhost:3900/cable?id=${id}`);
+      const cable = Cable.createConsumer(
+        process.env.REACT_APP_CABLE_ENDPOINT + `?id=${id}`
+      );
       cable.subscriptions.create("NotificationsChannel", {
         received: async (data) => {
           await addNotification(humps.camelizeKeys(data));

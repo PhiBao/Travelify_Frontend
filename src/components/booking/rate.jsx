@@ -81,6 +81,10 @@ const Rate = ({ open, handleClose, review, onSubmit }) => {
                   p: 2,
                   lineHeight: 2,
                   fontSize: "18px",
+                  "& img": {
+                    maxWidth: "100%",
+                    height: "auto !important",
+                  },
                 }}
                 component="div"
                 dangerouslySetInnerHTML={{ __html: review.body }}
