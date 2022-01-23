@@ -17,7 +17,6 @@ import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { useDispatch } from "react-redux";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Tooltip from "@mui/material/Tooltip";
 import { Link, useNavigate } from "react-router-dom";
@@ -25,7 +24,6 @@ import StyledRating from "../common/rating";
 import { vehicles as vh, departureFormatter } from "../../helpers/tourHelper";
 import CardMedia from "@mui/material/CardMedia";
 import { timeSentence } from "../../helpers/timeHelper";
-import { markTour } from "../../store/tours";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -47,10 +45,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TourItem = ({ item }) => {
+const TourItem = ({ item, markTour }) => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const {
     id,
     name,
@@ -69,7 +66,7 @@ const TourItem = ({ item }) => {
 
   const handleMark = async (e) => {
     e.preventDefault();
-    await dispatch(markTour(id));
+    await markTour(id);
   };
 
   return (

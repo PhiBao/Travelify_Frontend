@@ -50,7 +50,12 @@ import Loading from "../layout/loading";
 import CheckoutForm from "../common/checkoutForm";
 import Review from "../review/review";
 import { vehicles as vh } from "../../helpers/tourHelper";
-import { getTour, requestBookingTour, loadReviews } from "../../store/tours";
+import {
+  getTour,
+  requestBookingTour,
+  loadReviews,
+  markTour,
+} from "../../store/tours";
 import { dateFormatter, DEFAULT_DATE } from "../../helpers/timeHelper";
 import {
   state,
@@ -160,6 +165,7 @@ const TourDetail = (props) => {
     getTour,
     requestBookingTour,
     loadReviews,
+    markTour,
   } = props;
 
   const [clientSecret, setClientSecret] = useState("");
@@ -838,7 +844,7 @@ const TourDetail = (props) => {
                     xs={12}
                     md={4}
                   >
-                    <TourItem item={tour} />
+                    <TourItem item={tour} markTour={markTour} />
                   </Grid>
                 );
               })}
@@ -866,7 +872,7 @@ const TourDetail = (props) => {
                     xs={12}
                     md={4}
                   >
-                    <TourItem item={tour} />
+                    <TourItem item={tour} markTour={markTour} />
                   </Grid>
                 );
               })}
@@ -888,6 +894,7 @@ const mapDispatchToProps = (dispatch) => ({
   getTour: (id, data) => dispatch(getTour(id, data)),
   requestBookingTour: (data) => dispatch(requestBookingTour(data)),
   loadReviews: (id, params) => dispatch(loadReviews(id, params)),
+  markTour: (id) => dispatch(markTour(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TourDetail);

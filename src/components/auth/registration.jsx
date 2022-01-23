@@ -25,7 +25,7 @@ export const Registration = (props) => {
 
   return (
     <Box
-      mt={5}
+      mt={10}
       display="flex"
       justifyContent="center"
       alignItems="center"

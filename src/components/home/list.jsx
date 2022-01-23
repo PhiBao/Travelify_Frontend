@@ -2,8 +2,10 @@ import { Box, Typography } from "@mui/material";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 import Slider from "react-slick";
 import TourItem from "../tours/tourItem";
+import { markTour } from "../../store/home";
 
 const settings = {
   dots: true,
@@ -28,7 +30,8 @@ const settings = {
   ],
 };
 
-const List = ({ list, title, link }) => {
+const List = (props) => {
+  const { list, title, link, markTour } = props;
   return (
     <Box sx={{ mt: 3, mx: 4 }}>
       <Box sx={{ display: "flex" }}>
@@ -41,11 +44,15 @@ const List = ({ list, title, link }) => {
       </Box>
       <Slider {...settings}>
         {list.map((item) => {
-          return <TourItem key={item.id} item={item} />;
+          return <TourItem key={item.id} item={item} markTour={markTour} />;
         })}
       </Slider>
     </Box>
   );
 };
 
-export default List;
+const mapDispatchToProps = (dispatch) => ({
+  markTour: (id) => dispatch(markTour(id)),
+});
+
+export default connect(null, mapDispatchToProps)(List);

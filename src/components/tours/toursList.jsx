@@ -15,7 +15,7 @@ import _ from "lodash";
 import Typography from "@mui/material/Typography";
 import Loading from "../layout/loading";
 import TourItem from "./tourItem";
-import { loadTours } from "../../store/tours";
+import { loadTours, markTour } from "../../store/tours";
 import useDocumentTitle from "../../utils/useDocumentTitle";
 
 const useStyles = makeStyles((theme) => ({
@@ -53,7 +53,7 @@ const sortPath = [
 
 const ToursList = (props) => {
   useDocumentTitle("Tours list");
-  const { list, meta, loadTours, loading } = props;
+  const { list, meta, loadTours, loading, markTour } = props;
   const [searchParams] = useSearchParams();
   const { total } = meta;
   const classes = useStyles();
@@ -129,7 +129,7 @@ const ToursList = (props) => {
         )}
         {tours.map((tour) => (
           <Grid className={classes.stack} key={tour.id} item xs={12} md={4}>
-            <TourItem item={tour} />
+            <TourItem item={tour} markTour={markTour} />
           </Grid>
         ))}
       </Grid>
@@ -158,6 +158,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   loadTours: (params) => dispatch(loadTours(params)),
+  markTour: (id) => dispatch(markTour(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ToursList);
