@@ -328,8 +328,8 @@ const Review = (props) => {
         )}
         {currentUser.id !== 0 && (
           <CommentForm
-            username={username}
-            avatarUrl={avatarUrl}
+            username={currentUser.email}
+            avatarUrl={currentUser.avatarUrl}
             label="Comment"
             id={id}
             handleOnSubmit={createComment}
