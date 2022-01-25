@@ -40,7 +40,7 @@ export const CheckoutForm = () => {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: "http://localhost:3000/settings/history",
+        return_url: "https://travelify-fly.netlify.app/settings/history",
       },
     });
 
