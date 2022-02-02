@@ -27,7 +27,8 @@ const Notifications = (props) => {
 
   const handleRead = async (status, id, tourId) => {
     if (status === "unread") await readNotification(id);
-    navigate(`/tours/${tourId}`);
+    if (tourId === 0) navigate("/admin/transactions");
+    else navigate(`/tours/${tourId}`);
   };
 
   const handlePageChange = async (e, page) => {
@@ -72,6 +73,7 @@ const Notifications = (props) => {
             bgcolor: `${
               notification.status === "unread" ? "#f5f5f5" : "backgroud.paper"
             }`,
+            cursor: "pointer",
           }}
           key={`notification-${notification.id}`}
           onClick={() =>
@@ -96,18 +98,24 @@ const Notifications = (props) => {
             >
               {fromNow(notification.updatedAt)}
             </Typography>
-            <Typography variant="body1">
-              <b>{notification.user?.username}</b>
-              {` ${
-                notification.others === 0
-                  ? ""
-                  : `and ${notification.others} other${
-                      notification.others > 1 ? "s" : ""
-                    }`
-              } ${notification.action} ${
-                notification.action === "reported" ? "a" : "your"
-              } ${notification.notifiableType}`}
-            </Typography>
+            {notification.action === "booked" ? (
+              <Typography variant="body1">
+                There is a new transaction
+              </Typography>
+            ) : (
+              <Typography variant="body1">
+                <b>{notification.user?.username}</b>
+                {` ${
+                  notification.others === 0
+                    ? ""
+                    : `and ${notification.others} other${
+                        notification.others > 1 ? "s" : ""
+                      }`
+                } ${notification.action} ${
+                  notification.action === "reported" ? "a" : "your"
+                } ${notification.notifiableType}`}
+              </Typography>
+            )}
           </Box>
         </Box>
       ))}

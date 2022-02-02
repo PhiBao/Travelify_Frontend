@@ -190,7 +190,8 @@ const NavBar = (props) => {
   const handleRead = async (status, id, tourId) => {
     if (status === "unread") await readNotification(id);
     setAnchorElNot(null);
-    navigate(`/tours/${tourId}`);
+    if (tourId === 0) navigate("/admin/transactions");
+    else navigate(`/tours/${tourId}`);
   };
 
   return (
@@ -503,18 +504,24 @@ const NavBar = (props) => {
                         >
                           {fromNow(notification.updatedAt)}
                         </Typography>
-                        <Typography variant="body1">
-                          <b>{notification.user?.username}</b>
-                          {` ${
-                            notification.others === 0
-                              ? ""
-                              : `and ${notification.others} other${
-                                  notification.others > 1 ? "s" : ""
-                                }`
-                          } ${notification.action} ${
-                            notification.action === "reported" ? "a" : "your"
-                          } ${notification.notifiableType}`}
-                        </Typography>
+                        {notification.action === "booked" ? (
+                          <Typography variant="body1">
+                            There is a new transaction
+                          </Typography>
+                        ) : (
+                          <Typography variant="body1">
+                            <b>{notification.user?.username}</b>
+                            {` ${
+                              notification.others === 0
+                                ? ""
+                                : `and ${notification.others} other${
+                                    notification.others > 1 ? "s" : ""
+                                  }`
+                            } ${notification.action} ${
+                              notification.action === "reported" ? "a" : "your"
+                            } ${notification.notifiableType}`}
+                          </Typography>
+                        )}
                       </Box>
                     </MenuItem>
                   ))}

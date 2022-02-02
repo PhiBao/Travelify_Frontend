@@ -70,9 +70,16 @@ const Booking = ({ booking }) => {
         }}
       >
         <CardContent sx={{ flex: "1 0 auto" }}>
-          <Typography component={Link} to={`/tours/${tourId}`} variant="h6">
-            {tourName}
-          </Typography>
+          <Box sx={{ lineHeight: "1.5em", height: "3em", overflow: "hidden" }}>
+            <Typography
+              component={Link}
+              to={`/tours/${tourId}`}
+              variant="div"
+              sx={{ fontSize: "16px", fontWeight: 500 }}
+            >
+              {tourName}
+            </Typography>
+          </Box>
           <Typography sx={{ fontSize: "14px" }} component="div" variant="body2">
             {`${adults} Adults - ${children} Children`}
           </Typography>
