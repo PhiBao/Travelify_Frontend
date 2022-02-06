@@ -160,8 +160,10 @@ const slice = createSlice({
         (review) => review.id === parentId
       );
       tours.current.self.reviews[index].size += 1;
-      tours.current.self.reviews[index].comments.unshift(comment.id);
-      tours.current.commentsList.unshift(comment);
+      tours.current.commentsList?.unshift(comment);
+      let { comments = [] } = tours.current.self.reviews[index];
+      comments.unshift(comment.id);
+      tours.current.self.reviews[index].comments = comments;
     },
     replyCreated: (tours, action) => {
       const { reply, parentId } = action.payload;
@@ -169,8 +171,10 @@ const slice = createSlice({
         (comment) => comment.id === parentId
       );
       tours.current.commentsList[index].size += 1;
-      tours.current.commentsList[index].replies.unshift(reply.id);
-      tours.current.commentsList.unshift(reply);
+      let { replies = [] } = tours.current.commentsList[index];
+      replies.unshift(reply.id);
+      tours.current.commentsList[index].replies = replies;
+      tours.current.commentsList?.unshift(reply);
     },
     commentToggled: (tours, action) => {
       const { id, state } = action.payload;
@@ -187,6 +191,13 @@ const slice = createSlice({
       );
       tours.current.commentsList[index].liked = liked;
       tours.current.commentsList[index].likes += liked === true ? 1 : -1;
+    },
+    commentEdited: (tours, action) => {
+      const { id, body } = action.payload;
+      const index = tours.current.commentsList.findIndex(
+        (comment) => comment.id === id
+      );
+      tours.current.commentsList[index].body = body;
     },
   },
   extraReducers: (builder) => {
@@ -221,6 +232,7 @@ export const {
   reviewLiked,
   commentToggled,
   commentLiked,
+  commentEdited,
 } = slice.actions;
 
 export default slice.reducer;
@@ -398,6 +410,18 @@ export const loadTours = (params) => (dispatch) => {
       method: "GET",
       params,
       onSuccess: toursLoaded.type,
+    })
+  );
+};
+
+export const editComment = (id, data) => (dispatch) => {
+  return dispatch(
+    apiCallBegan({
+      url: comments_url + `/${id}`,
+      method: "PUT",
+      data,
+      onSuccess: commentEdited.type,
+      skipLoading: true,
     })
   );
 };

@@ -23,6 +23,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import ReportDialog from "../common/reportDialog";
 import CommentForm from "../common/commentForm";
 import { fromNow } from "../../helpers/timeHelper";
+import EditCommentForm from "../common/editCommentForm";
 
 const Comment = (props) => {
   const {
@@ -34,9 +35,10 @@ const Comment = (props) => {
     createReply,
     likeComment,
     toggleComment,
+    editComment,
   } = props;
   const {
-    user: { username, avatarUrl },
+    user: { id: userId, username, avatarUrl },
     id,
     body,
     createAt,
@@ -55,6 +57,7 @@ const Comment = (props) => {
   const [report, setReport] = useState(false);
   const [value, setValue] = useState("Negative words");
   const [openReplies, setOpenReplies] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
   const handleCloseDialog = () => {
     setConfirm(false);
@@ -64,6 +67,10 @@ const Comment = (props) => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
   };
 
   const handleLike = async () => {
@@ -79,6 +86,9 @@ const Comment = (props) => {
       case "delete":
         setConfirm(true);
         setAnchorEl(null);
+        break;
+      case "edit":
+        setOpenEdit(true);
         break;
       default:
         await toggleComment(id);
@@ -100,13 +110,19 @@ const Comment = (props) => {
   };
 
   const handleShowReplies = async () => {
-    if (replies.length === 0) await loadReplies(id, { page: 1 });
+    if (size > 0 && replies.length === 0) await loadReplies(id, { page: 1 });
     setOpenReplies(!openReplies);
   };
 
   const handleClickMore = async () => {
     const page = replies.length / 10 + 1;
     await loadReplies(id, { page });
+  };
+
+  const handleEdit = async (data, e) => {
+    e.preventDefault();
+    await editComment(id, data);
+    setOpenEdit(false);
   };
 
   return (
@@ -214,25 +230,27 @@ const Comment = (props) => {
                 "aria-labelledby": `button-${id}`,
               }}
             >
-              {currentUser.admin ? (
-                <Box>
-                  <MenuItem onClick={() => handleAction("toggle")}>
-                    {state === "hide" ? "appear" : "hide"}
-                  </MenuItem>
-                  <MenuItem onClick={() => handleAction("delete")}>
-                    delete
-                  </MenuItem>
-                </Box>
-              ) : (
-                <MenuItem
-                  aria-haspopup="true"
-                  aria-controls="report-menu"
-                  aria-label="review report"
-                  onClick={() => handleAction("report")}
-                >
-                  report
+              {currentUser.admin && (
+                <MenuItem onClick={() => handleAction("toggle")}>
+                  {state === "hide" ? "appear" : "hide"}
                 </MenuItem>
               )}
+              {(currentUser.admin || userId === currentUser.id) && (
+                <MenuItem onClick={() => handleAction("delete")}>
+                  delete
+                </MenuItem>
+              )}
+              {userId === currentUser.id && (
+                <MenuItem onClick={() => handleAction("edit")}>edit</MenuItem>
+              )}
+              <MenuItem
+                aria-haspopup="true"
+                aria-controls="report-menu"
+                aria-label="review report"
+                onClick={() => handleAction("report")}
+              >
+                report
+              </MenuItem>
             </Menu>
           </Stack>
           <ReportDialog
@@ -243,6 +261,15 @@ const Comment = (props) => {
             value={value}
             type="comment"
             targetId={id}
+          />
+          <EditCommentForm
+            id="edit-dialog"
+            open={openEdit}
+            handleClose={handleCloseEdit}
+            username={currentUser.email}
+            body={body}
+            avatarUrl={currentUser.avatarUrl}
+            onSubmit={handleEdit}
           />
           <Dialog
             open={confirm}
@@ -279,6 +306,7 @@ const Comment = (props) => {
               loadReplies={loadReplies}
               deleteComment={deleteComment}
               createReply={createReply}
+              editComment={editComment}
             />
           ))}
         {size > replies.length && (

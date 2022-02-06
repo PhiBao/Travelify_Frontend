@@ -39,6 +39,7 @@ import {
   likeReview,
   likeComment,
   toggleComment,
+  editComment,
 } from "../../store/tours";
 
 const Review = (props) => {
@@ -56,6 +57,7 @@ const Review = (props) => {
     likeReview,
     likeComment,
     toggleComment,
+    editComment,
   } = props;
   const {
     user: { username, avatarUrl },
@@ -122,7 +124,7 @@ const Review = (props) => {
   };
 
   const handleShowComments = async () => {
-    if (comments.length === 0) await loadComments(id, { page: 1 });
+    if (size > 0 && comments.length === 0) await loadComments(id, { page: 1 });
     setOpenComments(!openComments);
   };
 
@@ -314,6 +316,7 @@ const Review = (props) => {
               createReply={createReply}
               likeComment={likeComment}
               toggleComment={toggleComment}
+              editComment={editComment}
             />
           ))}
         {size > comments.length && (
@@ -356,6 +359,7 @@ const mapDispatchToProps = (dispatch) => ({
   likeReview: (id) => dispatch(likeReview(id)),
   toggleComment: (id) => dispatch(toggleComment(id)),
   likeComment: (id) => dispatch(likeComment(id)),
+  editComment: (id, data) => dispatch(editComment(id, data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Review);

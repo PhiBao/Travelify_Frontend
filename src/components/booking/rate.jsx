@@ -43,7 +43,7 @@ const Rate = ({ open, handleClose, review, onSubmit }) => {
   return (
     <Dialog fullWidth={true} maxWidth="sm" open={open} onClose={handleClose}>
       <Box
-        id="searchForm"
+        id="rateForm"
         component="form"
         onSubmit={handleSubmit(onSubmit)}
         autoComplete="off"
