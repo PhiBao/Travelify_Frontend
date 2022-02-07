@@ -14,7 +14,7 @@ const slice = createSlice({
     list: [],
     meta: {
       total: 0,
-      sortColumn: { path: "createAt", order: "desc" },
+      sortColumn: { path: "createdAt", order: "desc" },
     },
     current: {
       self: {
@@ -35,7 +35,7 @@ const slice = createSlice({
             id: 0,
             body: "",
             hearts: 0,
-            createAt: "",
+            createdAt: "",
             liked: false,
             likes: 0,
             state: "appear",
@@ -52,7 +52,7 @@ const slice = createSlice({
           user: { username: "", avatarUrl: "" },
           id: 0,
           body: "",
-          createAt: "",
+          createdAt: "",
           liked: false,
           likes: 0,
           state: "appear",
@@ -76,6 +76,7 @@ const slice = createSlice({
       tours.current.self = self;
       tours.current.related = related;
       tours.current.recently = recently;
+      tours.commentsList = [];
       setRecentlyWatched(self.id);
     },
     tourRequestBooking: () => {

@@ -64,7 +64,7 @@ const Review = (props) => {
     id,
     body,
     hearts,
-    createAt,
+    createdAt,
     liked,
     likes,
     state = "appear",
@@ -196,7 +196,7 @@ const Review = (props) => {
             sx={{ mr: 2, pb: 2, borderBottom: 1, color: "#757575" }}
             variant="body2"
           >
-            {dateFormatter(createAt)}
+            {dateFormatter(createdAt)}
           </Box>
           <Box
             component={Typography}

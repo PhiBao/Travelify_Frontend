@@ -27,7 +27,7 @@ const Booking = ({ booking }) => {
     adults,
     children,
     departureDate,
-    createAt,
+    createdAt,
     status,
     review,
   } = booking;
@@ -84,7 +84,7 @@ const Booking = ({ booking }) => {
             {`${adults} Adults - ${children} Children`}
           </Typography>
           <Typography sx={{ fontSize: "14px" }} component="div" variant="body2">
-            {`Booked at:  ${shortDateFormatter(createAt)}`}
+            {`Booked at:  ${shortDateFormatter(createdAt)}`}
           </Typography>
         </CardContent>
       </Box>

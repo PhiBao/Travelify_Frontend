@@ -41,7 +41,7 @@ const Comment = (props) => {
     user: { id: userId, username, avatarUrl },
     id,
     body,
-    createAt,
+    createdAt,
     liked,
     likes,
     state = "appear",
@@ -159,7 +159,7 @@ const Comment = (props) => {
             sx={{ mr: 2, color: "#757575" }}
             variant="body2"
           >
-            {fromNow(createAt)}
+            {fromNow(createdAt)}
           </Box>
           {state === "hide" && (
             <Alert sx={{ mr: 2 }} variant="filled" severity="info">
