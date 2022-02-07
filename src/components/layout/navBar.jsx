@@ -111,6 +111,7 @@ const NavBar = (props) => {
     } else {
       const cable = Cable.createConsumer(
         process.env.REACT_APP_CABLE_ENDPOINT + `?id=${id}`
+        // `ws://localhost:3900/cable?id=${id}`
       );
       cable.subscriptions.create("NotificationsChannel", {
         received: async (data) => {

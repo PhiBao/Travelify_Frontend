@@ -307,6 +307,8 @@ const Comment = (props) => {
               deleteComment={deleteComment}
               createReply={createReply}
               editComment={editComment}
+              likeComment={likeComment}
+              toggleComment={toggleComment}
             />
           ))}
         {size > replies.length && (
