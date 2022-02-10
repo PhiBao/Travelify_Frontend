@@ -91,7 +91,7 @@ const Notifications = (props) => {
               `${process.env.PUBLIC_URL}/assets/images/unknown.png`
             }
           />
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box sx={{ display: "flex", flexDirection: "column", ml: 1 }}>
             <Typography
               variant="subtitle2"
               sx={{ color: "#757575", fontStyle: "italic" }}

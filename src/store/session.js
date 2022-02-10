@@ -267,6 +267,7 @@ export const confirmUser = (token, email) => (dispatch) => {
       method: "PUT",
       data: { user: { email } },
       onSuccess: userConfirmed.type,
+      skipLoading: true,
     })
   );
 };

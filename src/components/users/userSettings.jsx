@@ -17,10 +17,11 @@ import Notifications from "./notifications";
 import PasswordChange from "./passwordChange";
 import useDocumentTitle from "../../utils/useDocumentTitle";
 import { updateUser } from "../../store/session";
+import Loading from "../layout/loading";
 
 export const UserSettings = (props) => {
   useDocumentTitle("User settings");
-  const { currentUser, updateUser } = props;
+  const { currentUser, updateUser, loading } = props;
 
   return (
     <Container>
@@ -33,6 +34,7 @@ export const UserSettings = (props) => {
         justifyContent="center"
         style={{ minHeight: "100vh" }}
       >
+        {loading && <Loading />}
         <Grid container spacing={2}>
           <Grid
             item
@@ -105,6 +107,7 @@ export const UserSettings = (props) => {
 
 const mapStateToProps = (state) => ({
   currentUser: state.entities.session.currentUser,
+  loading: state.entities.session.loading,
 });
 
 const mapDispatchToProps = (dispatch) => ({
