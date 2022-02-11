@@ -199,7 +199,12 @@ export const TransactionForm = (props) => {
               sx={{ display: "flex", alignItems: "center", p: 2 }}
             >
               <Chip sx={{ mr: 1 }} color="info" label="Name" />
-              <Box component="span">{tour.name}</Box>
+              <Box
+                sx={{ lineHeight: "1.5em", height: "3em", overflow: "hidden" }}
+                component="span"
+              >
+                {tour.name}
+              </Box>
             </Box>
             <Box
               component="div"

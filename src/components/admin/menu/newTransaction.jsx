@@ -187,7 +187,7 @@ export const NewTransaction = (props) => {
               name="tour"
               label="Tour"
               options={tours}
-              placeholder="Select a tour of this transaction"
+              placeholder="Select a tour..."
               error={errors.tour}
               handleChange={handleSelectTour}
             />
