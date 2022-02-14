@@ -26,9 +26,11 @@ const schema = Yup.object().shape({
     "password confirmation doesn't match password"
   ),
   phoneNumber: Yup.string()
-    .matches(/^[0-9]+$/, "Must be only digits")
-    .min(9)
-    .max(11),
+    .nullable()
+    .matches(
+      /^[0-9]{9,11}|^$/,
+      "Must be only digits and have length from 9 to 11"
+    ),
   address: Yup.string().max(100),
   birthday: Yup.date().test(
     "birthday",
