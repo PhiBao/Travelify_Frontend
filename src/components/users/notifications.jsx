@@ -13,6 +13,7 @@ import {
   readAllNotifications,
 } from "../../store/session";
 import { fromNow } from "../../helpers/timeHelper";
+import paginate from "../../utils/paginate";
 
 const Notifications = (props) => {
   const {
@@ -31,10 +32,11 @@ const Notifications = (props) => {
     else navigate(`/tours/${tourId}`);
   };
 
-  const handlePageChange = async (e, page) => {
+  const handlePageChange = async (e, value) => {
     e.preventDefault();
-    await loadNotifications(id, { page });
-    setPage(page);
+    if (list.length < (value - 1) * 10 + 1)
+      await loadNotifications(id, { page: value });
+    setPage(value);
   };
 
   const handleReadAll = async (e) => {
@@ -63,7 +65,7 @@ const Notifications = (props) => {
           Read all
         </Button>
       </Box>
-      {list.map((notification) => (
+      {paginate(list, page, 10).map((notification) => (
         <Box
           sx={{
             display: "flex",

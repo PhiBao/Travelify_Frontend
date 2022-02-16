@@ -27,7 +27,7 @@ export const UserSettings = (props) => {
     <Container>
       <Grid
         container
-        mt={6}
+        mt={10}
         spacing={0}
         direction="column"
         alignItems="center"
