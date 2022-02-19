@@ -166,13 +166,6 @@ const Reports = (props) => {
               )}
             </IconButton>
             <IconButton
-              aria-label="next"
-              onClick={() => handleSkip(params.row.id)}
-              color="warning"
-            >
-              <NextPlanIcon />
-            </IconButton>
-            <IconButton
               onClick={() =>
                 handleDelete(params.row.notifiableType, params.row.notifiableId)
               }

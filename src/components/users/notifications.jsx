@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
@@ -7,11 +7,8 @@ import Button from "@mui/material/Button";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
-import {
-  loadNotifications,
-  readNotification,
-  readAllNotifications,
-} from "../../store/session";
+import axios from "axios";
+import { readNotification, readAllNotifications } from "../../store/session";
 import { fromNow } from "../../helpers/timeHelper";
 import paginate from "../../utils/paginate";
 
@@ -19,12 +16,16 @@ const Notifications = (props) => {
   const {
     id,
     notifications: { list = [], total, unread },
-    loadNotifications,
     readNotification,
     readAllNotifications,
   } = props;
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
+  const [dummyList, setDummyList] = useState([]);
+
+  useEffect(() => {
+    setDummyList(list);
+  }, [id]);
 
   const handleRead = async (status, id, tourId) => {
     if (status === "unread") await readNotification(id);
@@ -34,9 +35,16 @@ const Notifications = (props) => {
 
   const handlePageChange = async (e, value) => {
     e.preventDefault();
-    if (list.length < (value - 1) * 10 + 1)
-      await loadNotifications(id, { page: value });
     setPage(value);
+    if (value === 1) {
+      setDummyList(list);
+      return;
+    }
+    await axios
+      .get(`users/${id}/notifications?page=${value}`)
+      .then((response) => {
+        setDummyList(response?.data?.list);
+      });
   };
 
   const handleReadAll = async (e) => {
@@ -65,7 +73,7 @@ const Notifications = (props) => {
           Read all
         </Button>
       </Box>
-      {paginate(list, page, 10).map((notification) => (
+      {paginate(dummyList, 1, 10).map((notification) => (
         <Box
           sx={{
             display: "flex",
@@ -144,7 +152,6 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loadNotifications: (id, params) => dispatch(loadNotifications(id, params)),
   readNotification: (id) => dispatch(readNotification(id)),
   readAllNotifications: (id) => dispatch(readAllNotifications(id)),
 });
