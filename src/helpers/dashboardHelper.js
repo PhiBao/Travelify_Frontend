@@ -6,7 +6,7 @@ import Chip from "@mui/material/Chip";
 import _ from "lodash";
 
 export const arrow = (cur, last) => {
-  if (cur < last) {
+  if (parseFloat(cur) < parseFloat(last)) {
     return <ArrowDropDownIcon color="error" />;
   } else {
     return <ArrowDropUpIcon color="success" />;
@@ -43,7 +43,10 @@ export const state = (status) => {
 
 export const percent = (cur, last) => {
   if (last === 0 || last === "0.0") return "No data";
-  const res = ((cur > last ? cur / last : last / cur) - 1) * 100;
+  const res =
+    (parseFloat(cur) > parseFloat(last)
+      ? parseFloat(cur) / parseFloat(last)
+      : parseFloat(last) / parseFloat(cur)) * 100;
   return Math.abs(res).toFixed(2);
 };
 
