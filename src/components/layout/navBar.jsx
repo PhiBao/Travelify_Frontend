@@ -191,8 +191,8 @@ const NavBar = (props) => {
   const handleRead = async (status, id, tourId) => {
     if (status === "unread") await readNotification(id);
     setAnchorElNot(null);
-    if (tourId === 0) navigate("/admin/transactions");
-    else navigate(`/tours/${tourId}`);
+    if (tourId === 0) window.location = "/admin/transactions";
+    else window.location = `/tours/${tourId}`;
   };
 
   return (
