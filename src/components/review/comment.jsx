@@ -121,8 +121,8 @@ const Comment = (props) => {
 
   const handleEdit = async (data, e) => {
     e.preventDefault();
-    await editComment(id, data);
     setOpenEdit(false);
+    await editComment(id, data);
   };
 
   return (
